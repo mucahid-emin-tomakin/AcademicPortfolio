@@ -1,0 +1,144 @@
+\chapter{Glatte Kurve (Java)}
+Das Programm ermöglicht es dem Benutzer, ein Polygon zu zeichnen, indem er Punkte per Mausklick hinzufügt. Nach der Erstellung des Polygons wird es durch den Corner-Cutting-Algorithmus geglättet, der die Kanten des Polygons schrittweise unterteilt und so eine weiche Kurve erzeugt. Zu Beginn wird das Polygon einfach gezeichnet, später wird es durch mehrfache Unterteilungen immer glatter. Die Benutzeroberfläche bietet eine interaktive Möglichkeit, das Polygon zu bearbeiten und die Kurve in Echtzeit zu sehen.
+
+\subsection*{Glatte Kurve - A}
+Zeichnet ein Polygon, indem er bei jedem Mausklick Punkte auf einem \textbf{JPanel} hinzufügt und das Polygon (ab 3 Punkten) zeigt.
+\begin{itemize}[itemsep=0pt]
+   \item Hauptklasse \textbf{GlatteKurve1a}
+   \begin{itemize}
+    \item Erweitert \textbf{JFrame}, um ein Fenster zu erstellen der ein \textbf{DrawPanel} enthält auf dem das Polygon gezeichnet wird
+   \end{itemize}
+   \item \textbf{DrawPanel} 
+   \begin{itemize}
+    \item Dies ist ein inneres \textbf{JPanel}, das als Zeichenbereich fungiert
+    \item Ein \textbf{MouseListener} wird hinzugefügt, um Mausklicks zu erfassen
+    \item Bei jedem Mausklick wird der Punkt zum Polygon hinzugefügt, und das Panel wird mit \textbf{repaint()} neu gezeichnet.
+   \end{itemize}
+   \item \textbf{Polygon}
+   \begin{itemize}
+    \item Die Punkte des Polygons werden als rote Kreise dargestellt
+    \item Wenn mindestens 3 Punkte vorhanden sind, wird das Polygon (blau) gezeichnet
+   \end{itemize}
+   \item \textbf{Mausereignisse}
+   \begin{itemize}
+    \item Die Methode \textbf{mouseClicked()} registriert Mausklicks und fügt die Klickpositionen dem Polygon hinzu
+   \end{itemize}
+   \item \textbf{main()}
+   \begin{itemize}
+    \item startet das Programm, indem sie \textbf{SwingUtilities.invokeLater()} verwendet, um die GUI im Event-Dispatch-Thread zu starten
+   \end{itemize}
+\end{itemize}
+\begin{codeblock}
+    \lstinputlisting[
+        style=inputlistingstyle,
+        caption={Glatte Kurve - A},
+        label={lst:GlatteKurve1a}
+    ]{code/GlatteKurve1a.java}
+\end{codeblock}
+
+\subsection*{Glatte Kurve - B}
+Ermöglicht es dem Benutzer, Punkte durch Mausklicks hinzuzufügen, und zeichnet das Polygon, sobald genügend Punkte vorhanden sind.
+\begin{itemize}[itemsep=0pt]
+   \item \textbf{MouseListener}
+   \begin{itemize}
+    \item Die Klasse \textbf{DrawPanel} implementiert jetzt das \textbf{MouseListener-Interface}
+    \item Es wird eine Methode \textbf{mouseClicked(MouseEvent e)} hinzugefügt, die den Mausklick verarbeitet, um neue Punkte zum Polygon hinzuzufügen
+   \end{itemize}
+   \item \textbf{Neuzeichnen des Panels} 
+   \begin{itemize}
+    \item Nach jedem Mausklick wird das Polygon aktualisiert und das Panel neu gezeichnet \textbf{(repaint())}, um die neuen Punkte anzuzeigen
+   \end{itemize}
+   \item \textbf{Farbe der Punkte und des Polygons}
+   \begin{itemize}
+    \item Es werden rote Punkte (für jeden hinzugefügten Punkt) und ein blaues Polygon (ab 3 Punkten) gezeichnet
+   \end{itemize}
+\end{itemize}
+\begin{codeblock}
+    \lstinputlisting[
+        style=inputlistingstyle,
+        caption={Glatte Kurve - B},
+        label={lst:GlatteKurve1b}
+    ]{code/GlatteKurve1b.java}
+\end{codeblock}
+
+\subsection*{Glatte Kurve - C}
+Ermöglicht es dem Benutzer, Punkte hinzuzufügen und ein Polygon zu erstellen. Sobald mindestens drei Punkte vorhanden sind, wird eine geglättete Kurve mit Corner-Cutting erzeugt und angezeigt.
+\begin{itemize}[itemsep=0pt]
+   \item \textbf{Corner-Cutting Unterteilung}
+   \begin{itemize}
+    \item Eine neue Methode \textbf{subdivide()} wurde hinzugefügt die  das \textbf{Corner-Cutting-Verfahren} implementiert, bei dem zwischen benachbarten Punkten eines Polygons neue Punkte erzeugt werden, um eine glattere Kurve zu erzeugen
+   \end{itemize}
+   \item \textbf{Zeichnen der geglätteten Kurve} 
+   \begin{itemize}
+    \item Wenn mindestens 3 Punkte im Polygon vorhanden sind, wird das Polygon fünfmal unterteilt
+    \item Nach jeder Unterteilung wird das Ergebnis gezeichnet, um eine glatte Kurve zu erzeugen
+   \end{itemize}
+   \item \textbf{Kontrollpolygon und Eckpunkte}
+   \begin{itemize}
+    \item Das ursprüngliche Polygon wird schwarz dargestellt, und die Eckpunkte des Polygons werden blau markiert
+   \end{itemize}
+   \item \textbf{Neuzeichnen nach Mausklick}
+   \begin{itemize}
+    \item Bei jedem Mausklick wird der Punkt zum Polygon hinzugefügt und das Panel wird neu gezeichnet, um die Änderungen zu zeigen
+   \end{itemize}
+\end{itemize}
+\begin{codeblock}
+    \lstinputlisting[
+        style=inputlistingstyle,
+        caption={Glatte Kurve - C},
+        label={lst:GlatteKurve1c}
+    ]{code/GlatteKurve1c.java}
+\end{codeblock}
+
+\subsection*{Glatte Kurve - D}
+ermöglicht es dem Benutzer, Punkte hinzuzufügen und ein Polygon zu erstellen. Mit jeder Mausklick wird das Polygon unterteilt, und eine geglättete Kurve (mit \textbf{Corner-Cutting}) wird gezeichnet, die nach 5 Schritten der Unterteilung eine glattere Form erhält.
+\begin{itemize}[itemsep=0pt]
+   \item \textbf{Corner-Cutting Unterteilung}
+   \begin{itemize}
+    \item Eine neue Methode \textbf{subdivide()} wurde hinzugefügt die  das \textbf{Corner-Cutting-Verfahren} implementiert, bei dem zwischen benachbarten Punkten eines Polygons neue Punkte erzeugt werden, um eine glattere Kurve zu erzeugen
+   \end{itemize}
+   \item \textbf{Mehrfaches Subdividing} 
+   \begin{itemize}
+    \item Die Methode \textbf{subdivide(Polygon polygon, int steps)} wurde hinzugefügt, um die Unterteilung des Polygons mehrmals zu wiederholen (in diesem Fall 5 Schritte), um eine noch glattere Kurve zu erzeugen
+   \end{itemize}
+   \item \textbf{Corner-Cutting Algorithmus}
+   \begin{itemize}
+    \item Der Algorithmus zur \textbf{Corner-Cutting} Unterteilung \textbf{(subdivide(Polygon polygon))} wurde als eigenständige Methode implementiert, die zwischen den benachbarten Punkten neue Punkte berechnet und hinzufügt
+   \end{itemize}
+   \item \textbf{Zeichnen der geglätteten Kurve}
+   \begin{itemize}
+    \item Wenn mindestens drei Punkte im Polygon vorhanden sind, wird das Polygon mehrmals unterteilt (5 Schritte), und eine geglättete Kurve wird in Rot gezeichnet
+   \end{itemize}
+   \item \textbf{Neuzeichnen nach Mausklick}
+   \begin{itemize}
+    \item Bei jedem Mausklick wird der Punkt zum Polygon hinzugefügt und das Panel wird neu gezeichnet, um die Änderungen anzuzeigen
+   \end{itemize}
+\end{itemize}
+\begin{codeblock}
+    \lstinputlisting[
+        style=inputlistingstyle,
+        caption={Glatte Kurve - D},
+        label={lst:GlatteKurve1c}
+    ]{code/GlatteKurve1d.java}
+\end{codeblock}
+
+\subsection*{Zusammenfassung A-D}
+\begin{itemize}[itemsep=0pt]
+   \item \textbf{Glatte Kurve - A}
+   \begin{itemize}
+    \item Einfaches Polygonzeichnen mit Mausklicks
+   \end{itemize}
+   \item \textbf{Glatte Kurve - B}
+   \begin{itemize}
+    \item Einführung des \textbf{Corner-Cutting-Algorithmus} zur Glättung des Polygons
+   \end{itemize}
+   \item \textbf{Glatte Kurve - C}
+   \begin{itemize}
+    \item Anwendung mehrfacher Unterteilungen, um die Kurve noch glatter zu machen
+   \end{itemize}
+   \item \textbf{Glatte Kurve - D}
+   \begin{itemize}
+    \item Verbesserung der Benutzeroberfläche und der Algorithmuslogik zur Optimierung der Interaktivität und Darstellung
+   \end{itemize}
+\end{itemize}
+Jeder Schritt baut auf dem vorherigen auf, wobei die Kurve zuerst einfach ist und dann mit zunehmender Komplexität immer glatter und präziser wird.

@@ -1,0 +1,114 @@
+% ============================== Dokumentformat ==============================
+
+% ================= KOMA-Script-Klasse =================
+\documentclass[a4paper,12pt,numbers=noenddot]{scrreprt}
+
+% ============================== Dokumentformat ==============================
+% ============================== Einstellungen ==============================
+
+\input{settings/settings.tex}
+
+% ============================== Einstellungen ==============================
+% ============================== Main ==============================
+
+\title{B-GOPB01-XX3-N01}
+\author{Mücahid Emin Tomakin}
+\date{\today}
+
+\begin{document}
+
+% ================= Deckblatt =================
+
+\include{tex/Deckblatt.tex}
+\cleardoublepage
+
+% ================= Deckblatt =================
+% ================= Inhaltsverzeichnis =================
+\renewcommand{\thepage}{\Roman{page}}
+\setcounter{page}{1}
+\setcounter{tocdepth}{1} % Inhaltsverzeichnis (nur Kapitel und Abschnitte)
+\tableofcontents
+\setlist[enumerate,1]{label*=\arabic*.,font=\bfseries\sffamily}
+\cleardoublepage
+
+% ================= Inhaltsverzeichnis =================
+% =======================================================================
+% ============================== HAUPTTEIL ==============================
+% =======================================================================
+
+\pagestyle{icmt-fancy}
+\pagenumbering{arabic}
+\setcounter{page}{1}
+
+% ================= Tree (Python) =================
+\include{tex/Tree (Python).tex}
+\cleardoublepage
+% ================= Tree (Python) =================
+% ================= Cäsar-Chiffre (Python) =================
+\include{tex/Cäsar-Chiffre (Python).tex}
+\cleardoublepage
+% ================= Cäsar-Chiffre (Python) =================
+% ================= CDMA (Java) =================
+\include{tex/CDMA (Java).tex}
+\cleardoublepage
+% ================= CDMA (Java) =================
+% ================= Glatte Kurve (Java) =================
+\include{tex/Glatte Kurve (Java).tex}
+\cleardoublepage
+% ================= Glatte Kurve (Java) =================
+
+\pagestyle{icmt-fancy}
+
+% =======================================================================
+% ============================== HAUPTTEIL ==============================
+% =======================================================================
+% ================= Abkürzungsverzeichnis =================
+
+\renewcommand{\thepage}{\Roman{page}}
+\setcounter{page}{2}
+\chapter*{Abkürzungsverzeichnis}
+\addcontentsline{toc}{chapter}{Abkürzungsverzeichnis}
+\input{literature/acronym.tex}
+\cleardoublepage
+
+% ================= Abkürzungsverzeichnis =================
+% ================= Literaturverzeichnis =================
+\begin{comment}
+\renewcommand{\thepage}{\Roman{page}}
+\setcounter{page}{3}
+\addcontentsline{toc}{chapter}{\bibname}
+\printbibliography
+\cleardoublepage
+\end{comment}
+% ================= Literaturverzeichnis =================
+% ================= Codeverzeichnis =================
+
+\renewcommand{\thepage}{\Roman{page}}
+\setcounter{page}{3}
+\addcontentsline{toc}{chapter}{\lstlistoflistingsname}
+\lstlistoflistings
+\cleardoublepage
+
+% ================= Codeverzeichnis =================
+% ================= Tabellenverzeichnis =================
+\begin{comment}
+\renewcommand{\thepage}{\Roman{page}}
+\setcounter{page}{5}
+\addcontentsline{toc}{chapter}{\listtablename}
+\listoftables
+\cleardoublepage
+\end{comment}
+% ================= Tabellenverzeichnis =================
+% ================= Abbildungsverzeichnis =================
+\begin{comment}
+\renewcommand{\thepage}{\Roman{page}}
+\setcounter{page}{6}
+\addcontentsline{toc}{chapter}{\listfigurename}
+\listoffigures
+\cleardoublepage
+\end{comment}
+% ================= Abbildungsverzeichnis =================
+
+\end{document}
+
+% ============================== Main ==============================

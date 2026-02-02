@@ -1,0 +1,97 @@
+\chapter{CDMA (Java)}
+\textbf{CDMA (Code Division Multiple Access)} ist ein Übertragungsverfahren, das es ermöglicht, mehrere Datenströme gleichzeitig über dasselbe Frequenzband zu senden, indem jeder Datenstrom mit einem einzigartigen Code codiert wird. Dank spezieller Codes, die jeder Nachricht zugewiesen werden, sogenannte \textbf{„Spreading Codes“} oder \textbf{„Chips“}.
+\begin{itemize}[itemsep=0pt]
+   \item Nachrichten definieren (\ac{zB} +1, -1 für Binärwerte)
+   \item Spreading-Codes festlegen (\ac{zB} [1, -1, 1, -1])
+   \item Jede Nachricht mit ihrem Code multiplizieren 
+   \begin{itemize}
+    \item ergibt den „gespreadeten“ Code
+   \end{itemize}
+   \item Alle gespreadeten Codes zusammenaddieren 
+   \begin{itemize}
+    \item ergibt das gemischte Signal
+   \end{itemize}
+   \item Zum Entschlüsseln wird das gemischte Signal mit dem jeweiligen Code multiplizieren und auswertet
+\end{itemize}
+
+\subsection*{CDMA - A}
+In der main-Methode werden vier typische Chip-Muster erzeugt, und das Muster des Chips A wird zur Kontrolle ausgegeben.
+\begin{itemize}[itemsep=0pt]
+   \item Die Klasse \textbf{Chip} Repräsentiert eine feste 4-stellige Codierungssequenz und speichert diese (\ac{zB} 1, -1, 1, -1)
+   \item Über \textbf{get(index)} greift man auf einzelne Werte zu
+   \item Eine \textbf{ByteMessage} besteht aus 8 BitMessage-Objekten (für 8 Bit = 1 Zeichen)
+   \item Ist die Grundlage für alle Codierungen in CDMA
+\end{itemize}
+\begin{codeblock}
+    \lstinputlisting[
+        style=inputlistingstyle,
+        caption={CDMA - A},
+        label={lst:CDMA1a}
+    ]{code/CDMA1a.java}
+\end{codeblock}
+
+\subsection*{CDMA - B}
+Eindeutigen Chip-Code werden vergeben, mit dem ein Bit (true/false) kodiert werden kann.
+\begin{itemize}[itemsep=0pt]
+   \item Die Klasse \textbf{BitMessage} Verwendet 8 BitMessage-Instanzen zur Speicherung eines Zeichens
+   \item \textbf{encode(Chip c, boolean bit)}
+   \begin{itemize}
+    \item Wenn \textbf{bit == true:} der Chip wird \textbf{addiert} zur Nachricht
+    \item Wenn \textbf{bit == false:} der Chip wird \textbf{subtrahiert}
+    \item Dadurch können mehrere Bits gleichzeitig in einer Nachricht gespeichert werden (Superposition)
+   \end{itemize}
+   \item \textbf{decode(Chip c)}
+   \begin{itemize}
+    \item Multipliziert Chip mit gespeicherter Nachricht (Skalarprodukt)
+    \item Gibt \textbf{true} zurück, wenn der ursprüngliche Beitrag positiv war gespeichert werden (Superposition)
+   \end{itemize}
+   \item \textbf{toString()}
+   \begin{itemize}
+    \item Gibt die Nachricht als \textbf{(x, y, z, w)} aus
+   \end{itemize}
+\end{itemize}
+\textbf{main()} zeigt, wie eine gemeinsame Nachricht von mehreren Nutzern zusammengesetzt und später wieder fehlerfrei getrennt werden kann.
+\begin{codeblock}
+    \lstinputlisting[
+        style=inputlistingstyle,
+        caption={CDMA - B},
+        label={lst:CDMA1b}
+    ]{code/CDMA1b.java}
+\end{codeblock}
+
+\subsection*{CDMA - C}
+Ein einfaches CDMA-Verfahren zur Übertragung mehrerer Zeichen gleichzeitig mit Hilfe von orthogonalen Chips.
+\begin{itemize}[itemsep=0pt]
+   \item Die Klasse \textbf{ByteMessage} Initialisiert ein Array mit 8 leeren BitMessage-Objekten (für 8 Bits)...8 BitMessage-Instanzen = ein Zeichens 
+   \item \textbf{encode(Chip c, boolean bit)}
+   \begin{itemize}
+    \item Wenn \textbf{bit == true:} der Chip wird \textbf{addiert} zur Nachricht
+    \item Wandelt das Zeichen \textbf{c} in seine 8-Bit-Darstellung (ASCII)
+    \item Kodiert jedes Bit einzeln mit \textbf{BitMessage.encode(...)}
+   \end{itemize}
+   \item \textbf{decode(Chip c)}
+   \begin{itemize}
+    \item Rekonstruiert das Zeichen, indem jedes Bit dekodiert wird
+    \item Fügt die Bits (LSB zuerst) zu einem ASCII-Zeichen zusammen
+   \end{itemize}
+   \item \textbf{toString()}
+   \begin{itemize}
+    \item Gibt alle 8 BitMessages nebeneinander als Text aus
+   \end{itemize}
+\end{itemize}
+\textbf{Die Ausgabe ist:}\\
+(0,0,0,-4) (-2,2,-2,-2) (2,-2,2,2) (-4,0,0,0) (2,2,-2,2) (4,0,0,0) (4,0,0,0) (-4,0,0,0)\\
+test\\
+Diese zeigt die interne Darstellung sowie die korrekt rekonstruierte Zeichenkette.
+\begin{codeblock}
+    \lstinputlisting[
+        style=inputlistingstyle,
+        caption={CDMA - C},
+        label={lst:CDMA1c}
+    ]{code/CDMA1c.java}
+\end{codeblock}
+
+\subsection*{Zusammenfassung A-C}
+CDMA - A \quad Darstellung einer 4-stelligen Signatur\\
+CDMA - B \quad Codierung und Decodierung eines einzelnen Bits\\
+CDMA - C \quad Verarbeitung ganzer Zeichen (8 Bits / 1 Byte)

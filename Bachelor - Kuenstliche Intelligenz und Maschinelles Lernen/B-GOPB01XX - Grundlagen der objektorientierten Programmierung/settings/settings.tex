@@ -1,0 +1,270 @@
+% ================================== Seitenränder ==================================
+
+\KOMAoptions{DIV=calc}
+
+% ================================== Seitenränder ==================================
+% ================================== Metadaten ==================================
+
+\newcommand{\workTitle}{Dokumentation}
+\newcommand{\subTitle}{B-GOPB01-XX3-N01}
+\newcommand{\specialization}{Grundlagen der objektorientierten Programmierung}
+\newcommand{\studentFirstName}{Mücahid Emin}
+\newcommand{\studentLastName}{Tomakin}
+\newcommand{\studentId}{30042741}
+\newcommand{\advisorPreTitle}{Vorg.-Titel}
+\newcommand{\advisorFirstName}{Vorname}
+\newcommand{\advisorLastName}{Nachname}
+\newcommand{\advisorPosTitle}{Nachg. Titel}
+\newcommand{\assessorPreTitle}{Vorg.-Titel}
+\newcommand{\assessorFirstName}{Vorname}
+\newcommand{\assessorLastName}{Nachname}
+\newcommand{\assessorPosTitle}{Nachg. Titel}
+\newcommand{\dateDay}{\the\day}
+\newcommand{\dateMonth}{\the\month}
+\newcommand{\dateYear}{\the\year}
+
+% ================================== Metadaten ==================================
+% ================================== Packages ==================================
+
+% =========== Layout & Formatierung =====
+\KOMAoptions{parskip=full} % Abstand zwischen Absätzen
+\usepackage[left=3.5cm, right=3cm, bottom=3cm, top=3cm]{geometry} % Seitenränder
+\usepackage[onehalfspacing]{setspace} % Zeilenabstand
+\usepackage[T1]{fontenc} % Korrekte Zeichencodierung
+\usepackage[utf8]{inputenc} % Eingabecodierung (nicht mehr notwendig bei LuaLaTeX/XeLaTeX)
+\usepackage[ngerman]{babel} % Deutsche Sprache für Trennungen, Datum, Kapitel usw.
+\usepackage{microtype} % Bessere Typografie (Silbentrennung, Randausgleich etc.)
+\usepackage{enumitem} % Bessere Kontrolle über Listen
+\usepackage{multicol} % Mehrspaltiger Text
+\usepackage{blindtext} % Platzhaltertext
+\usepackage{comment} % mehrere Zeilen auf einmal zu kommentieren
+% =========== Layout & Formatierung =====
+% =========== Mathematik & Symbole =====
+\usepackage{amsmath} % Erweiterte Matheumgebung
+\usepackage{amssymb} % Mathematische Symbole
+\usepackage{mathtools} % Erweiterungen zu amsmath
+\usepackage{fixmath} % Feste Mathe-Symbole
+\usepackage{textcomp} % Zusätzliche Zeichen (z.B. °C)
+\usepackage{fmtcount} % Römische Großbuchstaben
+% =========== Mathematik & Symbole =====
+% =========== Tabellen & Listen =====
+\usepackage{listings}
+\usepackage{longtable} % Tabellen über mehrere Seiten
+\usepackage{multirow} % Zellen über mehrere Zeilen
+\usepackage{booktabs} % Schönere Tabellen (z.B. \toprule)
+\usepackage{tabularx} % Tabellen mit automatischer Spaltenbreite
+\usepackage{enumerate} % Nummerierte Listen mit mehr Kontrolle
+% =========== Tabellen & Listen =====
+% =========== Grafiken & Diagramme =====
+\usepackage{graphicx} % Bilder einfügen
+\usepackage[export]{adjustbox} % Zusätzliche Optionen für includegraphics
+\usepackage{float} % Exakte Platzierung von Abbildungen ([H])
+\usepackage{scrhack} % Für KOMA-Script Kompatibilität mit float
+\usepackage{subcaption} % Unterabbildungen (aktuelle Version von 'subfigure')
+\usepackage{grffile} % Unterstützt komplexe Dateinamen
+\graphicspath{{Figures/}} % Standardpfad für Abbildungen
+\usepackage{animate} % Animationen in PDF
+\usepackage[dvipsnames]{xcolor} % Erweiterte Farbauswahl
+\usepackage{pgfplots} % Diagramme mit TikZ
+\pgfplotsset{compat=1.10} % Kompatibilität für pgfplots
+\usepgfplotslibrary{statistics} % Statistik in pgfplots
+\usepackage{pgf-pie} % Kreisdiagramme
+\usepackage{tikz} % Zeichnungen
+\usetikzlibrary{shapes,arrows} % Zusätzliche TikZ Bibliotheken
+\usepackage{smartdiagram} % Diagramme
+\usepackage[european,nooldvoltagedirection]{circuitikz} % Schaltpläne
+% =========== Grafiken & Diagramme =====
+% =========== Quellcode & Listings =====
+\usepackage{lstautogobble} % Quellcode einbinden
+\usepackage[breakable]{tcolorbox} % Codeboxen
+\usepackage{fancyvrb} % Erweiterte verbatim-Umgebung
+%\usepackage[style=numeric,backend=biber]{biblatex} % numeric als Beispiel
+% =========== Quellcode & Listings =====
+% =========== Kopf-/Fußzeile & Seitenzahlen =====
+\usepackage[automark]{scrlayer-scrpage} % KOMA-Script Kopf-/Fußzeilen
+\usepackage{lastpage} % Zugriff auf letzte Seite
+% =========== Kopf-/Fußzeile & Seitenzahlen =====
+% =========== Hyperlinks & URLs =====
+\usepackage{url} % URLs setzen
+\usepackage{hyperref} % Hyperlinks
+\hypersetup{
+    unicode=false,
+    pdftoolbar=true,
+    pdfmenubar=true,
+    pdffitwindow=false,
+    pdfstartview={FitV},
+    pdfpagelayout={SinglePage},
+    pdftitle={\workTitle},
+    pdfsubject={\subTitle},
+    pdfauthor={\studentFirstName~\studentLastName},
+    pdfkeywords={\workTitle,~\subTitle,~\specialization},
+    pdfcreator={pdflatex},
+    pdfproducer={LaTeX with hyperref},
+    pdfnewwindow=true,
+    colorlinks=false,   % Farbige Links aktivieren
+    linkcolor=blue,    % Farbe für interne Links (z.B. Inhaltsverzeichnis)
+    citecolor=blue,    % Farbe für Zitate
+    filecolor=blue,    % Farbe für Dateilinks
+    menucolor=black,   % Farbe für Menulinks
+    urlcolor=blue,     % Farbe für URLs
+    breaklinks=true,
+    pdfborder={0 0 0} % Keine Ränder um Links
+}
+% =========== Hyperlinks & URLs =====
+% =========== Abkürzungsverzeichnis =====
+\usepackage[nohyperlinks]{acronym} % Abkürzungen
+% =========== Abkürzungsverzeichnis =====
+% =========== Weitere nützliche Pakete =====
+%\usepackage{csquotes} % Intelligente Anführungszeichen (empfohlen mit biblatex)
+% =========== Weitere nützliche Pakete =====
+
+% ================================== Packages ==================================
+% ================================== Verzeichnisnamen ==================================
+
+\renewcommand{\contentsname}{Inhaltsverzeichnis}
+\renewcommand{\bibname}{Literaturverzeichnis}
+\renewcommand{\lstlistoflistingsname}{Codeverzeichnis}
+\renewcommand{\listtablename}{Tabellenverzeichnis}
+\renewcommand{\listfigurename}{Abbildungsverzeichnis}
+
+% ================================== Verzeichnisnamen ==================================
+% ================================== Literaturverzeichnis ==================================
+
+%\addbibresource{literature/bibliography.bib}
+
+% ================================== Literaturverzeichnis ==================================
+% ================================== BlockDiagram Config ==================================
+
+\tikzset{%
+  block/.style    = {draw, thick, rectangle, minimum height = 3em, minimum width = 3em},
+  sum/.style      = {draw, circle, node distance = 2cm}, % Adder
+  input/.style    = {coordinate}, % Input
+  output/.style   = {coordinate}, % Output
+  mult/.style     = {draw, isosceles triangle, minimum height=1cm, minimum width =1cm}
+}
+
+% ================================== BlockDiagram Config ==================================
+%  ================================== Listings  ==================================
+
+% =========== Einstellungen für Listings ===========
+
+\lstset{
+    title=\lstname, % Titel des Listings ist der Dateiname
+    frame=single, % Einzelne Umrandung des Codes
+    framerule=0pt, % Keine Dicke der Umrandung
+    rulecolor=\color{lightgray}, % Graue Rahmenfarbe
+    showspaces=false, % Keine Anzeige von Leerzeichen
+    showstringspaces=false, % Keine Anzeige von Leerzeichen in Strings
+    showtabs=false, % Keine Anzeige von Tabulatoren
+    numbers=left, % Zeilennummern links
+    numbersep=5pt, % Abstand der Zeilennummern
+    numberstyle=\sffamily\tiny\color{gray}, % Stil der Zeilennummern
+    stepnumber=1, % Schrittweite der Nummerierung
+    breaklines=true, % Zeilenumbruch aktivieren
+    autogobble=true, % Entfernt leere Präfixe
+    linewidth=\textwidth, % Maximale Breite für Listings
+    basicstyle=\sffamily\scriptsize, % Basisstil für den Code
+    sensitive=true, % Case-sensitive Modus
+    morekeywords={MyClass,MyFunction,def,class}, % Weitere Schlüsselwörter
+    emph={MyClass,MyFunction,def,class}, % Besonders hervorzuhebende Schlüsselwörter
+    emphstyle=\color{orange}\bfseries, % Stil für die hervorgehobenen Wörter
+    commentstyle=\color{green}\itshape, % Grüne, kursive Kommentare
+    keywordstyle=\color{blue}, % Blaue Schlüsselwörter
+    stringstyle=\color{red}, % Rote Strings
+    identifierstyle=\color{purple}, % Lila Bezeichner
+    numberstyle=\tiny\color{gray} % Graue Zeilennummern
+}
+% =========== Definition des Input-Listings-Stils ===========
+\lstdefinestyle{inputlistingstyle}{
+    language=Python,
+    frame=single,
+    numbers=left,
+    breaklines=true,
+    basicstyle=\sffamily\scriptsize,
+    captionpos=b, % Setzt die Caption oben
+    abovecaptionskip=11pt, % Abstand über dem Titel
+    belowcaptionskip=5pt % Abstand unter dem Titel
+}
+% =========== Definition der Codeboxen ===========
+\newtcolorbox{codeblock}{
+    colback=gray!5!white, % Hintergrundfarbe
+    %colframe=gray!88!black, % Rahmenfarbe
+    colframe=white, % Rahmenfarbe
+    before skip=20pt, % Abstand vor der Box
+    after skip=20pt, % Abstand nach der Box
+    breakable, % Ermöglicht den Seitenumbruch innerhalb der Box
+    top=-\tcboxrule, % Entfernt den oberen Rand
+    bottom=-\tcboxrule % Entfernt den unteren Rand
+}
+
+%  ================================== Listings  ==================================
+%  ================================== Color definition ================================== 
+
+\definecolor{zB}{RGB}{0, 84, 150}
+\definecolor{DB}{RGB}{0, 84, 150}
+%\definecolor{DB}{RGB}{0, 0, 0}
+
+%  ================================== Color definition ================================== 
+% ================================== headline & titel space ==================================
+
+\renewcommand*{\chapterheadstartvskip}{\vspace*{-.4cm}}
+\renewcommand*{\chapterheadendvskip}{\vspace{.5cm}}
+\setlength{\parindent}{0pt} % no indent at paragraph start
+
+% ================================== headline & titel space ==================================
+% ================================== Header and Footer ==================================
+
+% Kopfzeile
+\clearpairofpagestyles
+\ohead{\subTitle} % Rechts in der Kopfzeile
+\chead{} % Zentriert in der Kopfzeile
+\ihead{} % Links in der Kopfzeile
+
+% Fußzeile
+\ofoot{\pagemark} % Rechts in der Fußzeile
+\cfoot{} % Zentriert in der Fußzeile
+\ifoot{\studentLastName~|~\studentFirstName} % Links in der Fußzeile
+
+% Linien einstellen
+\setkomafont{pageheadfoot}{\normalfont}
+\setheadtopline{0.4pt}
+\setfootbotline{0.4pt}
+\pagestyle{scrheadings}
+
+% ================================== Header and Footer ==================================
+% ================================== Size of headings ==================================
+
+\setkomafont{chapter}{\LARGE}
+\setkomafont{section}{\Large}
+\setkomafont{subsection}{\large}
+\setkomafont{subsubsection}{\normalsize}
+\setkomafont{paragraph}{\normalsize}
+\setkomafont{subparagraph}{\small}
+
+% ================================== Size of headings ==================================
+% ================================== hyperref at the end ==================================
+
+\hypersetup{
+    unicode=false,
+    pdftoolbar=true,
+    pdfmenubar=true,
+    pdffitwindow=false,
+    pdfstartview={FitV},
+    pdfpagelayout={SinglePage},
+    pdftitle={\workTitle},
+    pdfsubject={\subTitle},
+    pdfauthor={\studentFirstName~\studentLastName},
+    pdfkeywords={\workTitle,~\subTitle,~\specialization},
+    pdfcreator={pdflatex},
+    pdfproducer={LaTeX with hyperref},
+    pdfnewwindow=true,
+    colorlinks=false,
+    linkcolor=black,
+    citecolor=black,
+    filecolor=black,
+    menucolor=black,
+    urlcolor=black,
+    breaklinks=true
+}
+
+% ================================== hyperref at the end ==================================

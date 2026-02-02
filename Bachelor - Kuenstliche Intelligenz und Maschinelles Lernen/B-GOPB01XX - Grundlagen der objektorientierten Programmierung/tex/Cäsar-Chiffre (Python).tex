@@ -1,0 +1,98 @@
+\chapter{Cäsar-Chiffre (Python)}
+Das \textbf{Caesar-Chiffre} ist eine einfache Verschlüsselung, bei der jeder Buchstabe im Text um eine feste Zahl von Stellen im Alphabet verschoben wird.\par
+Bei einer Verschiebung von \ac{zB} 3 wird aus „A“ „D“, aus „B“ „E“ und so weiter. Um den Text zu entschlüsseln, wird der Schlüssel (die Zahl der Verschiebung) einfach in die entgegengesetzte Richtung angewendet.
+Es ist einfach, aber unsicher, da es nur 25 mögliche Schlüssel gibt.
+
+\subsection*{Cäsar-Chiffre - A}
+Teil A verschlüsselt oder entschlüsselt Text mit dem Cäsar-Verschlüsselungsverfahren, bei dem Buchstaben im Alphabet um eine bestimmte Anzahl (den „Schlüssel“) verschoben werden. Es funktioniert über die Kommandozeile.\\\\
+\textbf{Eingabe:} python CaesarCipher-1-a.py "text" key
+\begin{codeblock}
+    \lstinputlisting[
+        style=inputlistingstyle,
+        caption={Cäsar-Chiffre - A},
+        label={lst:CaesarCipher-1-a}
+    ]{code/CaesarCipher-1-a.py}
+\end{codeblock}
+
+\subsection*{Cäsar-Chiffre - B}
+In diesem Teil wird gezählt, wie oft jeder Buchstabe in einem gegebenen Text vorkommt (Groß- und Kleinschreibung werden dabei ignoriert). Das Ergebnis ist ein Histogramm in Form eines Wörterbuchs.\\\\
+\textbf{Ausgabe von Text:}\quad \{'t': 2, 'e': 1, 's': 1\}
+\begin{codeblock}
+    \lstinputlisting[
+        style=inputlistingstyle,
+        caption={Cäsar-Chiffre - B},
+        label={lst:CaesarCipher-1-b}
+    ]{code/CaesarCipher-1-b.py}
+\end{codeblock}
+
+\subsection*{Cäsar-Chiffre - C}
+Dieses Programm berechnet die Häufigkeit von Buchstaben in einem gegebenen Text und berechnet dann die Wahrscheinlichkeiten für jeden Buchstaben (a-z). Die Ergebnisse werden als Prozentsatz der gesamten Buchstabenanzahl ausgegeben.\\\\
+\textbf{Ausgabe:}\quad Buchstabenhäufigkeit (in \%):\\
+a: 0.00\%\\
+b: 0.00\%\\
+c: 0.00\%\\
+d: 0.00\%\\
+e: 25.00\%\\
+f: 0.00\%\\
+g: 0.00\%\\
+h: 0.00\%\\
+i: 0.00\%\\
+j: 0.00\%\\
+k: 0.00\%\\
+l: 0.00\%\\
+m: 0.00\%\\
+n: 0.00\%\\
+o: 0.00\%\\
+p: 0.00\%\\
+q: 0.00\%\\
+r: 0.00\%\\
+s: 25.00\%\\
+t: 50.00\%\\
+u: 0.00\%\\
+v: 0.00\%\\
+w: 0.00\%\\
+x: 0.00\%\\
+y: 0.00\%\\
+z: 0.00\%\\
+\begin{codeblock}
+    \lstinputlisting[
+        style=inputlistingstyle,
+        caption={Cäsar-Chiffre - C},
+        label={lst:CaesarCipher-1-c}
+    ]{code/CaesarCipher-1-c.py}
+\end{codeblock}
+
+\subsection*{Cäsar-Chiffre - D}
+Im letzten Teil nutzt man den \textbf{Cäsar-Chiffre-Algorithmus} zur Verschlüsselung und Entschlüsselung von Texten. Es analysiert auch die \textbf{Häufigkeit} von Buchstaben im Text, um die \textbf{Wahrscheinlichkeiten} der Buchstaben zu berechnen. Zudem enthält es eine Methode, um den verschlüsselten Text mit \textbf{Chi-Quadrat-Test} zu entschlüsseln.\\\\
+\textbf{Ausgabe von Test:}\\
+Verschlüsselter Text:\\
+Whvw\par
+Häufigkeit vorkommender Buchstaben:\\
+\{'t': 2, 'e': 1, 's': 1\}\par
+Wahrscheinlichkeiten der Buchstaben im Text:\\
+e=25.0\%, s=25.0\%, t=50.0\%, d-x=0\%\par
+Entschlüsselter Text:\\
+Test\\
+\begin{codeblock}
+    \lstinputlisting[
+        style=inputlistingstyle,
+        caption={Cäsar-Chiffre - D},
+        label={lst:CaesarCipher-1-d}
+    ]{code/CaesarCipher-1-d.py}
+\end{codeblock}
+
+\subsection*{Zusammenfassung A-C}
+\begin{itemize}[itemsep=0pt]
+   \item \textbf{Teil A (Cäsar-Chiffre)} 
+   \begin{itemize}
+    \item Initialisiert ein Array mit 8 leeren BitMessage-Objekten (für 8 Bits)...8 BitMessage-Instanzen = ein Zeichens
+   \end{itemize}
+   \item \textbf{Teil B (Häufigkeitsanalyse)} 
+   \begin{itemize}
+    \item Zählt, wie oft jeder Buchstabe im Text vorkommt, und berechnet die Wahrscheinlichkeit jedes Buchstabens
+   \end{itemize}
+   \item \textbf{Teil C (Chi-Quadrat-Analyse)} 
+   \begin{itemize}
+    \item Entschlüsselt einen Text basierend auf der Häufigkeit der Buchstaben und vergleicht diese mit einem Beispieltext, um den besten Schlüssel zu finden.
+   \end{itemize}
+\end{itemize}

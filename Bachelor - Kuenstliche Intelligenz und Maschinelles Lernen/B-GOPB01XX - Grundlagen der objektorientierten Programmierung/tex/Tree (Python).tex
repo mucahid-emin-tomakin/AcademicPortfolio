@@ -1,0 +1,37 @@
+\chapter{Tree (Python)}
+Das Tree-Projekt ist eine Anwendung, die es ermöglicht, die Verzeichnisstruktur eines Dateisystems in einer baumartigen Darstellung anzuzeigen. Der Benutzer sieht dabei Ordner und Dateien als Knoten. Es werden visuell die Verzeichnisse und ihre Inhalte angezeigt, wobei auch eine Rekursion verwendet wird, um Unterverzeichnisse darzustellen. Im Verlauf des Programms wird das Ergebnis durch Hinzufügen von Zählfunktionen (Anzahl der Dateien und Ordner) ergänzt, und die Struktur wird immer detaillierter angezeigt.
+
+\subsection*{Tree - A}
+Es zeigt die Verzeichnisstruktur eines angegebenen Ordners in einer baumartigen Form an. Es nutzt spezielle Zeichen zur visuellen Darstellung der Struktur und gibt die Namen der Einträge im Verzeichnis aus. Die Einträge werden alphabetisch sortiert und das letzte Element wird mit einem anderen Symbol angezeigt, um das Ende des Verzeichnisses zu kennzeichnen.
+\begin{codeblock}
+    \lstinputlisting[
+        style=inputlistingstyle,
+        caption={Tree - A},
+        label={lst:Tree-1-a}
+    ]{code/Tree-1-a.py}
+\end{codeblock}
+
+\subsection*{Tree - B}
+In diesem Teil des Codes wird zusätzlich zu den vorherigen Funktionen das Konzept der rekursiven Durchlauf der Verzeichnisse eingeführt. Wenn ein Verzeichnis gefunden wird, ruft die Funktion \textbf{\texttt{print\_directory}} sich selbst auf, um die Struktur dieses Unterverzeichnisses ebenfalls darzustellen. Es wird auch überprüft, ob der aktuelle Eintrag das letzte Element im Verzeichnis ist, um das passende Symbol (├── oder └──) darzustellen. Die Einrückung wird durch das prefix-Argument verwaltet, das für jedes Unterverzeichnis angepasst wird.
+\begin{codeblock}
+    \lstinputlisting[
+        style=inputlistingstyle,
+        caption={Tree - B},
+        label={lst:Tree-1-b}
+    ]{code/Tree-1-b.py}
+\end{codeblock}
+
+\subsection*{Tree - C}
+Schlussendlich wird die Funktionalität erweitert, indem die Anzahl der Dateien und Verzeichnisse gezählt werden. Bei jedem rekursiven Aufruf wird die Anzahl der gefundenen Dateien und Verzeichnisse summiert und an das Hauptprogramm zurückgegeben. Am Ende gibt das Hauptprogramm die Gesamtzahl der Verzeichnisse und Dateien aus. Der Rückgabewert der Funktion \textbf{\texttt{print\_directory}} ist nun ein Tupel, das die Anzahl der Dateien und Verzeichnisse enthält. Dies ermöglicht es, auch eine Übersicht über die Struktur in Bezug auf die Anzahl der enthaltenen Elemente zu erhalten.
+\begin{codeblock}
+    \lstinputlisting[
+        style=inputlistingstyle,
+        caption={Tree - C},
+        label={lst:Tree-1-c}
+    ]{code/Tree-1-c.py}
+\end{codeblock}
+
+\subsection*{Zusammenfassung A-C}
+CDMA - A \quad zeigt die Verzeichnisstruktur\\
+CDMA - B \quad fügt Rekursion hinzu, um auch Unterverzeichnisse darzustellen\\
+CDMA - C \quad zählt die Dateien und Verzeichnisse im gesamten Baum

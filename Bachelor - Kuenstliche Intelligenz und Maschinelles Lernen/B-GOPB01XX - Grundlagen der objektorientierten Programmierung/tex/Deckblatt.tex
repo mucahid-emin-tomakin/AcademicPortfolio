@@ -1,0 +1,44 @@
+\newgeometry{left=2.4cm,right=2.4cm,bottom=2.5cm,top=5cm}
+
+% first titlepage
+\pagestyle{empty}
+
+%\begin{figure}[H]
+%\vspace*{-2.5cm}
+%\hspace*{2.7cm}
+%	\includegraphics[keepaspectratio, width=1.4\textwidth, right]{TemplateElements/fhlogo_allgemein.png}
+%\end{figure}
+
+\begin{center}
+\vspace{2cm}
+\begin{minipage}[t][5cm][s]{\textwidth}%
+\centering
+\Huge{{\color{DB}{\fontsize{24}{30} \textbf{\sffamily{\workTitle}}\\}}}
+\vspace{0.5cm}
+\LARGE{{\color{DB}{\fontsize{16}{24} \textbf{\sffamily{\subTitle}}\\}}}
+\vspace{0.5cm}
+\LARGE{{\color{DB}{\fontsize{14}{22} \textbf{\sffamily{\specialization}}}}}
+\end{minipage}
+
+\vfill
+
+Ausgeführt von:\\ 
+\fontsize{15pt}{15pt}\selectfont
+\textbf{\sffamily{\studentFirstName\ \studentLastName}} \\
+\fontsize{11pt}{15pt}\selectfont
+\studentId\\
+
+\vfill
+
+\begin{comment}
+\begin{tabular}{lll}
+Vortragender: & \advisorPreTitle\ \advisorFirstName\ \advisorLastName, \advisorPosTitle \\
+Begutachter: & \assessorPreTitle\ \assessorFirstName\ \assessorLastName, \assessorPosTitle
+\end{tabular}
+\end{comment}
+\vfill
+
+\normalsize{\dateDay.\dateMonth.\dateYear}
+
+\end{center}
+\restoregeometry
