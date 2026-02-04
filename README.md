@@ -6,8 +6,6 @@
 ![Java](https://img.shields.io/badge/Java-007396?logo=java&logoColor=white)
 ![AI](https://img.shields.io/badge/AI-FF6B6B?logo=openai&logoColor=white)
 ![ML](https://img.shields.io/badge/ML-4A90E2?logo=tensorflow&logoColor=white)
-![Projects](https://img.shields.io/badge/Projects-2-blue)
-![Languages](https://img.shields.io/badge/Languages-4-green)
 ![Status](https://img.shields.io/badge/Status-Active-brightgreen)
 ![License](https://img.shields.io/badge/License-MIT-blue)
 
