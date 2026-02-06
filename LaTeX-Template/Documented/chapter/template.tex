@@ -1,0 +1,111 @@
+% ==============================================================================
+% =================================== TEMPLATE =================================
+% ==============================================================================
+
+% TEMPLATE CHAPTER - Example structure for new chapters
+
+\chapter{Template}                       % Chapter title (Template Chapter)
+\label{chap:template}                    % Reference label for this chapter
+\thispagestyle{fancy}                    % Use fancy header/footer on first page
+
+% ================= Einleitung =================
+
+% INTRODUCTION - Start each chapter with introduction
+
+\section{Einleitung}                     % Section: Introduction
+Hier Kommt die Einleitung.               % Here comes the introduction.
+
+% ================= Einleitung =================
+% ================= Bild =================
+
+% IMAGE SECTION - How to include and reference images
+
+\section{Bild}                           % Section: Image
+\subsection{Bild Titel}                  % Subsection: Image Title
+Dies ist ein \acs{Bsp.} Bild: \par\vspace\baselineskip  % This is an example image
+\begin{figure}[H]                        % Figure environment with [H]ere placement
+    \centering                           % Center the image
+    \includegraphics[width=1\textwidth]{./asset/image/WilhelmBuechnerHochschule.png}
+    \caption{Wilhelm Büchner Hochschule} % Image caption
+    \label{fig:wbh}                      % Label for referencing this figure
+\end{figure}
+\cleardoublepage                         % Clear to next right-hand page
+
+% ================= Bild =================
+% ================= Code =================
+
+% CODE SECTION - How to include code listings
+
+\section{Code}                           % Section: Code
+\subsection{Code Titel}                  % Subsection: Code Title
+Dies ist ein \acs{Bsp.} Code: \par\vspace\baselineskip  % This is an example code
+\begin{codeblock}                        % Custom code block environment
+\lstinputlisting[                        % Import code from external file
+    caption={Baumdarstellung},           % Listing caption (Tree visualization)
+    label={lst:tree},                    % Label for referencing
+    style=python                         % Python syntax highlighting style
+]{./asset/code/code.py}                  % Path to code file
+\end{codeblock}
+\cleardoublepage
+
+% ================= Code =================
+% ================= Aufzählung =================
+
+% LIST SECTION - How to create bullet point lists
+
+\section{Aufzählung}                     % Section: List/Enumeration
+\subsection{Aufzählung Titel}            % Subsection: List Title
+Dies ist ein \acs{Bsp.} Aufzählung: \par\vspace\baselineskip % This is an example list
+\begin{itemize}                          % Unordered list environment
+    \item Text                           % List item 1: Text
+    \item Text                           % List item 2: Text
+    \item Text                           % List item 3: Text
+\end{itemize}
+\cleardoublepage
+
+% ================= Aufzählung =================
+% ================= Tabelle =================
+
+% TABLE SECTION - How to create and format tables
+
+\section{Tabelle}                        % Section: Table
+\subsection{Tabelle Titel}               % Subsection: Table Title
+Dies ist eine \acs{Bsp.} Tabelle: \par\vspace\baselineskip  % This is an example table
+\begin{table}[H]                         % Table environment with [H]ere placement
+    \centering                           % Center the table
+    \begin{tabular}{|l|c|c|c|}           % Table with 4 columns (left, center, center, center)
+        \hline                           % Horizontal line
+        \textbf{Version} & \textbf{Dateien} & \textbf{Ordner} & \textbf{Laufzeit (ms)} \\
+        \hline                           % Header separator
+        A & 15 & 3 & 45 \\               % Row 1: Version A
+        B & 22 & 5 & 68 \\               % Row 2: Version B
+        C & 30 & 8 & 92 \\               % Row 3: Version C
+        \hline                           % Bottom line
+    \end{tabular}
+    \caption{Vergleich der Tree-Versionen}  % Table caption (Comparison of Tree versions)
+    \label{tab:tree-results}             % Label for referencing this table
+\end{table}
+\cleardoublepage
+
+% ================= Tabelle =================
+% ================= Quellen =================
+
+% SOURCES SECTION - How to cite references and cross-reference
+
+\section{Quellen}                        % Section: Sources/References
+\subsection{Quellen Titel}               % Subsection: Sources Title
+Laut \cite{Willhelm} ist die Wilhelm Büchner Hochschule eine Fernhochschule. \par  % Citation 1
+Python \cite{PythonDoc} wird für die Implementierung verwendet. \par\vspace\baselineskip  % Citation 2
+\begin{itemize}                          % Reference list
+    \item \textbf{Bild:} Abbildung \ref{fig:wbh}            % Reference to Figure
+    \item \textbf{Code:} Listing \ref{lst:tree}             % Reference to Code Listing
+    \item \textbf{Tabelle:} Tabelle \ref{tab:tree-results}  % Reference to Table
+\end{itemize}
+
+% ================= Quellen =================
+
+% END OF TEMPLATE CHAPTER
+
+% ==============================================================================
+% =================================== TEMPLATE =================================
+% ==============================================================================

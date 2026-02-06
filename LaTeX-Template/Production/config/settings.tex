@@ -1,0 +1,189 @@
+% ==============================================================================
+% ================================== SETTINGS ==================================
+% ==============================================================================
+
+% ================================== PAGE LAYOUT =================================
+
+\usepackage[
+    a4paper,
+    left=3.5cm,
+    right=3cm,
+    bottom=3cm,
+    top=3cm
+]{geometry}
+
+% ================================== PAGE LAYOUT ==================================
+% ================================== METADATA ==================================
+
+\newcommand{\workTitle}{Documentation}
+\newcommand{\subTitle}{subTitle}
+\newcommand{\specialization}{Subject}
+\newcommand{\studentFirstName}{First Name}
+\newcommand{\studentLastName}{Last Name}
+\newcommand{\studentId}{12345678}
+
+\newcommand{\advisorPreTitle}{Title before}
+\newcommand{\advisorFirstName}{First Name}
+\newcommand{\advisorLastName}{Last Name}
+\newcommand{\advisorPosTitle}{Title after}
+
+\newcommand{\assessorPreTitle}{Title before}
+\newcommand{\assessorFirstName}{First Name}
+\newcommand{\assessorLastName}{Last Name}
+\newcommand{\assessorPosTitle}{Title after}
+
+\newcommand{\dateDay}{\the\day}
+\newcommand{\dateMonth}{\the\month}
+\newcommand{\dateYear}{\the\year}
+
+% ================================== METADATA ==================================
+% ================================== PACKAGES ==================================
+
+\usepackage[onehalfspacing]{setspace}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[ngerman]{babel}
+\usepackage{parskip}
+\usepackage{enumitem}
+
+\usepackage{lmodern}
+\usepackage{helvet}
+
+\usepackage{amsmath}
+\usepackage{amssymb}
+
+\usepackage{longtable}
+\usepackage{multirow}
+\usepackage{booktabs}
+\usepackage{tabularx}
+
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{subcaption}
+\usepackage[dvipsnames]{xcolor}
+\graphicspath{{./assets/images/}}
+
+\usepackage{listings}
+\usepackage{lstautogobble}
+
+\usepackage{natbib}
+\bibliographystyle{plain}
+    
+\usepackage{url}
+\usepackage{hyperref}
+
+% ================================== PACKAGES ==================================
+% ================================== LIST NAMES ==================================
+
+\renewcommand{\contentsname}{Table of Contents}
+\renewcommand{\listtablename}{List of Tables}
+\renewcommand{\listfigurename}{List of Figures}
+\providecommand{\lstlistoflistingsname}{List of Listings}
+\renewcommand{\lstlistingname}{Listing}
+\makeatletter
+\renewcommand*{\lstlistlistingname}{List of Listings}
+\makeatother
+
+% ================================== LIST NAMES ==================================
+% ================================== ACRONYM SETTINGS ==================================
+
+\usepackage[printonlyused]{acronym}
+
+\newcommand{\aclink}[1]{%
+    \hyperlink{acr:#1}{\ac{#1}}%
+}
+
+% ================================== ACRONYM SETTINGS ==================================
+% ================================== CODE LISTING AND SYNTAX SETTINGS ==================================
+
+\definecolor{codegray}{gray}{0.9}
+\definecolor{codeblue}{RGB}{0, 84, 150}
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codered}{rgb}{0.6,0,0}
+\definecolor{primary}{RGB}{0, 84, 150}
+\definecolor{secondary}{RGB}{0, 84, 150}
+
+\lstset{
+    basicstyle=\ttfamily\footnotesize,
+    frame=single,
+    framesep=5pt,
+    framerule=1pt,
+    rulecolor=\color{codegray},
+    backgroundcolor=\color{white!95!black},
+    breaklines=true,
+    showstringspaces=false,
+    tabsize=4,
+    numbers=left,
+    numberstyle=\tiny\color{gray},
+    numbersep=11pt,
+    captionpos=b,
+    abovecaptionskip=11pt,
+    belowcaptionskip=11pt,
+    inputencoding=utf8,
+    literate=
+    {ä}{{\"a}}1 {ö}{{\"o}}1 {ü}{{\"u}}1
+    {Ä}{{\"A}}1 {Ö}{{\"O}}1 {Ü}{{\"U}}1
+    {ß}{{\ss}}1
+}
+
+\lstdefinestyle{python}{
+    language=Python,
+    keywordstyle=\color{codeblue}\bfseries,
+    commentstyle=\color{codegreen}\itshape,
+    stringstyle=\color{codered}
+}
+
+\usepackage{framed}
+\newenvironment{codeblock}{%
+    \begin{minipage}{\linewidth}%
+}{%
+    \end{minipage}%
+}
+
+% ================================== CODE LISTING SETTINGS ==================================
+% ================================== TEXT LAYOUT ==================================
+
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0.5em}
+
+% ================================== TEXT LAYOUT ==================================
+% ================================== HEADER & FOOTER ==================================
+
+\usepackage{fancyhdr}
+\usepackage{lastpage}
+
+\pagestyle{fancy}
+\fancyhf{}
+
+\fancyhead[L]{\subTitle}
+\fancyhead[R]{\studentLastName\ \studentFirstName}
+
+\fancyfoot[C]{\thepage}
+
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\footrulewidth}{0.4pt}
+
+\fancypagestyle{plain}{
+    \fancyhf{}
+    \fancyfoot[C]{\thepage}
+    \renewcommand{\headrulewidth}{0pt}
+    \renewcommand{\footrulewidth}{0.4pt}
+}
+
+% ================================== HEADER & FOOTER ==================================
+% ================================== HYPERREF SETTINGS ==================================
+
+\hypersetup{
+    pdftitle={\subTitle},
+    pdfauthor={\studentFirstName\ \studentLastName},
+    colorlinks=true,
+    linkcolor=black,
+    urlcolor=blue,
+    citecolor=blue,
+    filecolor=magenta,
+    allcolors=black,
+}
+
+% ==============================================================================
+% ================================== SETTINGS ==================================
+% ==============================================================================

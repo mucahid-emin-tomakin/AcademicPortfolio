@@ -1,0 +1,102 @@
+% ==============================================================================
+% ===================================== MAIN ===================================
+% ==============================================================================
+
+% MAIN DOCUMENT - Entry point for LaTeX compilation
+
+\documentclass[
+    a4paper,                             % A4 paper size
+    12pt,                                % Base font size 12pt
+    numbers=noenddot,                    % Remove trailing dots in section numbers (e.g., "1." becomes "1")
+    toc=sectionentrydotfill,             % Add dot leaders in table of contents for sections
+    toc=chapterentrydotfill              % Add dot leaders in table of contents for chapters
+]{scrreprt}                              % KOMA-Script report class
+
+% ================= Settings =================
+
+% LOAD SETTINGS - Import all packages and configuration
+
+\input{config/settings.tex}              % Load settings, packages, and custom commands
+
+% ================= Settings =================
+
+\begin{document}                         % Start of document content
+
+% ================= Deckblatt =================
+
+% TITLE PAGE - Front cover of the document
+
+\input{config/titlepage.tex}             % Include title page template
+\cleardoublepage                         % Clear to next right-hand page (blank page if needed)
+
+% ================= Deckblatt =================
+% ================= Inhaltsverzeichnis =================
+
+% TABLE OF CONTENTS - Front matter with Roman page numbering
+
+\pagenumbering{Roman}                    % Switch to Roman numerals (I, II, III, ...)
+\setcounter{page}{1}                     % Start page counter at 1
+
+\tableofcontents                         % Generate table of contents
+\cleardoublepage                         % Clear to next page
+
+% ================= Inhaltsverzeichnis =================
+% ================= Hauptteil =================
+
+% MAIN CONTENT - Chapters with Arabic page numbering
+
+\pagenumbering{arabic}                   % Switch to Arabic numerals (1, 2, 3, ...)
+\setcounter{page}{1}                     % Reset page counter to 1 for main content
+\pagestyle{fancy}                        % Apply custom header/footer style
+
+\input{chapter/template.tex}             % Include template chapter (replace with actual chapters)
+\cleardoublepage                         % Clear to next page after chapter
+
+% ================= Hauptteil =================
+% ================= Verzeichnisse =================
+
+% APPENDICES AND LISTS - Back matter with various lists
+\pagenumbering{Roman}                    % Switch back to Roman numerals for appendices
+\setcounter{page}{2}                     % Continue from page 2 (after table of contents page 1)
+
+% List of figures
+\listoffigures                           % Generate list of all figures
+\addcontentsline{toc}{chapter}{Abbildungsverzeichnis}  % Add to table of contents
+\cleardoublepage
+
+% List of tables
+\listoftables                            % Generate list of all tables
+\addcontentsline{toc}{chapter}{Tabellenverzeichnis}    % Add to table of contents
+\cleardoublepage
+
+% List of code listings
+\lstlistoflistings                       % Generate list of all code listings
+\addcontentsline{toc}{chapter}{\lstlistoflistingsname} % Add to table of contents
+\cleardoublepage
+
+% Acronym list (unumbered chapter)
+\chapter*{Abkürzungsverzeichnis}         % Unnumbered chapter for acronyms
+\addcontentsline{toc}{chapter}{Abkürzungsverzeichnis}  % Add to table of contents
+\input{config/acronym.tex}               % Include acronym definitions
+\cleardoublepage
+
+% Bibliography
+\bibliography{config/bibliography}       % Generate bibliography from .bib file
+\addcontentsline{toc}{chapter}{Literaturverzeichnis}   % Add to table of contents
+\cleardoublepage
+
+% Prompt directory (optional appendix for AI prompts)
+\chapter*{Prompt-Verzeichnis}            % Unnumbered chapter for prompt documentation
+\addcontentsline{toc}{chapter}{Prompt-Verzeichnis}     % Add to table of contents
+\input{config/promts.tex}                % Include prompt documentation
+\cleardoublepage
+
+% ================= Verzeichnisse =================
+
+\end{document}                           % End of document
+
+% END OF MAIN DOCUMENT
+
+% ==============================================================================
+% ===================================== MAIN ===================================
+% ==============================================================================

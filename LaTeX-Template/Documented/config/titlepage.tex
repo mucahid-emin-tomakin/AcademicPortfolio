@@ -1,0 +1,49 @@
+% ==============================================================================
+% ================================== TITLE PAGE ================================
+% ==============================================================================
+
+% Temporary page margins for title page only
+\newgeometry{left=2.4cm,right=2.4cm,bottom=2.5cm,top=5cm}
+\pagestyle{empty}                               % No header/footer on title page
+
+\begin{center}
+\vspace{2cm}
+
+% Title area with scalable sizes
+\begin{minipage}[t][11cm][s]{\textwidth}%
+\centering
+\rule{\textwidth}{1pt}\\[0.5cm]
+{\color{primary}{\Huge\bfseries\sffamily\workTitle}\\}              % Main title
+\rule{\textwidth}{1pt}\\[1cm]
+{\color{primary}{\LARGE\bfseries\sffamily\subTitle}\\[0.5cm]}       % Subtitle
+{\color{primary}{\Large\bfseries\sffamily\specialization}}          % Specialization
+\end{minipage}
+
+\vfill                                          % Flexible vertical space
+
+\begin{minipage}{0.8\textwidth}
+\centering
+\rule{\textwidth}{0.5pt}\\
+Submitted by:\\[0.3cm]
+{\Large\bfseries\sffamily\studentFirstName\ \studentLastName}\\     % Student name
+{\normalsize Student ID: \studentId}\\                              % Student ID
+\rule{\textwidth}{0.5pt}
+\end{minipage}                                           
+
+\vfill
+
+\begin{tabular}{lll}
+Supervisor: & \advisorPreTitle\ \advisorFirstName\ \advisorLastName, \advisorPosTitle \\
+Examiner:   & \assessorPreTitle\ \assessorFirstName\ \assessorLastName, \assessorPosTitle
+\end{tabular}
+
+\vfill
+
+{\normalsize\dateDay.\dateMonth.\dateYear}                          % Date
+
+\end{center}
+\restoregeometry                                % Restore original page margins
+
+% ==============================================================================
+% ================================== TITLE PAGE ================================
+% ==============================================================================

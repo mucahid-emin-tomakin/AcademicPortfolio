@@ -1,0 +1,224 @@
+% ==============================================================================
+% ================================== SETTINGS ==================================
+% ==============================================================================
+
+% ================================== PAGE LAYOUT =================================
+
+% Document margins and paper format
+\usepackage[
+    a4paper,                                % A4 paper format
+    left=3.5cm,                             % Left margin
+    right=3cm,                              % Right margin (smaller for binding)
+    bottom=3cm,                             % Bottom margin
+    top=3cm                                 % Top margin
+]{geometry}
+
+% ================================== PAGE LAYOUT ==================================
+% ================================== METADATA ==================================
+
+% Document metadata - fill in with your information
+\newcommand{\workTitle}{Documentation}
+\newcommand{\subTitle}{subTitle}
+\newcommand{\specialization}{Subject}
+\newcommand{\studentFirstName}{First Name}
+\newcommand{\studentLastName}{Last Name}
+\newcommand{\studentId}{12345678}
+
+\newcommand{\advisorPreTitle}{Title before}
+\newcommand{\advisorFirstName}{First Name}
+\newcommand{\advisorLastName}{Last Name}
+\newcommand{\advisorPosTitle}{Title after}
+
+\newcommand{\assessorPreTitle}{Title before}
+\newcommand{\assessorFirstName}{First Name}
+\newcommand{\assessorLastName}{Last Name}
+\newcommand{\assessorPosTitle}{Title after}
+
+\newcommand{\dateDay}{\the\day}             % Current day (automatic)
+\newcommand{\dateMonth}{\the\month}         % Current month (automatic)
+\newcommand{\dateYear}{\the\year}           % Current year (automatic)
+
+% ================================== METADATA ==================================
+% ================================== PACKAGES ==================================
+
+% Essential LaTeX packages for document formatting
+
+% Text formatting and spacing
+\usepackage[onehalfspacing]{setspace}       % 1.5 line spacing
+\usepackage[T1]{fontenc}                    % Modern font encoding
+\usepackage[utf8]{inputenc}                 % UTF-8 character encoding
+\usepackage[ngerman]{babel}                 % German language support
+\usepackage{parskip}                        % Paragraph spacing
+\usepackage{enumitem}                       % Customizable lists
+
+% Font packages for better scaling
+\usepackage{lmodern}                        % Latin Modern fonts
+\usepackage{helvet}                         % Helvetica fonts (for sans-serif)
+
+% Mathematics packages
+\usepackage{amsmath}                        % Advanced math symbols
+\usepackage{amssymb}                        % Additional math symbols
+
+% Table packages
+\usepackage{longtable}                      % Multi-page tables
+\usepackage{multirow}                       % Multi-row cells in tables
+\usepackage{booktabs}                       % Professional table rules
+\usepackage{tabularx}                       % Tables with adjustable width
+
+% Graphics and figure packages
+\usepackage{graphicx}                       % Image inclusion
+\usepackage{float}                          % Better float positioning
+\usepackage{subcaption}                     % Sub-figures
+\usepackage[dvipsnames]{xcolor}             % Color support with named colors
+\graphicspath{{./assets/images/}}           % Default path for images
+
+% Diagrams/TikZ (UNCOMMENT IF NEEDED)
+% \usepackage{tikz}                                         % Vector graphics
+% \usetikzlibrary{shapes, arrows, positioning}              % TikZ libraries
+
+% Code listing packages
+\usepackage{listings}                       % Code listings
+\usepackage{lstautogobble}                  % Auto-remove indentation in listings
+
+% Bibliography package - FOR PAPEERIA/CLASSIC BIBTEX
+\usepackage{natbib}
+\bibliographystyle{plain}                   % Plain numeric citation style [1], [2]
+    
+% Hyperlink packages
+\usepackage{url}                            % URL formatting
+\usepackage{hyperref}                       % Interactive PDF links
+
+% ================================== PACKAGES ==================================
+% ================================== LIST NAMES ==================================
+
+% German names for document lists/contents (change to English if needed)
+\renewcommand{\contentsname}{Table of Contents}            % Table of contents
+\renewcommand{\listtablename}{List of Tables}              % List of tables
+\renewcommand{\listfigurename}{List of Figures}            % List of figures
+\providecommand{\lstlistoflistingsname}{List of Listings}  % List of code listings
+\renewcommand{\lstlistingname}{Listing}                    % Listing caption
+\makeatletter
+\renewcommand*{\lstlistlistingname}{List of Listings}      % Alternative list name
+\makeatother
+
+% ================================== LIST NAMES ==================================
+% ================================== ACRONYM SETTINGS ==================================
+
+% Acronyms package
+\usepackage[printonlyused]{acronym}                         % Acronym management
+
+% Custom command for clickable acronyms (requires hyperref setup)
+\newcommand{\aclink}[1]{%
+    \hyperlink{acr:#1}{\ac{#1}}%
+}
+
+% ================================== ACRONYM SETTINGS ==================================
+% ================================== CODE LISTING AND SYNTAX SETTINGS ==================================
+
+% Configuration for code listings and syntax highlighting
+
+% Color definitions for code syntax highlighting
+\definecolor{codegray}{gray}{0.9}           % Light gray for frame background
+\definecolor{codeblue}{RGB}{0, 84, 150}     % Corporate blue for keywords
+\definecolor{codegreen}{rgb}{0,0.6,0}       % Green for comments
+\definecolor{codered}{rgb}{0.6,0,0}         % Red for strings
+\definecolor{primary}{RGB}{0, 84, 150}      % Primary corporate color
+\definecolor{secondary}{RGB}{0, 84, 150}    % Secondary corporate color
+
+% Global listing settings (apply to all code listings)
+\lstset{
+    basicstyle=\ttfamily\footnotesize,      % Monospace font, small size
+    frame=single,                           % Frame around code
+    framesep=5pt,                           % Padding inside frame
+    framerule=1pt,                          % Frame border thickness
+    rulecolor=\color{codegray},             % Frame color
+    backgroundcolor=\color{white!95!black}, % 95% white, 5% black = very light gray
+    breaklines=true,                        % Automatic line breaking
+    showstringspaces=false,                 % Hide spaces in strings
+    tabsize=4,                              % Tab width = 4 spaces
+    numbers=left,                           % Line numbers on left
+    numberstyle=\tiny\color{gray},          % Line number style
+    numbersep=11pt,                         % Space between numbers and code
+    captionpos=b,                           % Caption position (bottom)
+    abovecaptionskip=11pt,                  % Space above caption
+    belowcaptionskip=11pt,                  % Space below caption
+    inputencoding=utf8,                     % UTF-8 character encoding
+    literate=                               % German character support (for code comments)
+    {ä}{{\"a}}1 {ö}{{\"o}}1 {ü}{{\"u}}1     % Lowercase umlauts
+    {Ä}{{\"A}}1 {Ö}{{\"O}}1 {Ü}{{\"U}}1     % Uppercase umlauts
+    {ß}{{\ss}}1                             % Sharp S
+}
+
+% Python-specific syntax highlighting
+\lstdefinestyle{python}{
+    language=Python,                        % Python language
+    keywordstyle=\color{codeblue}\bfseries, % Keywords: blue & bold
+    commentstyle=\color{codegreen}\itshape, % Comments: green & italic
+    stringstyle=\color{codered}             % Strings: red
+}
+
+% Code block environment (simple framed boxes without syntax highlighting)
+\usepackage{framed}
+\newenvironment{codeblock}{%
+    \begin{minipage}{\linewidth}%           % Full width container
+}{%
+    \end{minipage}%
+}
+
+% ================================== CODE LISTING SETTINGS ==================================
+% ================================== TEXT LAYOUT ==================================
+
+% Paragraph and text formatting settings
+\setlength{\parindent}{0pt}                 % No paragraph indentation
+\setlength{\parskip}{0.5em}                 % Space between paragraphs
+
+% ================================== TEXT LAYOUT ==================================
+% ================================== HEADER & FOOTER ==================================
+
+% Page header and footer configuration
+
+% Required packages
+\usepackage{fancyhdr}                       % Custom headers/footers
+\usepackage{lastpage}                       % Reference to last page
+
+% Main page style
+\pagestyle{fancy}
+\fancyhf{}                                  % Clear existing header/footer settings
+
+% Header configuration
+\fancyhead[L]{\subTitle}                    % Left header: document subtitle
+\fancyhead[R]{\studentLastName\ \studentFirstName} % Right header: student name
+
+% Footer configuration
+\fancyfoot[C]{\thepage}                     % Center: page number
+
+% Header/footer line thickness
+\renewcommand{\headrulewidth}{0.4pt}        % Header line (0.4 points)
+\renewcommand{\footrulewidth}{0.4pt}        % Footer line (0.4 points)
+
+% Plain page style (for chapter starts)
+\fancypagestyle{plain}{                     % Used by \chapter command
+    \fancyhf{}                              % Clear settings
+    \fancyfoot[C]{\thepage}                 % Same footer as normal pages
+    \renewcommand{\headrulewidth}{0pt}      % No header line on chapter starts
+    \renewcommand{\footrulewidth}{0.4pt}    % Footer line (0.4 points)
+}
+
+% ================================== HEADER & FOOTER ==================================
+% ================================== HYPERREF SETTINGS ==================================
+
+% PDF metadata and link formatting
+\hypersetup{
+    pdftitle={\subTitle},                   % PDF document title
+    pdfauthor={\studentFirstName\ \studentLastName}, % PDF author
+    colorlinks=true,                        % Colored links (not border boxes)
+    linkcolor=black,                        % Internal link color (ToC, references)
+    urlcolor=blue,                          % External URL color
+    citecolor=blue,                         % Citation color
+    filecolor=magenta,                      % File link color
+    allcolors=black,                        % All links black (if preferred)
+}
+
+% ==============================================================================
+% ================================== SETTINGS ==================================
+% ==============================================================================

@@ -1,0 +1,83 @@
+% ==============================================================================
+% ===================================== MAIN ===================================
+% ==============================================================================
+
+\documentclass[
+    a4paper,
+    12pt,
+    numbers=noenddot,
+    toc=sectionentrydotfill,
+    toc=chapterentrydotfill
+]{scrreprt}
+
+% ================= Settings =================
+
+\input{config/settings.tex}
+
+% ================= Settings =================
+
+\begin{document}
+
+% ================= Deckblatt =================
+
+\input{config/titlepage.tex}
+\cleardoublepage
+
+% ================= Deckblatt =================
+% ================= Inhaltsverzeichnis =================
+
+\pagenumbering{Roman}
+\setcounter{page}{1}
+
+\tableofcontents
+\cleardoublepage
+
+% ================= Inhaltsverzeichnis =================
+% ================= Hauptteil =================
+
+\pagenumbering{arabic}
+\setcounter{page}{1}
+\pagestyle{fancy}
+
+\input{chapter/template.tex}
+\cleardoublepage
+
+% ================= Hauptteil =================
+% ================= Verzeichnisse =================
+
+\pagenumbering{Roman}
+\setcounter{page}{2}
+
+\listoffigures
+\addcontentsline{toc}{chapter}{Abbildungsverzeichnis}
+\cleardoublepage
+
+\listoftables
+\addcontentsline{toc}{chapter}{Tabellenverzeichnis}
+\cleardoublepage
+
+\lstlistoflistings
+\addcontentsline{toc}{chapter}{\lstlistoflistingsname}
+\cleardoublepage
+
+\chapter*{Abkürzungsverzeichnis}
+\addcontentsline{toc}{chapter}{Abkürzungsverzeichnis}
+\input{config/acronym.tex}
+\cleardoublepage
+
+\bibliography{config/bibliography}
+\addcontentsline{toc}{chapter}{Literaturverzeichnis}
+\cleardoublepage
+
+\chapter*{Prompt-Verzeichnis}
+\addcontentsline{toc}{chapter}{Prompt-Verzeichnis}
+\input{config/promts.tex}
+\cleardoublepage
+
+% ================= Verzeichnisse =================
+
+\end{document}
+
+% ==============================================================================
+% ===================================== MAIN ===================================
+% ==============================================================================
