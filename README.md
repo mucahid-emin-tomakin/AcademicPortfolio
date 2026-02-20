@@ -15,8 +15,8 @@
 
 - [✨ Features](#-features)
 - [🖼️ Screenshots](#️-screenshots)
-- [📁 Struktur](#-struktur)
 - [⚡ Quick Start](#-quick-start)
+- [📁 Struktur](#-struktur)
 - [🚀 Tool](#-tool)
 - [⚙️ Konfiguration](#️-konfiguration)
 - [📦 Wichtige Hinweise](#-wichtige-hinweise)
