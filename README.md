@@ -14,12 +14,12 @@
 ## 📖 Inhaltsverzeichnis
 
 - [✨ FEATURES](#-features)
-- [🖼️ SCREENSHOTS](#-screenshots)
+- [🖼️ SCREENSHOTS](#️-screenshots)
 - [⚡ QUICK START](#-quick-start)
 - [📁 STRUKTUR](#-struktur)
 - [🚀 TOOL](#-tool)
-- [⚙️ KONFIGURATION](#-konfiguration)
-- [⚠️ WICHTIGE HINWEISE](#-wichtige-hinweise)
+- [⚙️ KONFIGURATION](#️-konfiguration)
+- [⚠️ WICHTIGE HINWEISE](#️-wichtige-hinweise)
 - [📝 LIZENZ](#-lizenz)
 - [👤 AUTOR](#-autor)
 - [📊 REPOSITORY STATISTIK](#-repository-statistik)
