@@ -94,7 +94,8 @@ pdflatex main.tex
 ### 📂 Hauptverzeichnis
 ```text
 AcademicPortfolio/
-└── 📁 Bachelor - Kuenstliche Intelligenz und Maschinelles Lernen
+├── 📁 Bachelor - Kuenstliche Intelligenz und Maschinelles Lernen
+└── 📄 README.md
 ```
 
 ### 🎛️ Bachelor - Kuenstliche Intelligenz und Maschinelles Lernen
