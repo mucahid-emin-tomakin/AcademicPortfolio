@@ -1,0 +1,50 @@
+% ==============================================================================
+% =================================== Aufgabe 2 =================================
+% ==============================================================================
+
+\chapter{Aufgabe}
+\label{chap:2 Aufgabe}
+\thispagestyle{fancy}
+\section*{Entwerfen Sie ein Star-Schema für einen Reseller, der an verschiedenen Standorten mit lokalen Mitarbeitern die Produkte verkauft.} \par Ein \uline{Star-Schema} für einen Reseller ist ein multidimensionales Datenmodell, das speziell für analytische Abfragen optimiert ist. \cite{58}\cite{59}\cite{60}\cite{61} Es besteht aus einer zentralen \uline{Faktentabelle}, die von mehreren deskriptiven \uline{Dimensionstabellen} sternförmig umgeben ist. \cite{60}\cite{61} \par Für das Szenario eines Resellers mit verschiedenen Standorten und lokalen Mitarbeitern lässt sich das Schema wie folgt entwerfen:
+\begin{enumerate}[label=\arabic*.), leftmargin=*]
+    \item \textbf{Die zentrale Faktentabelle (\textit{\acs{z. B.} \acs{FT}\_Verkäufe)}} \par Die Faktentabelle steht im Mittelpunkt und enthält die quantitativ messbaren Kennzahlen (\textit{Measures}) des Geschäftsbetriebs. \cite{59}
+    \begin{itemize}
+        \item \textbf{Measures (\textit{Kennzahlen}):}
+        \begin{itemize}
+            \item \textbf{Umsatz:} Der monetäre Wert der verkauften Produkte. \cite{59}\cite{62}\cite{63}\cite{64}
+            \item \textbf{Verkaufte Menge:} Die Anzahl der abgesetzten Einheiten. \cite{59}
+            \item \textbf{Deckungsbeitrag:} Errechnet aus Umsatz abzüglich variabler Kosten. \cite{65}\cite{66}
+            \item \textbf{Rabatte:} Gewährte Preisnachlässe pro Verkaufsvorgang.
+        \end{itemize}
+        \item \textbf{Zusammengesetzter Primärschlüssel:} Besteht aus den Fremdschlüsseln der verknüpften Dimensionstabellen (\textit{Zeit}, \textit{Produkt}, \textit{Mitarbeiter}, \textit{Standort}). \cite{62}\cite{63}\cite{64}
+    \end{itemize}
+    \item \textbf{Die Dimensionstabellen (\textit{\acs{DT}})} \par Diese Tabellen enthalten die beschreibenden Attribute, nach denen die Fakten gruppiert und analysiert werden können. \cite{67}
+    \begin{itemize}
+        \item \textbf{\acs{DT}\_Zeit (\textit{Zeitdimension}):} Ermöglicht Analysen über Zeiträume hinweg. \cite{67}
+        \begin{itemize}
+            \item Attribute: Datum, Monat, Quartal, Jahr. \cite{62}\cite{63}\cite{64}
+        \end{itemize}
+        \item \textbf{\acs{DT}\_Produkt (\textit{Produktdimension}):} Enthält Details zu den verkauften Waren. \cite{67}
+        \begin{itemize}
+            \item Attribute: Produktname, \uline{Warengruppe} (\textit{Klassifizierungsmerkmal}), Marke, Maße. \cite{68} \cite{62}\cite{63}\cite{64} Hierarchien innerhalb der Dimension (\textit{\acs{z. B.} Produkt -> Warengruppe -> Produkthierarchie}) sind möglich. \cite{67}\cite{69}
+        \end{itemize}
+        \item \textbf{\acs{DT}\_Mitarbeiter (\textit{Personaldimension}):} Bildet die lokale Belegschaft ab. \cite{67}
+        \begin{itemize}
+            \item Attribute: Mitarbeitername, Personalnummer, Funktion/Position. \cite{67}\cite{70}
+        \end{itemize}
+        \item \textbf{\acs{DT}\_Standort (\textit{Standortdimension}):} Spiegelt die verschiedenen Niederlassungen wider. \cite{63}\cite{64}\cite{67}
+        \begin{itemize}
+            \item Attribute: Filialname, Stadt, \uline{Region} (\textit{\acs{z. B.} Nord, Süd}), Land. \cite{65}\cite{67}
+        \end{itemize}
+    \end{itemize}
+\end{enumerate}
+\textbf{Beispielhafte Abfragestruktur} \par Mithilfe dieses Schemas kann der Reseller komplexe Analysefragen beantworten, wie \acs{z. B.}: \textit{„Welcher Umsatz wurde im letzten Quartal (Zeit) mit der Warengruppe 'Elektronik' (Produkt) am Standort 'Berlin' (Standort) von dem Mitarbeiter 'Max Mustermann' (Mitarbeiter) erzielt?“}. \cite{58}\cite{59}\cite{63}\cite{64} \par \textbf{Vorteile dieses Entwurfs:} \cite{71}
+\begin{itemize}
+    \item \textbf{Intuitive Bedienung:} Das Modell ist leicht verständlich für Endanwender in den Fachbereichen. \cite{71}
+    \item \textbf{Performance:} Durch die geringe Anzahl an Join-Operationen (\textit{Verknüpfungen}) werden schnelle Abfrageergebnisse erzielt. \cite{71}\cite{72}
+    \item \textbf{Hierarchieabbildung:} Innerhalb der Dimensionen (\textit{wie Standort oder Produkt}) können Navigationspfade zur Aggregation der Daten (\textit{Drill-down/Drill-up}) genutzt werden. \cite{63}\cite{64}\cite{65}\cite{67}
+\end{itemize}
+
+% ==============================================================================
+% =================================== Aufgabe 2 =================================
+% ==============================================================================
