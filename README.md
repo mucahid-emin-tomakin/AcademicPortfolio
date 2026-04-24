@@ -67,6 +67,7 @@
 ├── 🎓 Bachelor - Künstliche Intelligenz und Maschinelles Lernen/
 │   ├── 📁 B-INF01XX - Einführungsprojekt für Informatiker/
 │   └── 📁 B-GOPB01XX - Grundlagen der objektorientierten Programmierung/
+│   └── 📁 B-IBI02XX - Informationssysteme und Business Intelligence/
 ```
 
 ---
@@ -102,7 +103,8 @@ AcademicPortfolio/
 ```text
 Bachelor - Kuenstliche Intelligenz und Maschinelles Lernen/
 ├── 📁 B-INF01XX - Einfuehrungsprojekt für Informatiker/
-└── 📁 B-GOPB01XX - Grundlagen der objektorientierten Programmierung/
+├── 📁 B-GOPB01XX - Grundlagen der objektorientierten Programmierung/
+└── 📁 B-IBI02XX - Informationssysteme und Business Intelligence/
 ```
 
 ### 🎛️ B-INF01XX - Einfuehrungsprojekt für Informatiker
@@ -152,6 +154,26 @@ B-GOPB01XX - Grundlagen der objektorientierten Programmierung/
 └── 📄 main.tex
 ```
 
+### 🎛️ B-IBI02XX - Informationssysteme und Business Intelligence
+```text
+B-IBI02XX - Informationssysteme und Business Intelligence/
+├── 📁 Detailed/
+│   ├── 📁 asset/
+│   │   └── 📁 image/
+│   │       └── 🖼️ Stammdaten.png
+│   ├── 📁 chapter/
+│   │   ├── 📝 1.tex
+│   │   ├── 📝 2.tex
+│   │   ├── 📝 3.tex
+│   │   ├── 📝 4.tex
+│   │   └── 📝 5.tex
+│   ├── 📁 config/
+│   │   ├── 📝 acronym.tex
+│   │   ├── 📝 bibliography.bib
+│   │   ├── 📝 settings.tex
+│   │   └── 📝 titlepage.tex
+└── └── 📄 main.tex
+```
 ---
 
 ## 🚀 TOOL
