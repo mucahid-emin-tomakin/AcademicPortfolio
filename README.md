@@ -157,6 +157,26 @@ B-GOPB01XX - Grundlagen der objektorientierten Programmierung/
 ### 🎛️ B-IBI02XX - Informationssysteme und Business Intelligence
 ```text
 B-IBI02XX - Informationssysteme und Business Intelligence/
+├── 📁 asset/
+│   └── 📁 image/
+│       ├── 🖼️ Data-Mining-Prozess.png
+│       ├── 🖼️ ERP-Prozesse.png
+│       ├── 🖼️ Stammdaten.png
+│       ├── 🖼️ Star-Schema.png
+│       └── 🖼️ WBH.png
+├── 📁 chapter/
+│   ├── 📝 1.tex
+│   ├── 📝 2.tex
+│   ├── 📝 3.tex
+│   ├── 📝 4.tex
+│   ├── 📝 5.tex
+│   └── 📝 Zusammenfassung.tex
+├── 📁 config/
+│   ├── 📝 acronym.tex
+│   ├── 📝 bibliography.bib
+│   ├── 📝 settings.tex
+│   └── 📝 titlepage.tex
+├── 📄 main.tex
 ├── 📁 Detailed/
 │   ├── 📁 asset/
 │   │   └── 📁 image/
