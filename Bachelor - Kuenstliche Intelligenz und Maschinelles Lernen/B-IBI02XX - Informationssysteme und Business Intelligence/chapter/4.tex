@@ -1,0 +1,42 @@
+% ==============================================================================
+% =================================== Aufgabe 4 =================================
+% ==============================================================================
+
+\chapter{Aufgabe}
+\label{chap:4 Aufgabe}
+\thispagestyle{fancy}
+\section*{} Um die unübersichtliche Datenlage zwischen \acs{ERP}-, Buchhaltungs- und \acs{CRM}-Systemen bei einer XYZ AG dauerhaft in den Griff zu bekommen, ist die Implementierung eines \uline{(\textit{\acs{MDM}})-Konzepts} der richtige Weg. Das von Apel \acs{u. a.} \cite[85]{21} in ihren Praxislösungen zur Datenqualität formulierte Kernziel eines \acs{MDM}-Konzepts besteht darin, durch einen ‚\uline{„Single Point of Truth“} systemübergreifend mit absolut konsistenten und integritären Daten arbeiten zu können.
+ \par Der konzeptionelle Ansatz gliedert sich in folgende Phasen:
+\begin{enumerate}[label=\arabic*.), leftmargin=*]
+    \item \textbf{Datenanalyse und Bestandsaufnahme (\textit{Data Profiling})} \par Im Rahmen der Bestandsaufnahme (\textit{Data Profiling}) ist es nach Goram \cite[72]{22} entscheidend, die vorhandenen Datensätze der verschiedenen Quellsysteme (\textit{\acs{ERP}, \acs{CRM} und Buchhaltung}) zunächst technisch genau unter die Lupe nehmen, um etwa unvollständige Felder oder formale Fehler zu identifizieren.
+    \begin{itemize}
+        \item \textbf{Identifikation von Duplikaten:} Wenn man die vorliegenden Kundenkarten der XYZ AG betrachtet, fallen sofort Übereinstimmungen auf. Dazu nutzt man automatisierte Verfahren, um solche Dubletten anhand von Schlüsselattributen (\textit{\acs{z. B.} Name, Adresse, Geburtsdatum}) sicher zu identifizieren.
+        \item \textbf{Qualitätsprüfung:} Es wird ermittelt, welche Felder (\textit{\acs{z. B.} E-Mail, Telefonnummer}) unvollständig oder formal falsch sind.
+    \end{itemize}
+    \item \textbf{Harmonisierung und Standardisierung} \par Bevor Daten zusammengeführt werden können, müssen sie in ein einheitliches Format gebracht werden.
+    \begin{itemize}
+        \item \textbf{Strukturierung:} Adressdaten und Telefonnummern werden nach einem festen Schema (\textit{\acs{z. B.} internationale Vorwahlschreibweise}) formatiert.
+        \item \textbf{Normierung:} Apel \acs{u. a.} \cite[187]{23} betonen in ihren Ausführungen zur Datenbereinigung die Notwendigkeit einer konsequenten Normierung, um durch einheitliche Wertelisten unterschiedliche Schreibweisen (\textit{\acs{z. B.} Rechtsformen wie „GmbH“ \acs{vs.} „Ges. m. b. H.“}) zu eliminieren.
+    \end{itemize}
+    \item \textbf{Stammdatenbereinigung (\textit{Cleansing und Merging})} \par Nach der Harmonisierung erfolgt die eigentliche Zusammenführung der Datensätze.
+    \begin{itemize}
+        \item \textbf{Match \& Merge:} Die technische Zusammenführung von Dubletten zu einem sogenannten „Golden Record“ – also dem (\textit{Stammdatensatz mit der höchsten Güte}) – folgt dabei der von Apel u. a. \cite[81]{24} dargelegten Architektur für ein effizientes Datenqualitätsmanagement.
+        \item \textbf{Festlegung des führenden Systems:} Hinsichtlich der Datenhoheit weist Gronau \cite[308]{4} darauf hin, dass bereits im Rahmen der Projektvorbereitung verbindlich entschieden werden muss, welches System für welche Informationen die primäre Hoheit besitzt. Goram \cite[36]{25} illustriert dies am Beispiel von Kundenstammsätzen: So könnte das \acs{CRM} für Marketingdaten federführend sein, während die Buchhaltung die Hoheit über zahlungsrelevante Informationen wie die Bankverbindung behält.
+    \end{itemize}
+    \item \textbf{Wahl der Zentralisierungs-Architektur} \par Konzeptionell stehen für die dauerhafte Zentralisierung drei Varianten zur Verfügung:
+    \begin{itemize}
+        \item \textbf{Transaction Hub:} Alle Stammdaten werden ausschließlich in einer zentralen \acs{MDM}-Datenbank gepflegt. \acs{ERP}, \acs{CRM} und Buchhaltung greifen über Services darauf zu.
+        \item \textbf{Koexistenz:} Die Daten werden weiterhin in den Systemen gepflegt, aber zeitversetzt mit einer zentralen Master Data Base synchronisiert.
+        \item \textbf{Registry:} Die Daten bleiben dezentral, das \acs{MDM}-System verwaltet lediglich Referenzen und erstellt bei Bedarf eine virtuelle Gesamtsicht.
+    \end{itemize}
+    \item \textbf{Etablierung einer Data Governance} \par Um eine erneute Datenkorruption zu verhindern, müssen Verantwortlichkeiten festgelegt werden:
+    \begin{itemize}
+        \item \textbf{Data Stewards:} Zur langfristigen Sicherung der Datenqualität schlagen Apel u. a. \cite[58]{26} die Etablierung von Data Stewards vor, eine verantwortliche Person oder Abteilung (\textit{\acs{z. B.} Vertriebsinnendienst}), die jede Neuanlage oder Änderung prüft.
+        \item \textbf{Einführung von Workflows:} Während Goram \cite[42]{27} verdeutlicht, dass erst durch solche automatisierten Prozesse (\textit{Änderungsdienst}) manuelle Mehrfacheingaben und daraus resultierende Inkonsistenzen dauerhaft entfallen.
+    \end{itemize}
+\end{enumerate}
+Durch diesen Prozess wird sichergestellt, dass beispielsweise eine Adressänderung im \acs{CRM} automatisch auch in der Buchhaltung und im \acs{ERP}-System aktualisiert wird, wodurch manuelle Mehrfacheingaben und Inkonsistenzen entfallen. \cite[75]{28}
+
+% ==============================================================================
+% =================================== Aufgabe 4 =================================
+% ==============================================================================
