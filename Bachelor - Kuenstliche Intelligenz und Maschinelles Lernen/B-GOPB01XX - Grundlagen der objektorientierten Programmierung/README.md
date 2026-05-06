@@ -11,9 +11,9 @@
 
 - [📝 PROJEKTBESCHREIBUNG](#-projektbeschreibung)
 - [✨ FEATURES](#-features)
-- [⚡ QUICK START](#-quick-start)
-- [📁 STRUKTUR](#-struktur)
 - [🚀 TOOL](#-tool)
+- [📁 STRUKTUR](#-struktur)
+- [⚡ QUICK START](#-quick-start)
 - [⚠️ WICHTIGE HINWEISE](#️-wichtige-hinweise)
 - [📝 LIZENZ](#-lizenz)
 - [👤 AUTOR](#-autor)
@@ -66,39 +66,14 @@ Die gesamte Arbeit ist in **LaTeX** gesetzt und als PDF aus `main.tex` generierb
 
 ---
 
-## ⚡ QUICK START
+## 🚀 TOOL
 
-```bash
-# Ins Projektverzeichnis wechseln
-cd "Bachelor - Kuenstliche Intelligenz und Maschinelles Lernen/B-GOPB01XX - Grundlagen der objektorientierten Programmierung"
-
-# LaTeX-Dokument kompilieren (mehrfach für Verzeichnisse & Referenzen)
-pdflatex main.tex && pdflatex main.tex
-# oder automatisch
-latexmk -pdf main.tex
-
-# Tree ausführen (Python)
-cd code
-python Tree-1-a.py
-python Tree-1-b.py
-python Tree-1-c.py
-
-# Cäsar-Chiffre ausführen (Python)
-python CaesarCipher-1-a.py "Das ist ein Text" 3
-python CaesarCipher-1-b.py "Das ist ein Text" 3
-python CaesarCipher-1-c.py "Das ist ein Text" 3
-python CaesarCipher-1-d.py "Das ist ein Text" 3
-
-# CDMA kompilieren und ausführen (Java)
-javac CDMA1a.java && java CDMA1a
-javac CDMA1b.java && java CDMA1b
-javac CDMA1c.java && java CDMA1c
-
-# Glatte Kurve kompilieren und ausführen (Java, mit GUI)
-javac GlatteKurve1a.java && java GlatteKurve1a
-javac GlatteKurve1b.java && java GlatteKurve1b
-javac GlatteKurve1c.java && java GlatteKurve1c
-```
+| Bereich | Werkzeug |
+|---------|----------|
+| Dokumentation | LaTeX (erstellt mit Papeeria / lokalem TeXLive) |
+| Programmierung | Python 3 (Tree, Cäsar-Chiffre), Java (CDMA, Glatte Kurve) |
+| GUI | Java Swing (Glatte Kurve) |
+| Versionskontrolle | Git & GitHub |
 
 ---
 
@@ -148,14 +123,64 @@ B-GOPB01XX - Grundlagen der objektorientierten Programmierung/
 
 ---
 
-## 🚀 TOOL
+## ⚡ QUICK START
 
-| Bereich | Werkzeug |
-|---------|----------|
-| Dokumentation | LaTeX (erstellt mit Papeeria / lokalem TeXLive) |
-| Programmierung | Python 3 (Tree, Cäsar-Chiffre), Java (CDMA, Glatte Kurve) |
-| GUI | Java Swing (Glatte Kurve) |
-| Versionskontrolle | Git & GitHub |
+### 📦 Git & GitHub
+```bash
+# Repository klonen
+git clone https://github.com/mucahid-emin-tomakin/AcademicPortfolio.git
+cd AcademicPortfolio
+
+# Ins Projektverzeichnis wechseln
+cd "Bachelor - Kuenstliche Intelligenz und Maschinelles Lernen/B-GOPB01XX - Grundlagen der objektorientierten Programmierung"
+```
+
+### 📝 LaTeX Kompilierung
+```bash
+# LaTeX-Dokument kompilieren (mehrfach für Verzeichnisse & Referenzen)
+pdflatex main.tex && pdflatex main.tex
+# oder automatisch
+latexmk -pdf main.tex
+
+# Alternativ: Online mit Papeeria arbeiten
+# 1. Gehe auf https://m.papeeria.com
+# 2. Erstelle ein neues Projekt und importiere den gesamten Ordner als ZIP
+# 3. Papeeria kompiliert main.tex automatisch in der Cloud
+```
+
+### 🐍 Python virtueller Umgebung
+```bash
+# Tree ausführen (Python)
+cd code
+python Tree-1-a.py
+python Tree-1-b.py
+python Tree-1-c.py
+
+# Cäsar-Chiffre ausführen (Python)
+python CaesarCipher-1-a.py "Das ist ein Text" 3
+python CaesarCipher-1-b.py "Das ist ein Text" 3
+python CaesarCipher-1-c.py "Das ist ein Text" 3
+python CaesarCipher-1-d.py "Das ist ein Text" 3
+
+# Mit virtueller Umgebung
+python -m venv venv
+source venv/bin/activate  # Linux/Mac
+venv\Scripts\activate     # Windows
+pip install -r requirements.txt
+```
+
+### ☕ Java
+```bash
+# CDMA kompilieren und ausführen (Java)
+javac CDMA1a.java && java CDMA1a
+javac CDMA1b.java && java CDMA1b
+javac CDMA1c.java && java CDMA1c
+
+# Glatte Kurve kompilieren und ausführen (Java, mit GUI)
+javac GlatteKurve1a.java && java GlatteKurve1a
+javac GlatteKurve1b.java && java GlatteKurve1b
+javac GlatteKurve1c.java && java GlatteKurve1c
+```
 
 ---
 
