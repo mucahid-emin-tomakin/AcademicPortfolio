@@ -1,8 +1,10 @@
 # 🕹️ B-GOPB01XX – Grundlagen der objektorientierten Programmierung
 
+![GitHub](https://img.shields.io/badge/GitHub-181717?logo=github&logoColor=white)
 ![LaTeX](https://img.shields.io/badge/LaTeX-008080?logo=latex&logoColor=white)
 ![Python](https://img.shields.io/badge/Python-3776AB?logo=python&logoColor=white)
 ![Java](https://img.shields.io/badge/Java-007396?logo=java&logoColor=white)
+![License](https://img.shields.io/badge/License-MIT-blue)
 ![Status](https://img.shields.io/badge/Status-Abgeschlossen-brightgreen)
 
 ---
