@@ -80,7 +80,7 @@ Die gesamte Arbeit ist in **LaTeX** gesetzt und als PDF aus `main.tex` generierb
 ## 📁 STRUKTUR
 
 ```text
-B-GOPB01XX - Grundlagen der objektorientierten Programmierung/
+📓 B-GOPB01XX - Grundlagen der objektorientierten Programmierung/
 ├── 📁 code/
 │   ├── ☕ CDMA1a.java
 │   ├── ☕ CDMA1b.java
@@ -109,7 +109,7 @@ B-GOPB01XX - Grundlagen der objektorientierten Programmierung/
 
 ### 📁 Struktur-Legende
 ```text
-B-GOPB01XX - Grundlagen der objektorientierten Programmierung/
+📓 B-GOPB01XX - Grundlagen der objektorientierten Programmierung/
 ├── 📄 README.md          # Projektbeschreibung (diese Datei)
 ├── 📁 code/              # Quellcode (Python + Java)
 │   ├── ☕ .java          # Java Skript
