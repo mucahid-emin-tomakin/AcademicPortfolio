@@ -4,7 +4,6 @@
 ![UML](https://img.shields.io/badge/UML-Modellierung-orange)
 ![Python](https://img.shields.io/badge/Python-3776AB?logo=python&logoColor=white)
 ![Status](https://img.shields.io/badge/Status-Abgeschlossen-brightgreen)
-![Status](https://img.shields.io/badge/Status-Abgeschlossen-brightgreen)
 
 ---
 
