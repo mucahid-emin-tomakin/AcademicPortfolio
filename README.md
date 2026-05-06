@@ -150,7 +150,6 @@ Detaillierte Befehle für die anderen Projekte findest du im jeweiligen Projekt-
 
 **Studienfokus:**
 - 🎓 Bachelor: Künstliche Intelligenz & Maschinelles Lernen
-- 🔐 Master (geplant): Cyber Security
 - 📊 Forschung: Federated Learning, Explainable AI, Anomaly Detection
 
 ---
