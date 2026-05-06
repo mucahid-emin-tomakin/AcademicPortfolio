@@ -127,16 +127,16 @@ B-IBI02XX - Informationssysteme und Business Intelligence/
 ### 📁 Struktur-Legende
 ```text
 B-IBI02XX - Informationssysteme und Business Intelligence/
-├── 📄 README.md          # Projektbeschreibung (diese Datei)
-├── 📁 asset/image/       # Abbildungen (Star-Schema, Data-Mining, ERP-Prozesse)
-│   ├── 🖼️ .png           # PNG Files
-├── 📁 chapter/           # LaTeX-Kapitel für jede der fünf Aufgaben
-├── 📁 config/            # Einstellungen, Literaturverzeichnis, Deckblatt
-│   ├── 📝 acronym.tex    # Abkürzungsverzeichnis
-│   ├── 📝 bibliography.bib # Quellenverzeichnis (31 Einträge)
-│   ├── 📝 settings.tex   # Dokument-Einstellungen
-│   └── 📝 titlepage.tex  # Deckblatt
-└── 📄 main.tex           # LaTeX-Hauptdokument
+├── 📄 README.md              # Projektbeschreibung (diese Datei)
+├── 📁 asset/image/           # Abbildungen (Star-Schema, Data-Mining, ERP-Prozesse)
+│   ├── 🖼️ .png               # PNG Files
+├── 📁 chapter/               # LaTeX-Kapitel für jede der fünf Aufgaben
+├── 📁 config/                # Einstellungen, Literaturverzeichnis, Deckblatt
+│   ├── 📝 acronym.tex        # Abkürzungsverzeichnis
+│   ├── 📝 bibliography.bib   # Quellenverzeichnis (31 Einträge)
+│   ├── 📝 settings.tex       # Dokument-Einstellungen
+│   └── 📝 titlepage.tex      # Deckblatt
+└── 📄 main.tex               # LaTeX-Hauptdokument
 ```
 
 ---
