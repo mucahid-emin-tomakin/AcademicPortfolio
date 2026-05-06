@@ -9,8 +9,8 @@
 
 ## 📖 Inhaltsverzeichnis
 
-- [✨ FEATURES](#-features)
 - [📝 PROJEKTBESCHREIBUNG](#-projektbeschreibung)
+- [✨ FEATURES](#-features)
 - [⚡ QUICK START](#-quick-start)
 - [📁 STRUKTUR](#-struktur)
 - [🚀 TOOL](#-tool)
@@ -18,20 +18,6 @@
 - [📝 LIZENZ](#-lizenz)
 - [👤 AUTOR](#-autor)
 - [📊 REPOSITORY STATISTIK](#-repository-statistik)
-
----
-
-## ✨ FEATURES
-
-| Feature | Beschreibung |
-|---------|-------------|
-| 🌳 Tree | Rekursive Verzeichnisstruktur mit Zählfunktion |
-| 🔐 Cäsar-Chiffre | Verschlüsselung, Häufigkeitsanalyse & Chi-Quadrat-Entschlüsselung |
-| 📡 CDMA | Code-Multiplexverfahren für parallele Datenübertragung |
-| 📈 Glatte Kurve | Interaktives Polygon mit Corner-Cutting-Algorithmus |
-| 🐍 Python | Drei schrittweise erweiterte Python-Projekte |
-| ☕ Java | Komplexe objektorientierte Java-Anwendungen mit GUI |
-| 📄 LaTeX-Satz | Professionelle Dokumentation mit eingebundenen Listings |
 
 ---
 
@@ -63,6 +49,20 @@ Das Dokument fasst vier aufeinander aufbauende Programmierprojekte zusammen, die
 - Teil D: Auslagerung der Schrittzahl in separate Methode für beliebige Verfeinerungen  
 
 Die gesamte Arbeit ist in **LaTeX** gesetzt und als PDF aus `main.tex` generierbar.
+
+---
+
+## ✨ FEATURES
+
+| Feature | Beschreibung |
+|---------|-------------|
+| 🌳 Tree | Rekursive Verzeichnisstruktur mit Zählfunktion |
+| 🔐 Cäsar-Chiffre | Verschlüsselung, Häufigkeitsanalyse & Chi-Quadrat-Entschlüsselung |
+| 📡 CDMA | Code-Multiplexverfahren für parallele Datenübertragung |
+| 📈 Glatte Kurve | Interaktives Polygon mit Corner-Cutting-Algorithmus |
+| 🐍 Python | Drei schrittweise erweiterte Python-Projekte |
+| ☕ Java | Komplexe objektorientierte Java-Anwendungen mit GUI |
+| 📄 LaTeX-Satz | Professionelle Dokumentation mit eingebundenen Listings |
 
 ---
 
