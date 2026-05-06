@@ -76,7 +76,7 @@ AcademicPortfolio/
 ```text
 AcademicPortfolio/
 ├── 📁 B-.../             # Preojekte
-├── 📄 README.md          # Projektbeschreibung (diese Datei)
+└── 📄 README.md          # Projektbeschreibung (diese Datei)
 ```
 Die kompletten Verzeichnisbäume (Quellcode, Grafiken, LaTeX-Module) sind in den READMEs der einzelnen Projekte dokumentiert.
 
