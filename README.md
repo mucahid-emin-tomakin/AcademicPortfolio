@@ -65,7 +65,7 @@ cd AcademicPortfolio
 
 ### 📂 Hauptverzeichnis
 ```text
-AcademicPortfolio/
+📚 AcademicPortfolio/
 ├── 🎓 Bachelor - Künstliche Intelligenz und Maschinelles Lernen/
 │   ├── 📁 B-INF01XX - Einführungsprojekt für Informatiker/
 │   ├── 📁 B-GOPB01XX - Grundlagen der objektorientierten Programmierung/
@@ -76,7 +76,7 @@ AcademicPortfolio/
 
 ### 📁 Struktur-Legende
 ```text
-AcademicPortfolio/
+📚 AcademicPortfolio/
 ├── 📁 B-.../             # Preojekte
 └── 📄 README.md          # Projektbeschreibung (diese Datei)
 ```
