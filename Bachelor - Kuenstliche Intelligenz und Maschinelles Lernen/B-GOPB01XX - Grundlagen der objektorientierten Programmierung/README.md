@@ -137,6 +137,8 @@ B-GOPB01XX - Grundlagen der objektorientierten Programmierung/
 B-GOPB01XX - Grundlagen der objektorientierten Programmierung/
 ├── 📄 README.md          # Projektbeschreibung (diese Datei)
 ├── 📁 code/              # Quellcode (Python + Java)
+│   ├── ☕ .java          # Java Skript
+│   ├── 🐍 .py            # Python Skript
 ├── 📁 tex/               # LaTeX-Moduldateien für jedes Teilprojekt
 ├── 📁 literature/        # Literaturverzeichnis und Einstellungen
 │   ├── 📝 acronym.tex    # Abkürzungsverzeichnis
