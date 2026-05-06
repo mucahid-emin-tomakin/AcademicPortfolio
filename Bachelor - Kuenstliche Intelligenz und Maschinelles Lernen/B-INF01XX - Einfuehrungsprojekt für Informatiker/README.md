@@ -15,7 +15,7 @@
 - [⚡ QUICK START](#-quick-start)
 - [📁 STRUKTUR](#-struktur)
 - [🚀 TOOL](#-tool)
-- [⚠️ HINWEISE](#️-hinweise)
+- [⚠️ WICHTIGE HINWEISE](#️-wichtige-hinweise)
 - [👤 AUTOR](#-autor)
 
 ---
