@@ -105,7 +105,23 @@ B-IBI02XX - Informationssysteme und Business Intelligence/
 │   ├── 📝 bibliography.bib
 │   ├── 📝 settings.tex
 │   └── 📝 titlepage.tex
-└── 📄 main.tex
+├── 📄 main.tex
+├── 📁 Detailed/
+│   ├── 📁 asset/
+│   │   └── 📁 image/
+│   │       └── 🖼️ Stammdaten.png
+│   ├── 📁 chapter/
+│   │   ├── 📝 1.tex
+│   │   ├── 📝 2.tex
+│   │   ├── 📝 3.tex
+│   │   ├── 📝 4.tex
+│   │   └── 📝 5.tex
+│   ├── 📁 config/
+│   │   ├── 📝 acronym.tex
+│   │   ├── 📝 bibliography.bib
+│   │   ├── 📝 settings.tex
+│   │   └── 📝 titlepage.tex
+└── └── 📄 main.tex
 ```
 
 ### 📁 Struktur-Legende
