@@ -1,8 +1,10 @@
 # 📄 LaTeX‑Template
 
+![GitHub](https://img.shields.io/badge/GitHub-181717?logo=github&logoColor=white)
 ![LaTeX](https://img.shields.io/badge/LaTeX-008080?logo=latex&logoColor=white)
 ![Template](https://img.shields.io/badge/Template-Wiederverwendbar-blue)
-![Status](https://img.shields.io/badge/Status-Active-brightgreen)
+![License](https://img.shields.io/badge/License-MIT-blue)
+![Status](https://img.shields.io/badge/Status-Abgeschlossen-brightgreen)
 
 ---
 
