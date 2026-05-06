@@ -1,9 +1,11 @@
 # 🕹️ B-INF01XX – Einführungsprojekt für Informatiker
 
+![GitHub](https://img.shields.io/badge/GitHub-181717?logo=github&logoColor=white)
 ![LaTeX](https://img.shields.io/badge/LaTeX-008080?logo=latex&logoColor=white)
 ![UML](https://img.shields.io/badge/UML-Modellierung-orange)
 ![Python](https://img.shields.io/badge/Python-3776AB?logo=python&logoColor=white)
-![Status](https://img.shields.io/badge/Status-Abgeschlossen-brightgreen)
+![License](https://img.shields.io/badge/License-MIT-blue)
+![Status](https://img.shields.io/badge/Status-Active-brightgreen)
 
 ---
 
