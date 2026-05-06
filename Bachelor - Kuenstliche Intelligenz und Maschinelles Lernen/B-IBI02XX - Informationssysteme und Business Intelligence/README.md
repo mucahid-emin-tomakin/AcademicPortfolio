@@ -9,8 +9,8 @@
 
 ## 📖 Inhaltsverzeichnis
 
-- [✨ FEATURES](#-features)
 - [📝 PROJEKTBESCHREIBUNG](#-projektbeschreibung)
+- [✨ FEATURES](#-features)
 - [⚡ QUICK START](#-quick-start)
 - [📁 STRUKTUR](#-struktur)
 - [🚀 TOOL](#-tool)
@@ -18,21 +18,6 @@
 - [📝 LIZENZ](#-lizenz)
 - [👤 AUTOR](#-autor)
 - [📊 REPOSITORY STATISTIK](#-repository-statistik)
-
----
-
-## ✨ FEATURES
-
-| Feature | Beschreibung |
-|---------|-------------|
-| 🏭 Zukunftsfähige ERP-Systeme | Fünf Erfolgsfaktoren adaptiver ERP-Architekturen |
-| 👥 Projektteam & Migration | Rollenkonzept und Zieldefinition für ERP-Migration |
-| 🔗 ERP vs. SCM | Fünf Unterschiede und Gemeinsamkeiten der Systemklassen |
-| ⭐ Star-Schema | Multidimensionales Datenmodell für Reseller-Analysen |
-| ⛏️ Data-Mining-Prozess | Text-Mining und Sentimentanalyse von Internetquellen |
-| 🧹 Stammdatenbereinigung | MDM-Konzept zur Zentralisierung von Kundendaten |
-| 📈 Prozesskennzahlen | Fünf KPIs zur Messung der ERP-Wirkung |
-| 📄 LaTeX-Satz | Wissenschaftliche Dokumentation mit 31 Quellen |
 
 ---
 
@@ -60,6 +45,21 @@ Diese Einsendeaufgabe behandelt zentrale Themen moderner betrieblicher Informati
 - Fünf KPIs: Durchlaufzeit, Prozesskosten, Lagerumschlagshäufigkeit, Termintreue, Datenqualität.
 
 Die Arbeit ist in **LaTeX** gesetzt, umfasst 15 Seiten mit 31 wissenschaftlichen Quellen und ist als PDF aus `main.tex` generierbar.
+
+---
+
+## ✨ FEATURES
+
+| Feature | Beschreibung |
+|---------|-------------|
+| 🏭 Zukunftsfähige ERP-Systeme | Fünf Erfolgsfaktoren adaptiver ERP-Architekturen |
+| 👥 Projektteam & Migration | Rollenkonzept und Zieldefinition für ERP-Migration |
+| 🔗 ERP vs. SCM | Fünf Unterschiede und Gemeinsamkeiten der Systemklassen |
+| ⭐ Star-Schema | Multidimensionales Datenmodell für Reseller-Analysen |
+| ⛏️ Data-Mining-Prozess | Text-Mining und Sentimentanalyse von Internetquellen |
+| 🧹 Stammdatenbereinigung | MDM-Konzept zur Zentralisierung von Kundendaten |
+| 📈 Prozesskennzahlen | Fünf KPIs zur Messung der ERP-Wirkung |
+| 📄 LaTeX-Satz | Wissenschaftliche Dokumentation mit 31 Quellen |
 
 ---
 
