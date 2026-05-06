@@ -14,11 +14,9 @@
 ## 📖 Inhaltsverzeichnis
 
 - [✨ FEATURES](#-features)
-- [🖼️ SCREENSHOTS](#️-screenshots)
 - [⚡ QUICK START](#-quick-start)
 - [📁 STRUKTUR](#-struktur)
 - [🚀 TOOL](#-tool)
-- [⚙️ KONFIGURATION](#️-konfiguration)
 - [⚠️ WICHTIGE HINWEISE](#️-wichtige-hinweise)
 - [📝 LIZENZ](#-lizenz)
 - [👤 AUTOR](#-autor)
@@ -27,6 +25,14 @@
 ---
 
 ## ✨ FEATURES
+
+| Projekt | Inhalte & Schwerpunkte |
+|--------|------------------------|
+| **B-INF01XX – Einführungsprojekt** | 🕹️ Pong-Entwicklung (Python, UML, Projekttagebuch) |
+| **B-GOPB01XX – OOP-Grundlagen** | 🌳 Tree, 🔐 Cäsar-Chiffre, 📡 CDMA, 📈 Glatte Kurve (Python & Java) |
+| **B-IBI02XX – Informationssysteme & BI** | 🏭 ERP-Erfolgsfaktoren, ⭐ Star-Schema, ⛏️ Data Mining, 🧹 MDM, 📈 KPIs |
+
+*Jedes Projekt besitzt ein eigenes README mit Details, Quick-Start und Struktur.*
 
 ### 🎓 Akademisch & Organisiert
 
@@ -57,18 +63,15 @@
 | 💻 Programmierprojekte | OOP Grundlagen | ✅ |
 | 📚 Kursarbeiten | Übungsaufgaben | ✅ |
 
----
+### 💡 Technologien & Methoden
 
-## 🖼️ SCREENSHOTS
-
-### Overview
-```text
-📁 AcademicPortfolio/
-├── 🎓 Bachelor - Künstliche Intelligenz und Maschinelles Lernen/
-│   ├── 📁 B-INF01XX - Einführungsprojekt für Informatiker/
-│   └── 📁 B-GOPB01XX - Grundlagen der objektorientierten Programmierung/
-│   └── 📁 B-IBI02XX - Informationssysteme und Business Intelligence/
-```
+| Bereich | Konkret |
+|--------|---------|
+| Programmierung | Python 3, Java (inkl. Swing) |
+| Dokumentation | LaTeX (Online-Editor Papeeria, lokal TeXLive) |
+| Modellierung | UML-Klassen- & Implementierungsdiagramme, Star-Schema, MDM-Konzepte |
+| Analyse | Data Mining (Text, Sentiment), Chi-Quadrat-Test, Prozesskennzahlen |
+| Versionskontrolle | Git & GitHub |
 
 ---
 
@@ -77,16 +80,18 @@
 ```bash
 # 1. Repository klonen
 git clone https://github.com/mucahid-emin-tomakin/AcademicPortfolio.git
+cd AcademicPortfolio
 
-# 2. Beispiel-Projekt erkunden
-cd "AcademicPortfolio/Bachelor - Kuenstliche Intelligenz und Maschinelles Lernen/B-INF01XX"
+# 2. In den Bachelor-Bereich wechseln
+cd "Bachelor - Kuenstliche Intelligenz und Maschinelles Lernen"
 
-# 3. Projekt-README lesen
-cat README.md
-
-# 4. LaTeX kompilieren (optional)
-pdflatex main.tex
+# 3. Beliebiges Projekt ansteuern, z.B.:
+cd "B-INF01XX - Einfuehrungsprojekt für Informatiker"
+cat README.md          # Projektdetails anzeigen
+pdflatex main.tex      # Dokumentation kompilieren
+python aufgabe2.py     # Spiel starten (falls pygame installiert)
 ```
+Detaillierte Befehle für die anderen Projekte findest du im jeweiligen Projekt-README.
 
 ---
 
@@ -95,105 +100,21 @@ pdflatex main.tex
 ### 📂 Hauptverzeichnis
 ```text
 AcademicPortfolio/
-├── 📁 Bachelor - Kuenstliche Intelligenz und Maschinelles Lernen
+├── 🎓 Bachelor - Künstliche Intelligenz und Maschinelles Lernen/
+│   ├── 📁 B-INF01XX - Einführungsprojekt für Informatiker/
+│   └── 📁 B-GOPB01XX - Grundlagen der objektorientierten Programmierung/
+│   └── 📁 B-IBI02XX - Informationssysteme und Business Intelligence/
 └── 📄 README.md
 ```
 
-### 🎛️ Bachelor - Kuenstliche Intelligenz und Maschinelles Lernen
+### 📁 Struktur-Legende
 ```text
-Bachelor - Kuenstliche Intelligenz und Maschinelles Lernen/
-├── 📁 B-INF01XX - Einfuehrungsprojekt für Informatiker/
-├── 📁 B-GOPB01XX - Grundlagen der objektorientierten Programmierung/
-└── 📁 B-IBI02XX - Informationssysteme und Business Intelligence/
+AcademicPortfolio/
+├── 📁 B-.../             # Preojekte
+├── 📄 README.md          # Projektbeschreibung (diese Datei)
 ```
+Die kompletten Verzeichnisbäume (Quellcode, Grafiken, LaTeX-Module) sind in den READMEs der einzelnen Projekte dokumentiert.
 
-### 🎛️ B-INF01XX - Einfuehrungsprojekt für Informatiker
-```text
-B-INF01XX - Einfuehrungsprojekt für Informatiker/
-├── 📁 img/
-│   ├── 🖼️ Aufgabe2Ergebnis.png
-│   ├── 🖼️ Aufgabe2Konzeptklassendiagramm.png
-│   ├── 🖼️ Aufgabe3Konzeptklassendiagramm.png
-│   ├── 🖼️ Aufgabe4Ergebnis.png
-│   ├── 🖼️ Aufgabe4ErgebnisII.png
-│   ├── 🖼️ Aufgabe4Konzeptklassendiagramm.png
-│   ├── 🖼️ EigenesStoryBoard.jpg
-│   ├── 🖼️ Implementierungsklassendiagramm.png
-│   ├── 🖼️ Konzeptklassendiagramm.png
-│   └── 🖼️ StoryBoard.png
-└── 📄 main.tex
-```
-
-### 🎛️ B-GOPB01XX - Grundlagen der objektorientierten Programmierung
-```text
-B-GOPB01XX - Grundlagen der objektorientierten Programmierung/
-├── 📁 code/
-│   ├── ☕ CDMA1a.java
-│   ├── ☕ CDMA1b.java
-│   ├── ☕ CDMA1c.java
-│   ├── 🐍 CaesarCipher-1-a.py
-│   ├── 🐍 CaesarCipher-1-b.py
-│   ├── 🐍 CaesarCipher-1-c.py
-│   ├── 🐍 CaesarCipher-1-d.py
-│   ├── ☕ GlatteKurve1a.java
-│   ├── ☕ GlatteKurve1b.java
-│   ├── ☕ GlatteKurve1c.java
-│   ├── ☕ GlatteKurve1d.java
-│   ├── 🐍 Tree-1-a.py
-│   ├── 🐍 Tree-1-b.py
-│   └── 🐍 Tree-1-c.py
-├── 📁 literature/
-│   ├── 📝 acronym.tex
-│   └── ⚙️ settings.tex
-├── 📁 tex/
-│   ├── 📘 CDMA (Java).tex
-│   ├── 📘 Cäsar-Chiffre (Python).tex
-│   ├── 📘 Deckblatt.tex
-│   ├── 📘 Glatte Kurve (Java).tex
-│   └── 📘 Tree (Python).tex
-└── 📄 main.tex
-```
-
-### 🎛️ B-IBI02XX - Informationssysteme und Business Intelligence
-```text
-B-IBI02XX - Informationssysteme und Business Intelligence/
-├── 📁 asset/
-│   └── 📁 image/
-│       ├── 🖼️ Data-Mining-Prozess.png
-│       ├── 🖼️ ERP-Prozesse.png
-│       ├── 🖼️ Stammdaten.png
-│       ├── 🖼️ Star-Schema.png
-│       └── 🖼️ WBH.png
-├── 📁 chapter/
-│   ├── 📝 1.tex
-│   ├── 📝 2.tex
-│   ├── 📝 3.tex
-│   ├── 📝 4.tex
-│   ├── 📝 5.tex
-│   └── 📝 Zusammenfassung.tex
-├── 📁 config/
-│   ├── 📝 acronym.tex
-│   ├── 📝 bibliography.bib
-│   ├── 📝 settings.tex
-│   └── 📝 titlepage.tex
-├── 📄 main.tex
-├── 📁 Detailed/
-│   ├── 📁 asset/
-│   │   └── 📁 image/
-│   │       └── 🖼️ Stammdaten.png
-│   ├── 📁 chapter/
-│   │   ├── 📝 1.tex
-│   │   ├── 📝 2.tex
-│   │   ├── 📝 3.tex
-│   │   ├── 📝 4.tex
-│   │   └── 📝 5.tex
-│   ├── 📁 config/
-│   │   ├── 📝 acronym.tex
-│   │   ├── 📝 bibliography.bib
-│   │   ├── 📝 settings.tex
-│   │   └── 📝 titlepage.tex
-└── └── 📄 main.tex
-```
 ---
 
 ## 🚀 TOOL
@@ -249,21 +170,6 @@ git commit -m "[Bachelor] Add: B-INF01XX - Einführungsprojekt"
 # Strukturierte Commit-Nachrichten
 git commit -m "[Typ] Aktion: Projekt - Beschreibung"
 # Typen: [Bachelor], [Master], [Update], [Fix], [Docs]
-```
-
-### 📁 Struktur-Legende
-```text
-NEUES_PROJEKT/
-├── 📄 README.md          # Projektbeschreibung
-├── 📁 code/              # Quellcode
-├── 📁 img/               # Bilder
-├── 📁 tex/               # LaTeX Module datei
-├── 📁 literature/        # Literaturverzeichnis
-├── 📁 settings/          # Einstellungen
-├── 📄 main.tex           # LaTeX Hauptdatei
-├── 📄 acronym.tex        # Abkürzungsverzeichnis
-├── 📄 settings.tex       # Dokument Einstellungen
-└── 📄 bibliography.bib   # Literaturverzeichnis
 ```
 
 ---
