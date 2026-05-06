@@ -79,7 +79,7 @@ Alle Textteile, Diagramme und Codeausschnitte sind im LaTeX-Hauptdokument `main.
 ## 📁 STRUKTUR
 
 ```text
-B-INF01XX - Einfuehrungsprojekt für Informatiker/
+📓 B-INF01XX - Einfuehrungsprojekt für Informatiker/
 ├── 📁 img/
 │   ├── 🖼️ Aufgabe2Ergebnis.png
 │   ├── 🖼️ Aufgabe2Konzeptklassendiagramm.png
@@ -96,7 +96,7 @@ B-INF01XX - Einfuehrungsprojekt für Informatiker/
 
 ### 📁 Struktur-Legende
 ```text
-B-INF01XX - Einführungsprojekt für Informatiker/
+📓 B-INF01XX - Einführungsprojekt für Informatiker/
 ├── 📄 README.md          # Projektbeschreibung (diese Datei)
 ├── 📁 img/               # Bilder, Screenshots, Storyboards, Diagramme
 └── 📄 main.tex           # LaTeX-Hauptdokument
