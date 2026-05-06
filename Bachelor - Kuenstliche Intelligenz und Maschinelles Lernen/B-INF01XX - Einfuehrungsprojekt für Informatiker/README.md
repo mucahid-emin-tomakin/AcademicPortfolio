@@ -9,8 +9,8 @@
 
 ## 📖 Inhaltsverzeichnis
 
-- [✨ FEATURES](#-features)
 - [📝 PROJEKTBESCHREIBUNG](#-projektbeschreibung)
+- [✨ FEATURES](#-features)
 - [⚡ QUICK START](#-quick-start)
 - [📁 STRUKTUR](#-struktur)
 - [🚀 TOOL](#-tool)
@@ -18,22 +18,6 @@
 - [📝 LIZENZ](#-lizenz)
 - [👤 AUTOR](#-autor)
 - [📊 REPOSITORY STATISTIK](#-repository-statistik)
-
----
-
-## ✨ FEATURES
-
-| Feature | Beschreibung |
-|---------|-------------|
-| 📋 Projekttagebuch | Detaillierter Projektverlauf mit Zeitaufwänden, Entscheidungen und Ergebnissen |
-| 🎨 UML-Diagramme | Konzept‑ und Implementierungsdiagramme für das Softwaredesign |
-| 🖼️ Storyboards | Visuelle Planung der Benutzeroberfläche und Spielinteraktion |
-| 🕹️ Pong‑Implementierung | Lauffähiges Pong‑Spiel mit farbigen Objekten |
-| ⌨️ Tastatursteuerung | Umstellung von Maus‑ auf Tastaturbedienung inkl. ESC‑Abbruch |
-| 🚀 Eigenes Feature | Selbstentwickelte Erweiterung (farbwechselnder Ball bei Kollision) |
-| 🔍 Reflexion | Kritische Betrachtung des gesamten Projektablaufs mit Pro/Contra |
-| 📄 LaTeX‑Satz | Professionelle Dokumentation mit eingebundenen Grafiken und Listings |
-| ☁️ Online-Editor | Erstellung und Kompilierung mit Papeeria (keine lokale Installation nötig) |
 
 ---
 
@@ -61,6 +45,22 @@ Erweiterung um eine von `Schlaeger` abgeleitete Klasse `TastaturSchlaeger` und e
 Ein eigenes Feature: Der Ball ändert seine Farbe bei jedem Abprall an der X‑Achse (wird schwarz) und an der Y‑Achse (wird rot). Dadurch verschwindet er zeitweise, was den Schwierigkeitsgrad erhöht. Umgesetzt durch Überschreiben der `bounce()`-Methode in `ColoredBall`.
 
 Alle Textteile, Diagramme und Codeausschnitte sind im LaTeX-Hauptdokument `main.tex` zusammengeführt und über **Papeeria** (Online-LaTeX-Editor) kompiliert worden. Die entstehenden PDFs sind nicht im Repository enthalten, sondern nur die Quellen.
+
+---
+
+## ✨ FEATURES
+
+| Feature | Beschreibung |
+|---------|-------------|
+| 📋 Projekttagebuch | Detaillierter Projektverlauf mit Zeitaufwänden, Entscheidungen und Ergebnissen |
+| 🎨 UML-Diagramme | Konzept‑ und Implementierungsdiagramme für das Softwaredesign |
+| 🖼️ Storyboards | Visuelle Planung der Benutzeroberfläche und Spielinteraktion |
+| 🕹️ Pong‑Implementierung | Lauffähiges Pong‑Spiel mit farbigen Objekten |
+| ⌨️ Tastatursteuerung | Umstellung von Maus‑ auf Tastaturbedienung inkl. ESC‑Abbruch |
+| 🚀 Eigenes Feature | Selbstentwickelte Erweiterung (farbwechselnder Ball bei Kollision) |
+| 🔍 Reflexion | Kritische Betrachtung des gesamten Projektablaufs mit Pro/Contra |
+| 📄 LaTeX‑Satz | Professionelle Dokumentation mit eingebundenen Grafiken und Listings |
+| ☁️ Online-Editor | Erstellung und Kompilierung mit Papeeria (keine lokale Installation nötig) |
 
 ---
 
