@@ -143,13 +143,6 @@ cd LaTeX-Template
 
 ### 📝 LaTeX Kompilierung
 ```bash
-# Die Vorlagen selbst sind nicht direkt kompilierbar – sie werden in ein Hauptdokument eingebunden.
-# Typische Einbindung in main.tex eines Projekts:
-# \input{../LaTeX-Template/settings.tex}
-# \input{../LaTeX-Template/titlepage.tex}
-# \input{../LaTeX-Template/acronym.tex}
-# \bibliography{../LaTeX-Template/bibliography.bib}
-
 # LaTeX-Dokument kompilieren (mehrfach für Verzeichnisse & Referenzen)
 pdflatex main.tex && pdflatex main.tex
 # oder automatisch
