@@ -91,7 +91,7 @@ python aufgabe4.py
 ## 📁 STRUKTUR
 
 ```text
-B-INF01XX - Einführungsprojekt für Informatiker/
+B-INF01XX - Einfuehrungsprojekt für Informatiker/
 ├── 📁 img/
 │   ├── 🖼️ Aufgabe2Ergebnis.png
 │   ├── 🖼️ Aufgabe2Konzeptklassendiagramm.png
@@ -103,10 +103,6 @@ B-INF01XX - Einführungsprojekt für Informatiker/
 │   ├── 🖼️ Implementierungsklassendiagramm.png
 │   ├── 🖼️ Konzeptklassendiagramm.png
 │   └── 🖼️ StoryBoard.png
-├── 🐍 aufgabe2.py
-├── 🐍 aufgabe3.py
-├── 🐍 aufgabe4.py
-├── 🐍 spiel.py          # (muss vorhanden sein (für Python), wird nicht verändert)
 └── 📄 main.tex
 ```
 
@@ -115,10 +111,6 @@ B-INF01XX - Einführungsprojekt für Informatiker/
 B-INF01XX - Einführungsprojekt für Informatiker/
 ├── 📄 README.md          # Projektbeschreibung (diese Datei)
 ├── 📁 img/               # Bilder, Screenshots, Storyboards, Diagramme
-├── 🐍 aufgabe2.py        # Quellcode: farbige Pong-Variante
-├── 🐍 aufgabe3.py        # Quellcode: Tastatursteuerung + ESC
-├── 🐍 aufgabe4.py        # Quellcode: eigene Erweiterung (Farbwechsel)
-├── 🐍 spiel.py           # Projektinterne Spiel-Bibliothek (nicht verändern)
 └── 📄 main.tex           # LaTeX-Hauptdokument
 ```
 
