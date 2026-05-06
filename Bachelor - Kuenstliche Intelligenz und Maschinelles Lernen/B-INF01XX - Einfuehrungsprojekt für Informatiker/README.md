@@ -9,7 +9,7 @@
 
 ---
 
-## 📖 Inhaltsverzeichnis
+## 📖 INHALTSVERZEICHNIS
 
 - [📝 PROJEKTBESCHREIBUNG](#-projektbeschreibung)
 - [✨ FEATURES](#-features)
