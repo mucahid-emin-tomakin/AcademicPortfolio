@@ -111,17 +111,14 @@ B-INF01XX - Einführungsprojekt für Informatiker/
 
 ### 📁 Struktur-Legende
 ```text
-NEUES_PROJEKT/
-├── 📄 README.md          # Projektbeschreibung
-├── 📁 code/              # Quellcode
-├── 📁 img/               # Bilder
-├── 📁 tex/               # LaTeX Module datei
-├── 📁 literature/        # Literaturverzeichnis
-├── 📁 settings/          # Einstellungen
-├── 📄 main.tex           # LaTeX Hauptdatei
-├── 📄 acronym.tex        # Abkürzungsverzeichnis
-├── 📄 settings.tex       # Dokument Einstellungen
-└── 📄 bibliography.bib   # Literaturverzeichnis
+B-INF01XX - Einführungsprojekt für Informatiker/
+├── 📄 README.md          # Projektbeschreibung (diese Datei)
+├── 📁 img/               # Bilder, Screenshots, Storyboards, Diagramme
+├── 🐍 aufgabe2.py        # Quellcode: farbige Pong-Variante
+├── 🐍 aufgabe3.py        # Quellcode: Tastatursteuerung + ESC
+├── 🐍 aufgabe4.py        # Quellcode: eigene Erweiterung (Farbwechsel)
+├── 🐍 spiel.py           # Projektinterne Spiel-Bibliothek (nicht verändern)
+└── 📄 main.tex           # LaTeX-Hauptdokument
 ```
 
 ---
@@ -173,10 +170,12 @@ NEUES_PROJEKT/
 
 | Metrik | Wert | Trend |
 |--------|------|-------|
-| **Stars** | ![GitHub Stars]([https://img.shields.io/github/stars/mucahid-emin-tomakin/AcademicPortfolio](https://github.com/mucahid-emin-tomakin/AcademicPortfolio/tree/main/Bachelor%20-%20Kuenstliche%20Intelligenz%20und%20Maschinelles%20Lernen/B-INF01XX%20-%20Einfuehrungsprojekt%20f%C3%BCr%20Informatiker)) | 📈 |
-| **Forks** | ![GitHub Forks]([https://img.shields.io/github/forks/mucahid-emin-tomakin/AcademicPortfolio](https://github.com/mucahid-emin-tomakin/AcademicPortfolio/tree/main/Bachelor%20-%20Kuenstliche%20Intelligenz%20und%20Maschinelles%20Lernen/B-INF01XX%20-%20Einfuehrungsprojekt%20f%C3%BCr%20Informatiker)) | 🔄 |
-| **Issues** | ![GitHub Issues]([https://img.shields.io/github/issues/mucahid-emin-tomakin/AcademicPortfolio](https://github.com/mucahid-emin-tomakin/AcademicPortfolio/tree/main/Bachelor%20-%20Kuenstliche%20Intelligenz%20und%20Maschinelles%20Lernen/B-INF01XX%20-%20Einfuehrungsprojekt%20f%C3%BCr%20Informatiker)) | ✅ |
-| **Letztes Update** | ![GitHub Last Commit]([https://img.shields.io/github/last-commit/mucahid-emin-tomakin/AcademicPortfolio](https://github.com/mucahid-emin-tomakin/AcademicPortfolio/tree/main/Bachelor%20-%20Kuenstliche%20Intelligenz%20und%20Maschinelles%20Lernen/B-INF01XX%20-%20Einfuehrungsprojekt%20f%C3%BCr%20Informatiker)) | 🕐 |
+| Metrik | Wert | Trend |
+|--------|------|-------|
+| **Stars** | ![GitHub Stars](https://img.shields.io/github/stars/mucahid-emin-tomakin/AcademicPortfolio) | 📈 |
+| **Forks** | ![GitHub Forks](https://img.shields.io/github/forks/mucahid-emin-tomakin/AcademicPortfolio) | 🔄 |
+| **Issues** | ![GitHub Issues](https://img.shields.io/github/issues/mucahid-emin-tomakin/AcademicPortfolio) | ✅ |
+| **Letztes Update** | ![GitHub Last Commit](https://img.shields.io/github/last-commit/mucahid-emin-tomakin/AcademicPortfolio) | 🕐 |
 
 ---
 
