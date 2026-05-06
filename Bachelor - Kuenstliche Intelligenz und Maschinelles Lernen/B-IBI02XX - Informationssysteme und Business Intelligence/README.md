@@ -77,7 +77,7 @@ Die Arbeit ist in **LaTeX** gesetzt, umfasst 15 Seiten mit 31 wissenschaftlichen
 ## 📁 STRUKTUR
 
 ```text
-B-IBI02XX - Informationssysteme und Business Intelligence/
+📓 B-IBI02XX - Informationssysteme und Business Intelligence/
 ├── 📁 asset/
 │   └── 📁 image/
 │       ├── 🖼️ Data-Mining-Prozess.png
@@ -98,6 +98,7 @@ B-IBI02XX - Informationssysteme und Business Intelligence/
 │   ├── 📝 settings.tex
 │   └── 📝 titlepage.tex
 ├── 📄 main.tex
+│
 ├── 📁 Detailed/
 │   ├── 📁 asset/
 │   │   └── 📁 image/
@@ -118,7 +119,7 @@ B-IBI02XX - Informationssysteme und Business Intelligence/
 
 ### 📁 Struktur-Legende
 ```text
-B-IBI02XX - Informationssysteme und Business Intelligence/
+📓 B-IBI02XX - Informationssysteme und Business Intelligence/
 ├── 📄 README.md              # Projektbeschreibung (diese Datei)
 ├── 📁 asset/image/           # Abbildungen (Star-Schema, Data-Mining, ERP-Prozesse)
 │   ├── 🖼️ .png               # PNG Files
