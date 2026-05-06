@@ -11,9 +11,9 @@
 
 - [📝 PROJEKTBESCHREIBUNG](#-projektbeschreibung)
 - [✨ FEATURES](#-features)
-- [⚡ QUICK START](#-quick-start)
-- [📁 STRUKTUR](#-struktur)
 - [🚀 TOOL](#-tool)
+- [📁 STRUKTUR](#-struktur)
+- [⚡ QUICK START](#-quick-start)
 - [⚠️ WICHTIGE HINWEISE](#️-wichtige-hinweise)
 - [📝 LIZENZ](#-lizenz)
 - [👤 AUTOR](#-autor)
@@ -63,22 +63,14 @@ Die Arbeit ist in **LaTeX** gesetzt, umfasst 15 Seiten mit 31 wissenschaftlichen
 
 ---
 
-## ⚡ QUICK START
+## 🚀 TOOL
 
-```bash
-# Ins Projektverzeichnis wechseln
-cd "Bachelor - Kuenstliche Intelligenz und Maschinelles Lernen/B-IBI02XX - Informationssysteme und Business Intelligence"
-
-# LaTeX-Dokument kompilieren
-pdflatex main.tex && pdflatex main.tex
-# oder automatisch
-latexmk -pdf main.tex
-
-# Alternativ: Online mit Papeeria arbeiten
-# 1. Gehe auf https://m.papeeria.com
-# 2. Erstelle ein neues Projekt und importiere den gesamten Ordner als ZIP
-# 3. Papeeria kompiliert main.tex automatisch in der Cloud
-```
+| Bereich | Werkzeug |
+|---------|----------|
+| Dokumentation | LaTeX (erstellt mit Papeeria / lokalem TeXLive) |
+| Visualisierung | Eigene Darstellungen (erstellt mit [draw.io](https://app.diagrams.net/)) |
+| Literatur | 31 Quellen (Gronau, Gattnar, Goram, Apel u.a.) |
+| Versionskontrolle | Git & GitHub |
 
 ---
 
@@ -141,14 +133,30 @@ B-IBI02XX - Informationssysteme und Business Intelligence/
 
 ---
 
-## 🚀 TOOL
+## ⚡ QUICK START
 
-| Bereich | Werkzeug |
-|---------|----------|
-| Dokumentation | LaTeX (erstellt mit Papeeria / lokalem TeXLive) |
-| Visualisierung | Eigene Darstellungen (Star-Schema, ERP-Prozesse) |
-| Literatur | 31 Quellen (Gronau, Gattnar, Goram, Apel u.a.) |
-| Versionskontrolle | Git & GitHub |
+### 📦 Git & GitHub
+```bash
+# Repository klonen
+git clone https://github.com/mucahid-emin-tomakin/AcademicPortfolio.git
+cd AcademicPortfolio
+
+# Ins Projektverzeichnis wechseln
+cd "Bachelor - Kuenstliche Intelligenz und Maschinelles Lernen/B-IBI02XX - Informationssysteme und Business Intelligence"
+```
+
+### 📝 LaTeX Kompilierung
+```bash
+# LaTeX-Dokument kompilieren (mehrfach für Verzeichnisse & Referenzen)
+pdflatex main.tex && pdflatex main.tex
+# oder automatisch
+latexmk -pdf main.tex
+
+# Alternativ: Online mit Papeeria arbeiten
+# 1. Gehe auf https://m.papeeria.com
+# 2. Erstelle ein neues Projekt und importiere den gesamten Ordner als ZIP
+# 3. Papeeria kompiliert main.tex automatisch in der Cloud
+```
 
 ---
 
