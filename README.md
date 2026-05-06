@@ -41,6 +41,7 @@ Das Repository ist skalierbar aufgebaut und wird zukünftig um Master-Arbeiten u
 
 | Projekt | Inhalte & Schwerpunkte |
 |--------|------------------------|
+| **LaTeX-Template** | 📄 Zentrale Dokument-Vorlagen (Deckblatt, Abkürzungen, Einstellungen, BibTeX) |
 | **B-INF01XX – Einführungsprojekt** | 🕹️ Pong-Entwicklung (Python, UML, Projekttagebuch) |
 | **B-GOPB01XX – OOP-Grundlagen** | 🌳 Tree, 🔐 Cäsar-Chiffre, 📡 CDMA, 📈 Glatte Kurve (Python & Java) |
 | **B-IBI02XX – Informationssysteme & BI** | 🏭 ERP-Erfolgsfaktoren, ⭐ Star-Schema, ⛏️ Data Mining, 🧹 MDM, 📈 KPIs |
@@ -67,8 +68,9 @@ cd AcademicPortfolio
 AcademicPortfolio/
 ├── 🎓 Bachelor - Künstliche Intelligenz und Maschinelles Lernen/
 │   ├── 📁 B-INF01XX - Einführungsprojekt für Informatiker/
-│   └── 📁 B-GOPB01XX - Grundlagen der objektorientierten Programmierung/
+│   ├── 📁 B-GOPB01XX - Grundlagen der objektorientierten Programmierung/
 │   └── 📁 B-IBI02XX - Informationssysteme und Business Intelligence/
+├── 📁 LaTeX-Template/
 └── 📄 README.md
 ```
 
