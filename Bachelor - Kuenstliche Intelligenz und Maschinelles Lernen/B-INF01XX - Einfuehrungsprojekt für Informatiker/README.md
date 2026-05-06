@@ -11,9 +11,9 @@
 
 - [📝 PROJEKTBESCHREIBUNG](#-projektbeschreibung)
 - [✨ FEATURES](#-features)
-- [⚡ QUICK START](#-quick-start)
-- [📁 STRUKTUR](#-struktur)
 - [🚀 TOOL](#-tool)
+- [📁 STRUKTUR](#-struktur)
+- [⚡ QUICK START](#-quick-start)
 - [⚠️ WICHTIGE HINWEISE](#️-wichtige-hinweise)
 - [📝 LIZENZ](#-lizenz)
 - [👤 AUTOR](#-autor)
@@ -64,27 +64,15 @@ Alle Textteile, Diagramme und Codeausschnitte sind im LaTeX-Hauptdokument `main.
 
 ---
 
-## ⚡ QUICK START
+## 🚀 TOOL
 
-```bash
-# Ins Projektverzeichnis wechseln
-cd "Bachelor - Kuenstliche Intelligenz und Maschinelles Lernen/B-INF01XX - Einfuehrungsprojekt für Informatiker"
-
-# LaTeX lokal kompilieren (falls texlive installiert ist)
-pdflatex main.tex && pdflatex main.tex
-# oder automatisch
-latexmk -pdf main.tex
-
-# Alternativ: Online mit Papeeria arbeiten
-# 1. Gehe auf https://m.papeeria.com
-# 2. Erstelle ein neues Projekt und importiere den gesamten Ordner als ZIP
-# 3. Papeeria kompiliert main.tex automatisch in der Cloud
-
-# Python‑Spiele starten (benötigt pygame und die mitgelieferte spiel.py)
-python aufgabe2.py
-python aufgabe3.py
-python aufgabe4.py
-```
+| Bereich | Werkzeug |
+|---------|----------|
+| Dokumentation | LaTeX (erstellt mit Papeeria / lokalem TeXLive) |
+| Programmierung | Python 3, pygame, spiel.py (projektinterne Bibliothek) |
+| Modellierung | UML (Klassendiagramme, erstellt mit [draw.io](https://app.diagrams.net/)) |
+| Versionskontrolle | Git & GitHub |
+| Betriebssystem (Ziel) | Oracle VM Linux (Debian) |
 
 ---
 
@@ -116,15 +104,44 @@ B-INF01XX - Einführungsprojekt für Informatiker/
 
 ---
 
-## 🚀 TOOL
+## ⚡ QUICK START
 
-| Bereich | Werkzeug |
-|---------|----------|
-| Dokumentation | LaTeX (erstellt mit Papeeria) |
-| Programmierung | Python 3, pygame, spiel.py (projektinterne Bibliothek) |
-| Modellierung | UML (Klassendiagramme) |
-| Versionskontrolle | Git & GitHub |
-| Betriebssystem (Ziel) | Linux (Raspberry Pi) |
+### 📦 Git & GitHub
+```bash
+# Repository klonen
+git clone https://github.com/mucahid-emin-tomakin/AcademicPortfolio.git
+cd AcademicPortfolio
+
+# Ins Projektverzeichnis wechseln
+cd "Bachelor - Kuenstliche Intelligenz und Maschinelles Lernen/B-INF01XX - Einfuehrungsprojekt für Informatiker"
+```
+
+### 📝 LaTeX Kompilierung
+```bash
+# LaTeX-Dokument kompilieren (mehrfach für Verzeichnisse & Referenzen)
+pdflatex main.tex && pdflatex main.tex
+# oder automatisch
+latexmk -pdf main.tex
+
+# Alternativ: Online mit Papeeria arbeiten
+# 1. Gehe auf https://m.papeeria.com
+# 2. Erstelle ein neues Projekt und importiere den gesamten Ordner als ZIP
+# 3. Papeeria kompiliert main.tex automatisch in der Cloud
+```
+
+### 🐍 Python virtueller Umgebung
+```bash
+# Python‑Spiele starten (benötigt pygame und die mitgelieferte spiel.py)
+python aufgabe2.py
+python aufgabe3.py
+python aufgabe4.py
+
+# Mit virtueller Umgebung
+python -m venv venv
+source venv/bin/activate  # Linux/Mac
+venv\Scripts\activate     # Windows
+pip install -r requirements.txt
+```
 
 ---
 
