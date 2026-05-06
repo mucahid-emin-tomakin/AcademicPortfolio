@@ -169,8 +169,6 @@ B-INF01XX - Einführungsprojekt für Informatiker/
 
 | Metrik | Wert | Trend |
 |--------|------|-------|
-| Metrik | Wert | Trend |
-|--------|------|-------|
 | **Stars** | ![GitHub Stars](https://img.shields.io/github/stars/mucahid-emin-tomakin/AcademicPortfolio) | 📈 |
 | **Forks** | ![GitHub Forks](https://img.shields.io/github/forks/mucahid-emin-tomakin/AcademicPortfolio) | 🔄 |
 | **Issues** | ![GitHub Issues](https://img.shields.io/github/issues/mucahid-emin-tomakin/AcademicPortfolio) | ✅ |
