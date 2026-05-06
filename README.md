@@ -15,9 +15,9 @@
 
 - [📝 PROJEKTBESCHREIBUNG](#-projektbeschreibung)
 - [✨ FEATURES](#-features)
-- [⚡ QUICK START](#-quick-start)
-- [📁 STRUKTUR](#-struktur)
 - [🚀 TOOL](#-tool)
+- [📁 STRUKTUR](#-struktur)
+- [⚡ QUICK START](#-quick-start)
 - [⚠️ WICHTIGE HINWEISE](#️-wichtige-hinweise)
 - [📝 LIZENZ](#-lizenz)
 - [👤 AUTOR](#-autor)
@@ -49,23 +49,14 @@ Das Repository ist skalierbar aufgebaut und wird zukünftig um Master-Arbeiten u
 
 ---
 
-## ⚡ QUICK START
+## 🚀 TOOL
 
+### 📦 Git & GitHub
 ```bash
-# 1. Repository klonen
+# Repository klonen
 git clone https://github.com/mucahid-emin-tomakin/AcademicPortfolio.git
 cd AcademicPortfolio
-
-# 2. In den Bachelor-Bereich wechseln
-cd "Bachelor - Kuenstliche Intelligenz und Maschinelles Lernen"
-
-# 3. Beliebiges Projekt ansteuern, z.B.:
-cd "B-INF01XX - Einfuehrungsprojekt für Informatiker"
-cat README.md          # Projektdetails anzeigen
-pdflatex main.tex      # Dokumentation kompilieren
-python aufgabe2.py     # Spiel starten (falls pygame installiert)
 ```
-Detaillierte Befehle für die anderen Projekte findest du im jeweiligen Projekt-README.
 
 ---
 
@@ -91,60 +82,23 @@ Die kompletten Verzeichnisbäume (Quellcode, Grafiken, LaTeX-Module) sind in den
 
 ---
 
-## 🚀 TOOL
+## ⚡ QUICK START
 
-### 📦 Git & GitHub
 ```bash
-# Repository klonen
+# 1. Repository klonen
 git clone https://github.com/mucahid-emin-tomakin/AcademicPortfolio.git
 cd AcademicPortfolio
 
-# Neues Projekt hinzufügen
-git add "Bachelor - Kuenstliche Intelligenz und Maschinelles Lernen/NEUES_PROJEKT/"
-git commit -m "[Bachelor] Add: PROJEKTNAME - Beschreibung"
-git push
+# 2. In den Bachelor-Bereich wechseln
+cd "Bachelor - Kuenstliche Intelligenz und Maschinelles Lernen"
+
+# 3. Beliebiges Projekt ansteuern, z.B.:
+cd "B-INF01XX - Einfuehrungsprojekt für Informatiker"
+cat README.md          # Projektdetails anzeigen
+pdflatex main.tex      # Dokumentation kompilieren
+python aufgabe2.py     # Spiel starten (falls pygame installiert)
 ```
-
-### 📝 LaTeX Kompilierung
-```bash
-# LaTeX Dokument kompilieren
-pdflatex main.tex
-bibtex main
-pdflatex main.tex
-pdflatex main.tex
-
-# Oder mit latexmk (automatisch)
-latexmk -pdf main.tex
-```
-
-### 🐍 Python Ausführung
-```bash
-# Python Skripte ausführen
-python code/CaesarCipher-1-a.py
-
-# Mit virtueller Umgebung
-python -m venv venv
-source venv/bin/activate  # Linux/Mac
-venv\Scripts\activate     # Windows
-pip install -r requirements.txt
-```
-
----
-
-## ⚙️ KONFIGURATION
-
-### 🔧 Git Konfiguration
-```bash
-# Sichere Änderungen (verhindert Löschungen)
-git add --ignore-removal .
-
-# Projektspezifische Commits
-git commit -m "[Bachelor] Add: B-INF01XX - Einführungsprojekt"
-
-# Strukturierte Commit-Nachrichten
-git commit -m "[Typ] Aktion: Projekt - Beschreibung"
-# Typen: [Bachelor], [Master], [Update], [Fix], [Docs]
-```
+Detaillierte Befehle für die anderen Projekte findest du im jeweiligen Projekt-README.
 
 ---
 
