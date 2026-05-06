@@ -13,6 +13,7 @@
 
 ## 📖 Inhaltsverzeichnis
 
+- [📝 PROJEKTBESCHREIBUNG](#-projektbeschreibung)
 - [✨ FEATURES](#-features)
 - [⚡ QUICK START](#-quick-start)
 - [📁 STRUKTUR](#-struktur)
@@ -21,6 +22,16 @@
 - [📝 LIZENZ](#-lizenz)
 - [👤 AUTOR](#-autor)
 - [📊 REPOSITORY STATISTIK](#-repository-statistik)
+
+---
+
+## 📝 PROJEKTBESCHREIBUNG
+
+Das **AcademicPortfolio** ist mein persönliches Archiv aller akademischen Arbeiten aus dem Bachelorstudium **Künstliche Intelligenz und Maschinelles Lernen**. Es sammelt Projekt- und Einsendeaufgaben, die im Laufe des Studiums entstanden sind, und dokumentiert sie einheitlich mit eigenständigen READMEs, LaTeX-Dokumentationen und vollständigem Quellcode.
+
+Der Schwerpunkt liegt auf der praktischen Anwendung von **Python** und **Java** in den Bereichen Softwareentwicklung, objektorientierte Programmierung und betriebliche Informationssysteme. Jedes Projekt beleuchtet typische Arbeitsabläufe – von der Anforderungsanalyse über UML-Modellierung bis zur Implementierung und Reflexion. Ergänzt werden die technischen Inhalte durch Themen wie Data Mining, ERP-Systeme und Business Intelligence.
+
+Das Repository ist skalierbar aufgebaut und wird zukünftig um Master-Arbeiten und eigene Forschungsprojekte erweitert. Es dient zugleich als Lernressource, um meinen Studienverlauf nachvollziehbar zu machen, und als Nachweis für praktische Erfahrung im Umgang mit Git, LaTeX und wissenschaftlichem Arbeiten.
 
 ---
 
