@@ -37,6 +37,8 @@ Das Repository ist skalierbar aufgebaut und wird zukünftig um Master-Arbeiten u
 
 ## ✨ FEATURES
 
+### 🎓 Akademisch & Organisiert
+
 | Projekt | Inhalte & Schwerpunkte |
 |--------|------------------------|
 | **B-INF01XX – Einführungsprojekt** | 🕹️ Pong-Entwicklung (Python, UML, Projekttagebuch) |
@@ -44,45 +46,6 @@ Das Repository ist skalierbar aufgebaut und wird zukünftig um Master-Arbeiten u
 | **B-IBI02XX – Informationssysteme & BI** | 🏭 ERP-Erfolgsfaktoren, ⭐ Star-Schema, ⛏️ Data Mining, 🧹 MDM, 📈 KPIs |
 
 *Jedes Projekt besitzt ein eigenes README mit Details, Quick-Start und Struktur.*
-
-### 🎓 Akademisch & Organisiert
-
-| Feature | Beschreibung | Status |
-|---------|-------------|--------|
-| 📚 Bachelor KI/ML | Sammlung aller Bachelor-Arbeiten | ✅ |
-| 🏛️ Strukturierte Ablage | Klare Ordnerhierarchie | ✅ |
-| 🔍 Vollständige Projekte | Code + Dokumentation + Assets | ✅ |
-| 🎯 Fokus KI & ML | Spezialisierung auf Künstliche Intelligenz | ✅ |
-| 📄 LaTeX Dokumente | Professionelle akademische Formatierung | ✅ |
-
-### 💻 Technologien & Sprachen
-
-| Technologie | Verwendung |
-|------------|-----------|
-| Python 🐍 | Machine Learning, Data Science |
-| Java ☕ | Objektorientierte Programmierung |
-| LaTeX 📝 | Wissenschaftliche Arbeiten |
-| Git 🔧 | Versionskontrolle & Kollaboration |
-| Markdown 📘 | Dokumentation & READMEs |
-
-### 📊 Projekt-Typen
-
-| Typ | Beispiele | Status |
-|-----|----------|--------|
-| 🎓 Abschlussarbeiten | Bachelor Thesis | ✅ |
-| 📝 Seminararbeiten | Einführungsprojekte | ✅ |
-| 💻 Programmierprojekte | OOP Grundlagen | ✅ |
-| 📚 Kursarbeiten | Übungsaufgaben | ✅ |
-
-### 💡 Technologien & Methoden
-
-| Bereich | Konkret |
-|--------|---------|
-| Programmierung | Python 3, Java (inkl. Swing) |
-| Dokumentation | LaTeX (Online-Editor Papeeria, lokal TeXLive) |
-| Modellierung | UML-Klassen- & Implementierungsdiagramme, Star-Schema, MDM-Konzepte |
-| Analyse | Data Mining (Text, Sentiment), Chi-Quadrat-Test, Prozesskennzahlen |
-| Versionskontrolle | Git & GitHub |
 
 ---
 
