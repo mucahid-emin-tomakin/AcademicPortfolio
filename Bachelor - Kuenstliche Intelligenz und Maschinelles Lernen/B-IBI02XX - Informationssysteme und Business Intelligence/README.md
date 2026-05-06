@@ -1,8 +1,10 @@
 # 📊 B-IBI02XX – Informationssysteme und Business Intelligence
 
+![GitHub](https://img.shields.io/badge/GitHub-181717?logo=github&logoColor=white)
 ![LaTeX](https://img.shields.io/badge/LaTeX-008080?logo=latex&logoColor=white)
 ![ERP](https://img.shields.io/badge/ERP-Systeme-blue)
 ![BI](https://img.shields.io/badge/Business_Intelligence-FF6B6B?logo=openai&logoColor=white)
+![License](https://img.shields.io/badge/License-MIT-blue)
 ![Status](https://img.shields.io/badge/Status-Abgeschlossen-brightgreen)
 
 ---
