@@ -72,7 +72,7 @@ Beide Varianten sind identisch aufgebaut und enthalten neben der Hauptdatei `mai
 ## 📁 STRUKTUR
 
 ```text
-LaTeX-Template/
+📓 LaTeX-Template/
 ├── 📁 Documented/                    # Ausführlich kommentierte Lernvorlage
 │   ├── 📄 main.tex                    # Hauptdatei
 │   ├── 📁 chapter/
@@ -106,7 +106,7 @@ LaTeX-Template/
 
 ### 📁 Struktur-Legende
 ```text
-LaTeX-Template/
+📓 LaTeX-Template/
 ├── 📁 Documented/                     # Ausführlich kommentierte Lernvorlage
 │   ├── 📄 main.tex                    # Hauptdatei – Einstiegspunkt, bindet config und chapter ein
 │   ├── 📁 chapter/                    # Inhaltskapitel
