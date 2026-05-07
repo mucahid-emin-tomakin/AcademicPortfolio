@@ -52,12 +52,7 @@ Das Repository ist skalierbar aufgebaut und wird zukünftig um Master-Arbeiten u
 
 ## 🚀 TOOL
 
-### 📦 Git & GitHub
-```bash
-# Repository klonen
-git clone https://github.com/mucahid-emin-tomakin/AcademicPortfolio.git
-cd AcademicPortfolio
-```
+
 
 ---
 
@@ -86,8 +81,9 @@ Die kompletten Verzeichnisbäume (Quellcode, Grafiken, LaTeX-Module) sind in den
 
 ## ⚡ QUICK START
 
+### 📦 Git & GitHub
 ```bash
-# 1. Repository klonen
+# Repository klonen
 git clone https://github.com/mucahid-emin-tomakin/AcademicPortfolio.git
 cd AcademicPortfolio
 
