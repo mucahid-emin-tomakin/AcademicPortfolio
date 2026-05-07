@@ -52,7 +52,14 @@ Das Repository ist skalierbar aufgebaut und wird zukünftig um Master-Arbeiten u
 
 ## 🚀 TOOL
 
-
+| Kategorie | Werkzeuge & Technologien |
+|-----------|--------------------------|
+| 📝 Dokumentation | LaTeX (Papeeria & lokal), Markdown |
+| 🐍 Programmierung | Python 3 (pygame, pandas, Standardbibliothek) |
+| ☕ Programmierung | Java (Swing, objektorientierte Konzepte) |
+| 🎨 Modellierung & Analyse | UML (Klassendiagramme), Star-Schema, Data Mining, MDM |
+| 🔧 Versionskontrolle | Git & GitHub |
+| 💻 Betriebssysteme | Linux (Raspberry Pi), plattformunabhängig |
 
 ---
 
