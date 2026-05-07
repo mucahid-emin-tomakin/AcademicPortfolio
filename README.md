@@ -46,7 +46,7 @@ Das Repository ist skalierbar aufgebaut und wird zukünftig um Master-Arbeiten u
 | **B-GOPB01XX – OOP-Grundlagen** | 🌳 Tree, 🔐 Cäsar-Chiffre, 📡 CDMA, 📈 Glatte Kurve (Python & Java) |
 | **B-IBI02XX – Informationssysteme & BI** | 🏭 ERP-Erfolgsfaktoren, ⭐ Star-Schema, ⛏️ Data Mining, 🧹 MDM, 📈 KPIs |
 
-*Jedes Projekt besitzt ein eigenes README mit Details, Quick-Start und Struktur.*
+*Jedes fertige Projekt besitzt ein eigenes `README.md` mit Quick-Start und Konfiguration.*
 
 ---
 
