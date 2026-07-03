@@ -1,0 +1,290 @@
+% ==============================================================================
+% ================================== SETTINGS ==================================
+% ==============================================================================
+
+% ================================== PAGE LAYOUT =================================
+
+\usepackage[
+    a4paper,
+    left=3cm,
+    right=3cm,
+    bottom=2.5cm,
+    top=2.5cm
+]{geometry}
+
+% ================================== PAGE LAYOUT ==================================
+% ================================== METADATA ==================================
+
+\newcommand{\workTitle}{Dokumentation}
+\newcommand{\subTitle}{B-PWAA01XX-XX4-N01}
+\newcommand{\specialization}{Projektmanagement und wissenschaftliches Arbeiten}
+\newcommand{\studentFirstName}{Mücahid Emin}
+\newcommand{\studentLastName}{Tomakin}
+\newcommand{\studentId}{30042741}
+
+\newcommand{\advisorPreTitle}{Title before}
+\newcommand{\advisorFirstName}{First Name}
+\newcommand{\advisorLastName}{Last Name}
+\newcommand{\advisorPosTitle}{Title after}
+
+\newcommand{\assessorPreTitle}{Title before}
+\newcommand{\assessorFirstName}{First Name}
+\newcommand{\assessorLastName}{Last Name}
+\newcommand{\assessorPosTitle}{Title after}
+
+\newcommand{\dateDay}{\the\day}
+\newcommand{\dateMonth}{\the\month}
+\newcommand{\dateYear}{\the\year}
+
+% ================================== METADATA ==================================
+% ================================== PACKAGES ==================================
+
+\usepackage[onehalfspacing]{setspace}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[ngerman]{babel}
+\usepackage{parskip}
+\usepackage{enumitem}
+
+\usepackage{lmodern}
+\usepackage{helvet}
+
+\usepackage{amsmath}
+\usepackage{amssymb}
+
+\usepackage{longtable}
+\usepackage{multirow}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{seqsplit}
+
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{subcaption}
+\usepackage[dvipsnames]{xcolor}
+\graphicspath{{./assets/images/}}
+
+\usepackage{listings}
+\usepackage{lstautogobble}
+    
+\usepackage{url}
+\usepackage{hyperref}
+
+\usepackage[normalem]{ulem}
+
+% ================================== PACKAGES ==================================
+% ================================== FONT & HEADING SIZES ==================================
+
+% ================================== CHAPTER ==================================
+
+\RedeclareSectionCommand[
+    beforeskip=-1.5ex,
+    afterskip=2ex
+]{chapter}
+
+% ================================== CHAPTER ==================================
+% ================================== SECTION ==================================
+
+\setkomafont{section}{\normalfont\large\bfseries}
+\setcounter{secnumdepth}{0}
+
+% ================================== SECTION ==================================
+% ================================== LIST NAMES ==================================
+
+\renewcommand{\contentsname}{Table of Contents}
+\renewcommand{\listtablename}{List of Tables}
+\renewcommand{\listfigurename}{List of Figures}
+\providecommand{\lstlistoflistingsname}{List of Listings}
+\renewcommand{\lstlistingname}{Listing}
+\makeatletter
+\renewcommand*{\lstlistlistingname}{List of Listings}
+\makeatother
+
+% ================================== LIST NAMES ==================================
+% ================================== ACRONYM SETTINGS ==================================
+
+\usepackage[printonlyused]{acronym}
+\newcommand{\aclink}[1]{
+    \hyperlink{acr:#1}{\ac{#1}}
+}
+
+% ================================== ACRONYM SETTINGS ==================================
+% ================================== BIBLIOGRAPHY SETTINGS ==================================
+
+\usepackage[
+    backend=biber,
+    style=numeric,
+    sorting=none,
+    defernumbers=true,
+]{biblatex}
+\addbibresource{config/bibliography.bib}
+
+\DeclareNameAlias{author}{family-given}
+\DeclareNameAlias{editor}{family-given}
+
+\DeclareFieldFormat{volume}{\acs{Bd.}~#1}
+\DeclareFieldFormat{eid}{\acs{Art.-Nr.}~#1}
+\DeclareFieldFormat[manual]{pages}{\acs{S.}~#1}
+\DeclareFieldFormat[manual]{edition}{#1.~\acs{ed.}}
+\DeclareFieldFormat{doi}{\acs{DOI}:~#1}
+
+\DeclareSourcemap{
+  \maps[datatype=bibtex]{
+    \map{
+      \step[fieldsource=article-number, fieldtarget=eid]
+    }
+    \map{
+      \step[fieldsource=publisher, fieldtarget=usera]
+      \step[fieldsource=address, fieldtarget=userb]
+      \step[fieldsource=location, fieldtarget=userb]
+      \step[fieldsource=institution, fieldtarget=userc]
+    }
+  }
+}
+
+\DeclareBibliographyDriver{manual}{%
+  \printnames{author}%
+  \addspace
+  (\printfield{year})%
+  \addperiod\addspace
+  \printfield{title}%
+  \iffieldundef{journaltitle}{}{%
+    \addperiod\addspace
+    \printtext{In:}%
+    \addspace
+    \printfield{journaltitle}%
+  }%
+  \iffieldundef{volume}{}{%
+    \printtext{,\space}%
+    \printfield{volume}%
+    \printfield[parens]{number}%
+  }%
+  \iffieldundef{eid}{}{%
+    \printtext{,\space}%
+    \printfield{eid}%
+  }%
+  \iffieldundef{pages}{}{%
+    \printtext{,\space}%
+    \printfield[manual]{pages}%
+  }%
+  \iffieldundef{doi}{}{%
+    \printtext{,\space}%
+    \printfield{doi}%
+  }%
+  \iffieldundef{edition}{}{%
+    \addperiod\addspace
+    \printfield{edition}%
+  }%
+  \iffieldundef{usera}{}{%
+    \printtext{,\space}%
+    \printfield{usera}%
+  }%
+  \iffieldundef{userb}{}{%
+    \printtext{,\space}%
+    \printfield{userb}%
+  }%
+  \iffieldundef{userc}{}{%
+    \addperiod\addspace
+    \printfield{userc}%
+  }%
+  \iffieldundef{note}{}{%
+    \printtext{,\space}%
+    \printfield{note}%
+  }%
+  \finentry
+}%
+
+% ================================== BIBLIOGRAPHY SETTINGS ==================================
+% ================================== CODE LISTING AND SYNTAX SETTINGS ==================================
+
+\definecolor{codegray}{gray}{0.9}
+\definecolor{codeblue}{RGB}{0, 84, 150}
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codered}{rgb}{0.6,0,0}
+\definecolor{primary}{RGB}{0, 84, 150}
+\definecolor{secondary}{RGB}{0, 84, 150}
+
+\lstset{
+    basicstyle=\ttfamily\footnotesize,
+    frame=single,
+    framesep=5pt,
+    framerule=1pt,
+    rulecolor=\color{codegray},
+    backgroundcolor=\color{white!95!black},
+    breaklines=true,
+    showstringspaces=false,
+    tabsize=4,
+    numbers=left,
+    numberstyle=\tiny\color{gray},
+    numbersep=11pt,
+    captionpos=b,
+    abovecaptionskip=11pt,
+    belowcaptionskip=11pt,
+    inputencoding=utf8,
+    literate=
+    {ä}{{\"a}}1 {ö}{{\"o}}1 {ü}{{\"u}}1
+    {Ä}{{\"A}}1 {Ö}{{\"O}}1 {Ü}{{\"U}}1
+    {ß}{{\ss}}1
+}
+
+\lstdefinestyle{python}{
+    language=Python,
+    keywordstyle=\color{codeblue}\bfseries,
+    commentstyle=\color{codegreen}\itshape,
+    stringstyle=\color{codered}
+}
+
+\usepackage{framed}
+\newenvironment{codeblock}{
+    \begin{minipage}{\linewidth}
+}{
+    \end{minipage}
+}
+
+% ================================== CODE LISTING SETTINGS ==================================
+% ================================== TEXT LAYOUT ==================================
+
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0.5em}
+
+% ================================== TEXT LAYOUT ==================================
+% ================================== HEADER & FOOTER ==================================
+
+\usepackage{fancyhdr}
+\usepackage{lastpage}
+
+\pagestyle{fancy}
+\fancyhf{}
+
+\fancyhead[L]{\subTitle}
+\fancyhead[R]{\studentId}
+
+\fancyfoot[C]{\thepage}
+
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\footrulewidth}{0.4pt}
+
+\fancypagestyle{plain}{
+    \fancyhf{}
+    \fancyfoot[C]{\thepage}
+    \renewcommand{\headrulewidth}{0pt}
+    \renewcommand{\footrulewidth}{0.4pt}
+}
+
+% ================================== HEADER & FOOTER ==================================
+% ================================== HYPERREF SETTINGS ==================================
+
+\hypersetup{
+    pdftitle={\subTitle},
+    pdfauthor={\studentFirstName\ \studentLastName},
+    colorlinks=true,
+    linkcolor=black,
+    urlcolor=blue,
+    citecolor=blue,
+    filecolor=magenta,
+    allcolors=black,
+}
+
+% ==============================================================================
+% ================================== SETTINGS ==================================
+% ==============================================================================
