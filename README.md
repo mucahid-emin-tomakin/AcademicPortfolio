@@ -45,6 +45,7 @@ Das Repository ist skalierbar aufgebaut und wird zukünftig um Master-Arbeiten u
 | **B-INF01XX – Einführungsprojekt** | 🕹️ Pong-Entwicklung (Python, UML, Projekttagebuch) |
 | **B-GOPB01XX – OOP-Grundlagen** | 🌳 Tree, 🔐 Cäsar-Chiffre, 📡 CDMA, 📈 Glatte Kurve (Python & Java) |
 | **B-IBI02XX – Informationssysteme & BI** | 🏭 ERP-Erfolgsfaktoren, ⭐ Star-Schema, ⛏️ Data Mining, 🧹 MDM, 📈 KPIs |
+| **B-PWAA01XX – Projektmanagement & wiss. Arbeiten** | 📊 Vergleich klassischer vs. agiler Rollen (Projektleiter vs. Scrum Master), Hypothesenprüfung, Methodik (quantitativ/qualitativ/Review), LaTeX‑Dokumentation |
 
 *Jedes fertige Projekt besitzt ein eigenes `README.md` mit Quick-Start und Konfiguration.*
 
@@ -69,9 +70,10 @@ Das Repository ist skalierbar aufgebaut und wird zukünftig um Master-Arbeiten u
 ```text
 📚 AcademicPortfolio/
 ├── 🎓 Bachelor - Künstliche Intelligenz und Maschinelles Lernen/
-│   ├── 📁 B-INF01XX - Einführungsprojekt für Informatiker/
 │   ├── 📁 B-GOPB01XX - Grundlagen der objektorientierten Programmierung/
-│   └── 📁 B-IBI02XX - Informationssysteme und Business Intelligence/
+│   ├── 📁 B-IBI02XX - Informationssysteme und Business Intelligence/
+│   ├── 📁 B-INF01XX - Einfuehrungsprojekt für Informatiker/
+│   └── 📁 B-PWAA01XX - Projektmanagement und wissenschaftliches Arbeiten/
 ├── 📁 LaTeX-Template/
 └── 📄 README.md
 ```
