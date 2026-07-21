@@ -1,0 +1,41 @@
+% ==============================================================================
+% ================================ Zusammenfassung ==============================
+% ==============================================================================
+
+\chapter{Zusammenfassung und Reflexion}
+\label{chap:zusammenfassung}
+\thispagestyle{fancy}
+
+Die vorliegende Arbeit hat die drei Einsendeaufgaben der Module BID02 (\textit{Explorative Datenanalyse}), BID03 (\textit{Machine Learning}) und BID04 (\textit{Big Data Architektur}) bearbeitet. Ziel war die praktische Umsetzung der Studieninhalte in einem reproduzierbaren Analyse-Workflow. Im Folgenden werden die methodischen und technischen Erkenntnisse reflektiert.
+
+\section{Methodische Erkenntnisse}
+
+Die Bearbeitung der Aufgaben hat gezeigt, dass die explorative Datenanalyse keine reine Vorbereitungsphase ist, sondern bereits zentrale Einsichten liefert. Die Visualisierungen in Aufgabe 1 haben nicht nur die Datenstruktur offengelegt, sondern auch die spätere Modellierung in Aufgabe 2 und 3 beeinflusst. Insbesondere die Identifikation von Ausreißern, fehlenden Werten und Korrelationsstrukturen erwies sich als entscheidend für die Wahl geeigneter Verfahren.
+
+Die Gegenüberstellung von linearer Regression und Entscheidungsbaum (\textit{Aufgabe 2}) verdeutlichte den Trade-off zwischen Interpretierbarkeit und Flexibilität. Während die lineare Regression eine klare, aber lineare Beziehung modelliert, erfasst der Entscheidungsbaum nichtlineare Zusammenhänge – mit erhöhter Overfitting-Gefahr bei großer Tiefe. Die manuelle Iteration der maximalen Baumtiefe in Aufgabe 2g stellte eine erste, grundlegende Form der Hyperparameter-Optimierung dar. Für zukünftige Arbeiten könnte dieser Ansatz durch automatisierte Verfahren wie \texttt{GridSearchCV} mit Cross-Validierung erweitert werden, um eine systematischere und effizientere Parameteroptimierung zu ermöglichen.
+
+Die Clusteranalyse (\textit{Aufgabe 3}) zeigte, dass die Elbow-Methode ein praktikables, aber nicht immer eindeutiges Verfahren zur Bestimmung der Cluster-Anzahl ist. Die Skalierung der Daten mit \texttt{StandardScaler} verbesserte die Erkennbarkeit des Elbows und erhöhte die Robustheit des Ergebnisses – ein Hinweis darauf, dass Datenvorverarbeitung für distanzbasierte Verfahren unerlässlich ist.
+
+\section{Technische Erkenntnisse}
+
+Die Arbeit mit \texttt{conda-forge} und \texttt{Miniforge} erwies sich als zuverlässige Basis für reproduzierbare Data-Science-Projekte. Die Isolation der Umgebungen verhinderte Konflikte zwischen Paketversionen und erleichterte die Nachvollziehbarkeit der Analyse. Die Integration von Jupyter Notebooks für die interaktive Entwicklung und \LaTeX{} für die Dokumentation ermöglichte einen effizienten Workflow.
+
+Die Herausforderungen bei der Visualisierung großer Datensätze (\textit{Pairplot mit 20.640 Datenpunkten in Aufgabe 2d}) zeigten, dass für explorative Zwecke eine zufällige Stichprobe eine praktikable Alternative darstellt. Um die Übersichtlichkeit zu wahren und die Rechenzeit zu reduzieren, wurde bewusst eine Stichprobe von 1.000 Datenpunkten verwendet. Dies ermöglichte eine klare Darstellung der Zusammenhänge, ohne dass die Ladezeiten unverhältnismäßig anstiegen. Dieser pragmatische Ansatz ist ein wichtiger Hinweis für zukünftige Arbeiten mit großen Datenmengen.
+
+\section{Wissenschaftliche und technische Qualität}
+
+Die Arbeit folgt dem in BID02 beschriebenen Epizyklus der Datenanalyse: Jede Aufgabe wurde mit einer klaren Fragestellung begonnen, die Daten wurden explorativ untersucht, Modelle erstellt und die Ergebnisse interpretiert. Die Dokumentation erfolgte nachvollziehbar in Code und Text.
+
+Die Reproduzierbarkeit der Analyse wurde durch die Verwendung von Conda-Umgebungen und die Dokumentation aller Schritte sichergestellt. Die Wahl von \texttt{conda-forge} als Paketquelle gewährleistet die langfristige Verfügbarkeit der verwendeten Bibliotheken.
+
+\section{Persönliche Reflexion}
+
+Die Arbeit hat gezeigt, dass die Kombination aus explorativer Datenanalyse, geeigneter Modellwahl und kritischer Ergebnisinterpretation der Schlüssel zu erfolgreichen Data-Science-Projekten ist. Die in den Studienheften vermittelten Konzepte haben sich als praxistauglich erwiesen.
+
+Besonders wertvoll war die Erkenntnis, dass die explorative Datenanalyse nicht nur Vorbereitung, sondern ein eigenständiger Erkenntnisgewinn ist. Die Visualisierungen und deskriptiven Statistiken lieferten bereits Hinweise auf die spätere Modellierung und halfen, Fehlinterpretationen zu vermeiden.
+
+Für zukünftige Arbeiten könnte der Einsatz automatisierter Hyperparameter-\\Optimierungsverfahren (\textit{\acs{z. B.} \texttt{GridSearchCV}}) vertieft werden. Die Berücksichtigung räumlicher Abhängigkeiten in Regressionsmodellen (\textit{Aufgabe 2h}) ist ein weiterer Ansatzpunkt für weiterführende Analysen.
+
+% ==============================================================================
+% ================================ Zusammenfassung ==============================
+% ==============================================================================

@@ -1,0 +1,16 @@
+# Summenstatistik des Datensatzes
+print("Summenstatistik von wine.data:")
+print(wine.data.describe())
+
+# Standardabweichungen berechnen
+std_devs = wine.data.std()
+
+# Variable mit der größten Standardabweichung
+max_std_var = std_devs.idxmax()
+max_std_value = std_devs.max()
+
+print(f"\nDie Variable mit der größten Standardabweichung ist: {max_std_var} ({max_std_value:.2f})")
+
+# Optional: Alle Standardabweichungen anzeigen
+print("\nStandardabweichungen aller Variablen (absteigend sortiert):")
+print(std_devs.sort_values(ascending=False))

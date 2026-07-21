@@ -1,0 +1,35 @@
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+# Korrelationsmatrix berechnen
+corr_matrix = wine.data.corr()
+
+# Korrelationsplot erstellen
+plt.figure(figsize=(12, 10))
+sns.heatmap(
+    corr_matrix,
+    annot=True,           # Werte in den Zellen anzeigen
+    cmap='coolwarm',      # Farbpalette: blau-weiß-rot
+    vmin=-1, vmax=1,      # Wertebereich -1 bis 1
+    square=True,          # Quadratische Zellen
+    fmt='.2f',            # 2 Nachkommastellen
+    cbar_kws={'shrink': 0.8}
+)
+
+plt.title('Korrelationsplot für wine.data', fontsize=14)
+plt.tight_layout()
+plt.show()
+
+# Stärkste Korrelationen identifizieren
+# Obere Dreiecksmatrix extrahieren (ohne Diagonale)
+corr_upper = corr_matrix.where(
+    np.triu(np.ones(corr_matrix.shape), k=1).astype(bool)
+).stack()
+
+# Stärkste positive Korrelationen
+print("Stärkste positive Korrelationen:")
+print(corr_upper.sort_values(ascending=False).head(10))
+
+# Stärkste negative Korrelationen
+print("\nStärkste negative Korrelationen:")
+print(corr_upper.sort_values(ascending=True).head(10))

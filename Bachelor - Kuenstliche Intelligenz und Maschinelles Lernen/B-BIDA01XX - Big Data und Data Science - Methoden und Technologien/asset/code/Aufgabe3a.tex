@@ -1,0 +1,25 @@
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+from sklearn.datasets import load_wine
+
+# Datensatz laden (als DataFrame)
+wine = load_wine(as_frame=True)
+
+# Typen der Komponenten prüfen
+print(f"Typ von wine: {type(wine)}")
+print(f"Typ von wine.data: {type(wine.data)}")
+print(f"Typ von wine.target: {type(wine.target)}")
+
+# Erste Einblicke
+print("\nErste 5 Zeilen von wine.data:")
+print(wine.data.head())
+
+print("\nErste 5 Werte von wine.target:")
+print(wine.target.head())
+
+print(f"\nFeature names: {wine.feature_names}")
+print(f"Target names: {wine.target_names}")
+print(f"Data shape: {wine.data.shape}")

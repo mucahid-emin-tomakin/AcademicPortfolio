@@ -1,0 +1,59 @@
+from sklearn.tree import DecisionTreeRegressor
+
+# Unabhängige Variablen (ohne Latitude und Longitude)
+X = df_california.drop(['MedHouseVal', 'Latitude', 'Longitude'], axis=1)
+y = df_california['MedHouseVal']
+
+# Train-Test-Split (gleicher Split wie in 2f)
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.2, random_state=42
+)
+
+# R2-Score der linearen Regression (aus 2f)
+r2_linear = 0.5099
+
+# Verschiedene Tiefen testen
+depths = range(1, 21)
+r2_scores = []
+better_than_linear = None
+
+for depth in depths:
+    # Entscheidungsbaum mit aktueller Tiefe
+    dt = DecisionTreeRegressor(
+        max_depth=depth,
+        random_state=42
+    )
+    dt.fit(X_train, y_train)
+    y_pred = dt.predict(X_test)
+    r2 = r2_score(y_test, y_pred)
+    r2_scores.append(r2)
+    
+    # Prüfen, ob besser als lineare Regression
+    if r2 > r2_linear and better_than_linear is None:
+        better_than_linear = depth
+    
+    print(f"max_depth={depth:2d}  R2 Score: {r2:.4f}")
+
+print(f"\nDie lineare Regression hat einen R2 Score von {r2_linear:.4f}")
+print(f"Der Entscheidungsbaum ist ab einer Tiefe von {better_than_linear} besser als die lineare Regression.")
+
+# Plot der R2-Scores
+import matplotlib.pyplot as plt
+
+plt.figure(figsize=(10, 6))
+plt.plot(depths, r2_scores, 'o-', label='Entscheidungsbaum R2')
+plt.axhline(y=r2_linear, color='r', linestyle='--', label=f'Lineare Regression (R2={r2_linear:.4f})')
+plt.xlabel('Maximale Tiefe des Entscheidungsbaums')
+plt.ylabel('R2 Score')
+plt.title('R2-Scores in Abhängigkeit von der maximalen Tiefe')
+plt.legend()
+plt.grid(True, alpha=0.3)
+
+# Markiere den Punkt, ab dem der Baum besser ist
+if better_than_linear:
+    plt.axvline(x=better_than_linear, color='g', linestyle=':', alpha=0.7)
+    plt.text(better_than_linear + 0.5, r2_scores[better_than_linear-1] - 0.02, 
+             f'Depth={better_than_linear}', fontsize=10, color='green')
+
+plt.tight_layout()
+plt.show()

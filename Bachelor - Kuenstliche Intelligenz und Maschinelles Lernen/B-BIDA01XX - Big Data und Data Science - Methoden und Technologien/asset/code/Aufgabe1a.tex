@@ -1,0 +1,8 @@
+import pandas as pd
+
+# CSV-Datei aus dem data-Unterordner einlesen
+df = pd.read_csv('../data/movies2019.csv')
+
+# Erste fünf Zeilen anzeigen
+print("Erste 5 Zeilen des Datensatzes:")
+print(df.head())

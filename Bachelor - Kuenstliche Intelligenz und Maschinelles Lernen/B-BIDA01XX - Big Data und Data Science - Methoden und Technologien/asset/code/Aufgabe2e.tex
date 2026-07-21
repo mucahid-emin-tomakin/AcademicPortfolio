@@ -1,0 +1,33 @@
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+# Korrelationsmatrix berechnen
+corr_matrix = df_california.corr()
+
+# Korrelationsplot erstellen
+plt.figure(figsize=(10, 8))
+sns.heatmap(
+    corr_matrix,
+    annot=True,           # Werte in den Zellen anzeigen
+    cmap='coolwarm',      # Farbpalette: blau-weiß-rot
+    vmin=-1, vmax=1,      # Wertebereich -1 bis 1
+    square=True,          # Quadratische Zellen
+    fmt='.2f'             # 2 Nachkommastellen
+)
+
+plt.title('Korrelationsplot des California-Housing-Datensatzes', fontsize=14)
+plt.tight_layout()
+plt.show()
+
+# Korrelationen mit der Zielvariable extrahieren
+corr_with_target = corr_matrix['MedHouseVal'].sort_values(ascending=False)
+
+print("\nKorrelationen mit der Zielvariable MedHouseVal:")
+print(corr_with_target)
+
+# Variable mit der größten Korrelation
+highest_corr = corr_with_target.index[1]  # Index 0 = MedHouseVal (1.0)
+highest_corr_value = corr_with_target.iloc[1]
+
+print(f"\nDie größte Korrelation mit MedHouseVal zeigt '{highest_corr}' "
+      f"mit einem Wert von {highest_corr_value:.4f}")

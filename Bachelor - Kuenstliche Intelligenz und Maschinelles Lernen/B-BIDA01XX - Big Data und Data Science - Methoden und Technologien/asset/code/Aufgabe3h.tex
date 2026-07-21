@@ -1,0 +1,41 @@
+import os
+os.environ["OMP_NUM_THREADS"] = "1"
+
+import pandas as pd
+import matplotlib.pyplot as plt
+from sklearn.cluster import KMeans
+from sklearn.preprocessing import StandardScaler
+import warnings
+warnings.filterwarnings('ignore')
+
+# Daten skalieren
+scaler = StandardScaler()
+scaled_data = scaler.fit_transform(wine.data)
+
+# Skalierte Daten in DataFrame umwandeln
+scaled_df = pd.DataFrame(scaled_data, columns=wine.feature_names)
+
+# WCSS-Werte für verschiedene k berechnen
+wcss_scaled = []
+k_range = range(1, 11)
+
+for k in k_range:
+    kmeans = KMeans(n_clusters=k, random_state=42, n_init=10)
+    kmeans.fit(scaled_data)
+    wcss_scaled.append(kmeans.inertia_)
+
+# Elbow-Plot für skalierte Daten erstellen
+plt.figure(figsize=(8, 6))
+plt.plot(k_range, wcss_scaled, 'o-', color='green', linewidth=2, markersize=8)
+plt.xlabel('Anzahl Cluster (k)', fontsize=12)
+plt.ylabel('WCSS (Within-Cluster Sum of Squares)', fontsize=12)
+plt.title('Elbow-Methode für den skalierten Wine-Datensatz', fontsize=14)
+plt.xticks(k_range)
+plt.grid(True, alpha=0.3)
+
+# Knick bei k=3 markieren
+plt.axvline(x=3, color='red', linestyle='--', alpha=0.7, label='Elbow bei k=3')
+plt.legend()
+
+plt.tight_layout()
+plt.show()

@@ -1,0 +1,16 @@
+# Scatter-Plot der Hauswerte nach geografischer Lage
+plt.figure(figsize=(12, 8))
+scatter = plt.scatter(
+    df_california['Longitude'],
+    df_california['Latitude'],
+    c=df_california['MedHouseVal'],
+    cmap='viridis',
+    s=10,
+    alpha=0.6
+)
+plt.colorbar(scatter, label='MedHouseVal ($100,000)')
+plt.xlabel('Longitude')
+plt.ylabel('Latitude')
+plt.title('Räumliche Verteilung der Hauswerte in Kalifornien')
+plt.tight_layout()
+plt.show()

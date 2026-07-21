@@ -1,0 +1,17 @@
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+# Pairplot erstellen
+sns.pairplot(
+    df_california,
+    hue='MedHouseVal',
+    palette='viridis',
+    height=2.5,
+    plot_kws={'alpha': 0.5, 's': 10}
+)
+
+# Titel setzen
+plt.suptitle('Pairplot des California-Housing-Datensatzes', y=1.02, fontsize=16)
+
+# Plot anzeigen
+plt.show()

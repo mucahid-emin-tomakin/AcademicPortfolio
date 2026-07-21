@@ -1,0 +1,8 @@
+# Python-Pfad ermitteln (z.B. C:\Users\Benutzer\AppData\Local\Programs\Python\Python312)
+where python
+
+# PATH für die aktuelle Sitzung setzen
+$env:Path += ";C:\Pfad\zu\Python"
+
+# Dauerhafte Setzung über die Systemumgebungsvariablen (empfohlen)
+[System.Environment]::SetEnvironmentVariable("Path", $env:Path + ";C:\Pfad\zu\Python", [System.EnvironmentVariableTarget]::User)

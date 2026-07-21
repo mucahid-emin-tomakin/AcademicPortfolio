@@ -1,0 +1,31 @@
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+import os
+
+# output-Ordner im Projekt-Hauptordner erstellen (eine Ebene höher)
+os.makedirs('../output', exist_ok=True)
+
+# wine.data und wine.target kombinieren
+wine_df = pd.concat([wine.data, wine.target], axis=1)
+wine_df.rename(columns={'target': 'class'}, inplace=True)
+
+# Pairplot erstellen
+pairplot = sns.pairplot(
+    wine_df,
+    hue='class',
+    palette='viridis',
+    diag_kind='kde',
+    plot_kws={'alpha': 0.6, 's': 15}
+)
+
+# Titel setzen
+pairplot.fig.suptitle('Pairplot des Wine-Datensatzes (3 Klassen)', y=1.02, fontsize=14)
+
+# Speichern im output-Ordner des Projekt-Hauptordners
+pairplot.fig.savefig('../output/Aufgabe3e.png', dpi=300, bbox_inches='tight')
+print("Plot gespeichert als: ../output/Aufgabe3e.png")
+print("Vollständiger Pfad: C:\\Users\\tomak\\Downloads\\B-BIDA01XX\\output\\Aufgabe3e.png")
+
+# Plot anzeigen
+plt.show()

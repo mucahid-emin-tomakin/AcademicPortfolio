@@ -1,0 +1,14 @@
+# Gruppierung und Sortierung
+distributor_gross = df.groupby('Distributor')['2019 Gross'].sum().sort_values(ascending=False)
+
+# Top 5 anzeigen
+top5 = distributor_gross.head(5)
+
+print("Top 5 Distributoren nach Gesamtumsatz 2019:")
+print(top5)
+print()
+
+# Formatierte Ausgabe
+print("Detaillierte Ausgabe:")
+for i, (distributor, gross) in enumerate(top5.items(), 1):
+    print(f"{i}. {distributor}: ${gross:,.2f}M")

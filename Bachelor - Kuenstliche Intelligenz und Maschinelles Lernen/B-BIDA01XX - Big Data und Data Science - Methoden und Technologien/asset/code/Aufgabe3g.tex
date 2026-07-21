@@ -1,0 +1,42 @@
+import os
+os.environ["OMP_NUM_THREADS"] = "1"
+
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+from sklearn.cluster import KMeans
+from sklearn.decomposition import PCA
+import warnings
+warnings.filterwarnings('ignore')
+
+# K-Means mit k=3 durchführen
+kmeans = KMeans(n_clusters=3, random_state=42, n_init=10)
+wine_df['cluster'] = kmeans.fit_predict(wine.data)
+
+# PCA für Visualisierung (2 Hauptkomponenten)
+pca = PCA(n_components=2, random_state=42)
+pca_result = pca.fit_transform(wine.data)
+
+# DataFrame mit PCA-Ergebnissen
+pca_df = pd.DataFrame(pca_result, columns=['PC1', 'PC2'])
+pca_df['cluster'] = wine_df['cluster']
+pca_df['true_class'] = wine_df['class']
+
+# PCA-Plot erstellen
+plt.figure(figsize=(10, 8))
+sns.scatterplot(
+    data=pca_df,
+    x='PC1', y='PC2',
+    hue='cluster',
+    palette='viridis',
+    style='cluster',
+    s=100,
+    alpha=0.8
+)
+
+plt.title('K-Means-Clustering des Wine-Datensatzes (k=3)', fontsize=14)
+plt.xlabel(f'PC1 ({pca.explained_variance_ratio_[0]*100:.1f}%)', fontsize=12)
+plt.ylabel(f'PC2 ({pca.explained_variance_ratio_[1]*100:.1f}%)', fontsize=12)
+plt.legend(title='Cluster')
+plt.tight_layout()
+plt.show()

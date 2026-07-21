@@ -1,0 +1,22 @@
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+from sklearn.datasets import fetch_california_housing
+
+# Datensatz laden
+california = fetch_california_housing()
+
+# Beschreibung des Datensatzes ausgeben
+print(california.DESCR)
+
+# Attribute anzeigen
+print("\nFeature names:", california.feature_names)
+print("Target name:", california.target_names)
+print("Data shape:", california.data.shape)
+
+# Optional: Datensatz als CSV speichern
+df_california = pd.DataFrame(california.data, columns=california.feature_names)
+df_california['MedHouseVal'] = california.target
+df_california.to_csv('../data/california_housing.csv', index=False)

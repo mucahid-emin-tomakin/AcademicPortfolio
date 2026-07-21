@@ -1,0 +1,7 @@
+# Summenstatistik des Datensatzes
+print("Summenstatistik des Datensatzes:")
+print(df_california.describe())
+
+# Mittelwert der Spalte HouseAge
+house_age_mean = df_california['HouseAge'].mean()
+print(f"\nMittelwert der Spalte HouseAge: {house_age_mean:.6f}")

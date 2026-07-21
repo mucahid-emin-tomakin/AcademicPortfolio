@@ -1,0 +1,29 @@
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+# Plot-Größe anpassen
+plt.figure(figsize=(8, 6))
+
+# Countplot erstellen (mit hue und legend=False)
+sns.countplot(
+    x=wine.target,
+    hue=wine.target,
+    palette='viridis',
+    legend=False
+)
+
+# Titel und Achsenbeschriftungen
+plt.title('Verteilung der Weinsorten (wine.target)', fontsize=14)
+plt.xlabel('Klasse (Weinsorte)', fontsize=12)
+plt.ylabel('Anzahl', fontsize=12)
+
+# X-Achsen-Labels anpassen
+plt.xticks([0, 1, 2], ['Klasse 0', 'Klasse 1', 'Klasse 2'])
+
+# Werte über den Balken anzeigen
+for i, count in enumerate(wine.target.value_counts().sort_index()):
+    plt.text(i, count + 1, str(count), ha='center', va='bottom', fontsize=11)
+
+# Layout optimieren
+plt.tight_layout()
+plt.show()

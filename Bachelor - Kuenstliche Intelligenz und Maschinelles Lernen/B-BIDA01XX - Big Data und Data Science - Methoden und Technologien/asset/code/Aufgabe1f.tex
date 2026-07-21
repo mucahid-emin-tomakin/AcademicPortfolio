@@ -1,0 +1,36 @@
+# Release Date in Datetime konvertieren
+df['Release Date'] = pd.to_datetime(df['Release Date'])
+
+# Monat extrahieren
+df['Month'] = df['Release Date'].dt.month
+
+# Monatsnamen für bessere Lesbarkeit
+month_names = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 
+               'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+df['Month Name'] = df['Month'].map(lambda x: month_names[x-1])
+
+# Umsatz nach Monat aggregieren
+monthly_gross = df.groupby('Month')['2019 Gross'].sum().sort_index()
+
+# Plot erstellen
+plt.figure(figsize=(14, 7))
+sns.barplot(
+    x=month_names, 
+    y=monthly_gross.values, 
+    hue=month_names,
+    palette='coolwarm',
+    legend=False
+)
+
+# Titel und Achsen
+plt.title('Gesamtumsatz pro Monat (2019)', fontsize=16)
+plt.xlabel('Monat', fontsize=12)
+plt.ylabel('Gesamtumsatz (Millionen $)', fontsize=12)
+
+# Werte über den Balken anzeigen
+for i, v in enumerate(monthly_gross.values):
+    plt.text(i, v + 5, f'${v:.1f}M', ha='center', va='bottom', fontsize=9)
+
+# Layout optimieren
+plt.tight_layout()
+plt.show()

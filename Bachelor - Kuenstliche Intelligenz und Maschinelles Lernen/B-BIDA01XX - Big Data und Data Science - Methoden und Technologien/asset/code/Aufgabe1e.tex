@@ -1,0 +1,28 @@
+# Gruppierung für den Plot
+genre_sum = df.groupby('Genre')['2019 Gross'].sum().sort_values(ascending=False)
+
+# Plot erstellen
+plt.figure(figsize=(14, 7))
+sns.barplot(
+    x=genre_sum.index, 
+    y=genre_sum.values, 
+    hue=genre_sum.index,      # Neu: hue auf x gesetzt
+    palette='viridis',
+    legend=False              # Neu: Legende deaktivieren
+)
+
+# Titel und Achsen
+plt.title('Gesamtumsatz pro Genre (2019)', fontsize=16)
+plt.xlabel('Genre', fontsize=12)
+plt.ylabel('Gesamtumsatz (Millionen $)', fontsize=12)
+
+# X-Achsen-Labels rotieren
+plt.xticks(rotation=45, ha='right')
+
+# Werte über den Balken anzeigen
+for i, v in enumerate(genre_sum.values):
+    plt.text(i, v + 5, f'${v:.1f}M', ha='center', va='bottom', fontsize=9)
+
+# Layout optimieren
+plt.tight_layout()
+plt.show()

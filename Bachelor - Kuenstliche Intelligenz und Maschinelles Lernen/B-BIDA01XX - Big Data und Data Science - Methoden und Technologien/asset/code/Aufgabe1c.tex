@@ -1,0 +1,17 @@
+def convert_gross(value):
+    """
+    Konvertiert Strings wie '$857,190,335' in Zahlen (Float).
+    """
+    if isinstance(value, str):
+        # $, M und Kommas entfernen
+        value = value.replace('$', '').replace('M', '').replace(',', '')
+        # Zu float konvertieren
+        return float(value)
+    return value
+
+# Auf die Spalte anwenden
+df['2019 Gross'] = df['2019 Gross'].apply(convert_gross)
+
+# Gesamtumsatz berechnen
+total_gross = df['2019 Gross'].sum()
+print(f"Gesamtumsatz 2019: ${total_gross:,.2f} Millionen")

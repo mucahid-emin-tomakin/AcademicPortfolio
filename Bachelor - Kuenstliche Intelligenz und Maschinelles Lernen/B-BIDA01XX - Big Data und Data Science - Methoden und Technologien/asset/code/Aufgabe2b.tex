@@ -1,0 +1,16 @@
+# DataFrame aus den Daten erstellen
+df_california = pd.DataFrame(
+    california.data, 
+    columns=california.feature_names
+)
+
+# Zielvariable hinzufügen
+df_california['MedHouseVal'] = california.target
+
+# Erste fünf Zeilen anzeigen
+print("Erste 5 Zeilen des DataFrames:")
+print(df_california.head())
+
+# Informationen über den DataFrame anzeigen
+print("\nInformationen zum DataFrame:")
+print(df_california.info())

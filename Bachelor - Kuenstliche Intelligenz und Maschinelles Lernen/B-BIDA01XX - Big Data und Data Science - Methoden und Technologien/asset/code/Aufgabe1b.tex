@@ -1,0 +1,24 @@
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+# Plot-Größe anpassen
+plt.figure(figsize=(12, 6))
+
+# Count Plot erstellen (absteigend sortiert)
+sns.countplot(
+    data=df, 
+    x='Genre', 
+    order=df['Genre'].value_counts().index
+)
+
+# Titel und Achsenbeschriftungen
+plt.title('Anzahl der Filme pro Genre (2019)', fontsize=16)
+plt.xlabel('Genre', fontsize=12)
+plt.ylabel('Anzahl Filme', fontsize=12)
+
+# X-Achsen-Labels rotieren (für bessere Lesbarkeit)
+plt.xticks(rotation=45, ha='right')
+
+# Layout optimieren und anzeigen
+plt.tight_layout()
+plt.show()

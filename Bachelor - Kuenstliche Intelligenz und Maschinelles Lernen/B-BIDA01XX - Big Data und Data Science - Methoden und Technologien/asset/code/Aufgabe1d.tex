@@ -1,0 +1,21 @@
+# Gruppierung nach Genre mit count und sum
+genre_stats = df.groupby('Genre')['2019 Gross'].agg(['count', 'sum'])
+
+# Sortierung nach Anzahl Filme (absteigend)
+genre_stats = genre_stats.sort_values('count', ascending=False)
+
+# Spalten umbenennen
+genre_stats.columns = ['Anzahl Filme', 'Gesamtumsatz (Mio)']
+
+# Formatierung des Umsatzes (als String mit $-Zeichen)
+genre_stats['Gesamtumsatz (Mio)'] = genre_stats['Gesamtumsatz (Mio)'].map('${:,.2f}M'.format)
+
+print("Summenstatistik nach Genre:")
+print(genre_stats)
+
+# Genre mit den meisten und wenigsten Filmen
+most_genre = genre_stats.index[0]
+least_genre = genre_stats.index[-1]
+
+print(f"\nDie meisten Filme: {most_genre} ({genre_stats.loc[most_genre, 'Anzahl Filme']} Filme)")
+print(f"Die wenigsten Filme: {least_genre} ({genre_stats.loc[least_genre, 'Anzahl Filme']} Filme)")

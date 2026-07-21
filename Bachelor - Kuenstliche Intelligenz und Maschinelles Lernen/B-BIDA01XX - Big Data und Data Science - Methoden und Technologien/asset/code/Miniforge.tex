@@ -1,0 +1,12 @@
+# Miniforge-Umgebung über das verlinkte Activation-Skript aktivieren
+C:\Users\Benutzer\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Miniforge3\Miniforge Prompt.lnk
+
+# Miniforge-Umgebung direkt über das Activation-Skript aktivieren
+C:\Users\tomak\miniforge3\Scripts\activate.bat
+
+# Miniforge-Umgebung Tämporär in der PowerShell aktivieren
+& "C:\Users\tomak\miniforge3\shell\condabin\conda-hook.ps1"
+conda activate
+
+# Miniforge-Umgebung dauerhaft in der PowerShell-Profile aktivieren
+conda init powershell
