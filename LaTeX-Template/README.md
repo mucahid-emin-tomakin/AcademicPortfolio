@@ -144,13 +144,30 @@ cd LaTeX-Template
 ```
 
 ### 📝 LaTeX Kompilierung
-```bash
-# LaTeX-Dokument kompilieren (mehrfach für Verzeichnisse & Referenzen)
-pdflatex main.tex && pdflatex main.tex
-# oder automatisch
-latexmk -pdf main.tex
 
-# Alternativ: Online mit Papeeria arbeiten
+**Option A: Lokal mit LaTeX**
+```bash
+# Einmalig (mehrfach für Verzeichnisse & Referenzen)
+pdflatex main.tex && pdflatex main.tex
+
+# Automatisch mit latexmk (empfohlen)
+latexmk -pdf main.tex
+```
+
+**Option B: Docker (empfohlen, keine lokale LaTeX-Installation nötig)**
+```bash
+# Kompilieren mit texlive/texlive-Image (vollständige LaTeX-Distribution)
+docker run --rm -v "${PWD}:/work" -w /work texlive/texlive latexmk -pdf main.tex
+
+# Bei Pfaden mit Leerzeichen die Anführungszeichen setzen
+docker run --rm -v "${PWD}:/work" -w /work texlive/texlive latexmk -pdf main.tex
+```
+- Das `texlive/texlive-Image` wird beim ersten Mal heruntergeladen (ca. 4 GB).
+- Alle folgenden Kompilierungen sind sofort verfügbar.
+- Die generierte `main.pdf` erscheint im Projektordner.
+
+**Option C: Online mit Papeeria**
+```bash
 # 1. Gehe auf https://m.papeeria.com
 # 2. Erstelle ein neues Projekt und importiere den gesamten Ordner als ZIP
 # 3. Papeeria kompiliert main.tex automatisch in der Cloud
