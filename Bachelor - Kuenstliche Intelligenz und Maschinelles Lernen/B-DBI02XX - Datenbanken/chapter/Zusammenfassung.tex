@@ -1,0 +1,50 @@
+% ==============================================================================
+% ================================ Zusammenfassung ==============================
+% ==============================================================================
+
+\chapter{Zusammenfassung und Reflexion}
+\label{chap:zusammenfassung}
+\thispagestyle{fancy}
+
+\section{Reflexion}
+
+Die Entwicklung zeigte, dass die Kombination aus \acs{PHP} und einer relationalen Datenbank für einfache Webanwendungen gut geeignet ist. Besonders hilfreich war die Verwendung von \acs{PDO} für eine einheitliche und sichere Datenbankanbindung.
+
+Herausforderungen ergaben sich bei der Validierung von Nutzereingaben und der Unterscheidung zwischen anonymen und registrierten Teilnehmern. Die Export-Funktion von phpMyAdmin erwies sich als praktikable Lösung zur Sicherung des Datenbankzustands.
+
+Die Arbeit hat gezeigt, dass eine strukturierte Vorgehensweise – von der Datenbankmodellierung über die Implementierung bis zur Dokumentation – für die Entwicklung funktionaler Anwendungen essenziell ist. Die gewählte Architektur ist wartbar und kann um weitere Funktionen erweitert werden:
+
+\begin{forest}
+    for tree={
+        font=\ttfamily,
+        grow'=0,
+        child anchor=west,
+        parent anchor=south,
+        anchor=west,
+        calign=first,
+        edge path={
+            \noexpand\path [draw, \forestoption{edge}] (!u.south west) +(10pt,0) |- node[fill,inner sep=1.5pt] {} (.child anchor)\forestoption{edge label};
+        },
+        before typesetting nodes={
+            if n=1{
+                insert before={[,phantom,calign with current]}
+            }{}
+        },
+        fit=band,
+        before computing xy={l=22pt},
+    }
+    [\textbf{C:\textbackslash xampp\textbackslash htdocs\textbackslash survey}
+        [\textbf{index.php}]
+        [\textbf{report.php}]
+        [\textbf{save.php}]
+        [\textbf{survey.php}]
+        [\textbf{inc}
+                [\textbf{db.php}]
+                [\textbf{db.sql}]
+        ]
+    ]
+\end{forest}
+
+% ==============================================================================
+% ================================ Zusammenfassung ==============================
+% ==============================================================================

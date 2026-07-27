@@ -1,0 +1,157 @@
+% ==============================================================================
+% =================================== Einleitung ================================
+% ==============================================================================
+
+\chapter{Einleitung}
+\label{chap:einleitung}
+\thispagestyle{fancy}
+
+Die vorliegende B-Prüfung \texttt{B-DBI02-XX3-N01} hat die Entwicklung einer webbasierten Umfrageanwendung zum Thema \glqq{}\textbf{\textit{Umfrage zum Studium}}\grqq{} zum Ziel. Die Anwendung besteht aus mehreren \acs{PHP}-Skripten, die auf einem Apache-Webserver mit einer Maria\acs{DB}-Datenbank im Hintergrund laufen.
+
+Für die Entwicklung wird die \acs{XAMPP}-Umgebung gewählt, da sie alle notwendigen Komponenten (\textit{Apache}, \textit{Maria\acs{DB}}/\textit{My\acs{SQL}}, \textit{\acs{PHP}}) in einem einfachen Paket bereitstellt und plattformunabhängig ist. Die vorliegende Dokumentation beschreibt die vollständige Einrichtung der Entwicklungsumgebung unter Windows sowie die Vorbereitung der Datenbank.
+
+\section{Installation von \acs{XAMPP}}
+
+\acs{XAMPP} ist ein kostenloses und quelloffenes Paket, das einen Apache-Webserver, eine Maria\acs{DB}-Datenbank sowie \acs{PHP} in einer einfachen Installation bündelt.
+
+\subsection{Herunterladen von \acs{XAMPP}}
+
+Die aktuelle Version von \acs{XAMPP} wird von der offiziellen Webseite heruntergeladen:
+
+\begin{center}
+    \textsl{\url{https://www.apachefriends.org/de/index.html}}
+\end{center}
+
+Für Windows wird die Installationsdatei im \texttt{.exe}-Format angeboten.
+
+\subsection{Installation unter Windows}
+
+Die Installation unter Windows erfolgt über die heruntergeladene \texttt{.exe}-Datei. Hierzu werden folgende Schritte durchgeführt:
+
+\begin{enumerate}
+    \item Die \texttt{.exe}-Datei wird mit Administratorrechten gestartet.
+    \item Die Sicherheitsabfrage von Windows wird mit \glqq{}\textit{Ja}\grqq{} bestätigt.
+    \item Bei der Auswahl der Komponenten werden folgende Module aktiviert:
+          \begin{itemize}
+              \item \textbf{Apache} – Webserver
+              \item \textbf{My\acs{SQL}} (\textit{Maria\acs{DB}}) – Datenbankserver
+              \item \textbf{\acs{PHP}} – Skriptsprache
+              \item \textbf{phpMyAdmin} – grafische Datenbankverwaltung
+          \end{itemize}
+          Nicht benötigte Komponenten wie FileZilla, Mercury und Tomcat werden deaktiviert.
+    \item Als Installationsordner wird \texttt{C:\textbackslash xampp} gewählt (\textit{oder ein alternativer Pfad ohne Leerzeichen}).
+    \item Der Installationsassistent wird bis zum Abschluss durchlaufen.
+    \item Nach der Installation wird die Option \glqq{}\textit{\acs{XAMPP} jetzt starten}\grqq{} aktiviert.
+\end{enumerate}
+
+\section{Starten der Dienste}
+
+Nach erfolgreicher Installation müssen die benötigten Dienste gestartet werden.
+
+\subsection{\acs{XAMPP} Control Panel öffnen}
+
+Das \acs{XAMPP} Control Panel wird über das Startmenü unter \glqq{}\textit{XAMPP Control Panel}\grqq{} geöffnet.
+
+\subsection{Starten von Apache und My\acs{SQL}}
+
+Im Control Panel werden folgende Dienste gestartet:
+
+\begin{itemize}
+    \item \textbf{Apache} – Der Webserver, der \acs{PHP}-Seiten ausliefert.
+    \item \textbf{My\acs{SQL}} – Der Datenbankserver (\textit{Maria\acs{DB}}), der die Umfragedaten speichert.
+\end{itemize}
+
+Nach dem Start leuchten die entsprechenden Buttons im Control Panel grün.
+
+\section{Überprüfung der Umgebung}
+
+Um sicherzustellen, dass alle Komponenten korrekt funktionieren, werden folgende Tests durchgeführt:
+
+\subsection{Test des Apache-Webservers}
+
+Der Browser wird geöffnet und die Adresse \textsl{\url{http://localhost/}} aufgerufen. Die \acs{XAMPP}-Startseite wird erfolgreich angezeigt.
+
+\subsection{Test von \acs{PHP}}
+
+Im Verzeichnis \texttt{\acs{htdocs}} (\textit{\acs{z. B.} \texttt{C:\textbackslash xampp\textbackslash htdocs\textbackslash}}) wird eine Datei \texttt{test.php} mit folgendem Inhalt erstellt:
+
+\lstinputlisting[
+    language=php, 
+    caption={PHP test page}, 
+    label={lst:php_test_page}
+]{asset/code/Einleitung.tex}
+
+Der Aufruf \textsl{\url{http://localhost/test.php}} zeigt die \acs{PHP}-Infoseite mit allen Konfigurationsdetails.
+
+\subsection{Test von Maria\acs{DB} / phpMyAdmin}
+
+Der Browser wird mit \textsl{\url{http://localhost/phpmyadmin/}} geöffnet. Die phpMyAdmin-Oberfläche wird erfolgreich geladen und zeigt die vorhandenen Datenbanken an.
+
+\section{Projektverzeichnis vorbereiten}
+
+Für die Entwicklung der Umfrageanwendung wird das folgende Verzeichnis im \texttt{\acs{htdocs}}-Ordner angelegt:
+
+\begin{forest}
+    for tree={
+        font=\ttfamily,
+        grow'=0,
+        child anchor=west,
+        parent anchor=south,
+        anchor=west,
+        calign=first,
+        edge path={
+            \noexpand\path [draw, \forestoption{edge}] (!u.south west) +(10pt,0) |- node[fill,inner sep=1.5pt] {} (.child anchor)\forestoption{edge label};
+        },
+        before typesetting nodes={
+            if n=1{
+                insert before={[,phantom,calign with current]}
+            }{}
+        },
+        fit=band,
+        before computing xy={l=22pt},
+    }
+    [\textbf{C:\textbackslash xampp\textbackslash htdocs\textbackslash survey}
+        [\textbf{inc\textbackslash}]
+    ]
+\end{forest}
+
+Dieses Verzeichnis dient als Wurzel der Anwendung. Alle \acs{PHP}-Dateien werden hier abgelegt, die datenbankrelevanten Dateien im Unterordner \texttt{inc/}.
+
+Die Anwendung ist später unter der \acs{URL} \textsl{\url{http://localhost/survey/}} erreichbar.
+
+\section{Anlegen der Datenbank}
+
+Die Datenbank wird über phpMyAdmin erstellt:
+
+\begin{enumerate}
+    \item Aufruf von \textsl{\url{http://localhost/phpmyadmin/}}
+    \item Klick auf \glqq{}\textit{Neu}\grqq{} in der linken Seitenleiste
+    \item Datenbankname: \texttt{umfrage\_db}
+    \item Zeichensatz: \texttt{utf8mb4\_general\_ci}
+    \item Klick auf \glqq{}\textit{Anlegen}\grqq{}
+\end{enumerate}
+
+Die Datenbank ist nun bereit für die Tabellen, die im Rahmen der ersten Programmieraufgabe erstellt werden.
+
+\section{Zusammenfassung der Umgebung}
+
+Die folgende Tabelle fasst die wichtigsten Komponenten und deren Versionen zusammen:
+
+\begin{center}
+    \begin{tabular}{|l|l|}
+        \hline
+        \textbf{Komponente} & \textbf{Version} \\
+        \hline
+        Betriebssystem & Windows 11 \\
+        \acs{XAMPP} & 8.2.4 \\
+        Apache & 2.4.57 \\
+        Maria\acs{DB} & 10.4.28 \\
+        \acs{PHP} & 8.2.4 \\
+        phpMyAdmin & 5.2.1 \\
+        \hline
+    \end{tabular}
+\end{center}
+
+% ==============================================================================
+% =================================== Einleitung ================================
+% ==============================================================================

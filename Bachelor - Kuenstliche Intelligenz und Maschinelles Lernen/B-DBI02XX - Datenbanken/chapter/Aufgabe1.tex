@@ -1,0 +1,178 @@
+% ==============================================================================
+% ================================= Aufgabe 1 =================================
+% ==============================================================================
+
+\chapter{Aufgabe 1: Datenbank}
+\label{chap:aufgabe1}
+\thispagestyle{fancy}
+
+Im Rahmen der ersten Aufgabe wird die Datenbankstruktur für die Umfrageanwendung entworfen und implementiert. Die Datenbank besteht aus zwei Tabellen: einer Tabelle für die Nutzerverwaltung und einer Tabelle für die Speicherung der Umfrageantworten.
+
+% ======================================= a =====================================
+
+\section{Tabelle \texttt{user\_table} (\textit{1a})}
+
+Die Tabelle \texttt{user\_table} dient der Verwaltung der Umfrageteilnehmer. Sie speichert die Namen der Nutzer und wird für die Zuordnung von Umfrageantworten zu bestimmten Nutzern benötigt.
+
+\subsection{Tabellenstruktur}
+
+Die Tabelle \texttt{user\_table} wurde mit folgender Struktur angelegt:
+
+\begin{table}[h]
+\centering
+\begin{tabular}{|l|l|l|}
+\hline
+\textbf{Spalte} & \textbf{Datentyp} & \textbf{Besonderheit} \\
+\hline
+Id & INT & Primary Key, Auto Increment \\
+Name & VARCHAR(255) & NOT NULL \\
+\hline
+\end{tabular}
+\caption{Struktur der Tabelle \texttt{user\_table}}
+\label{tab:user_table}
+\end{table}
+
+Die Spalte \texttt{Id} dient als eindeutiger Primärschlüssel und wird automatisch inkrementiert. Die Spalte \texttt{Name} speichert den Namen des Nutzers. Ein NULL-Wert ist hier nicht zugelassen, da jeder Nutzer einen Namen besitzen muss – bei anonymen Teilnahmen wird der Name \texttt{anonymous} verwendet.
+
+\subsection{\acs{SQL}-Statement}
+
+Das Anlegen der Tabelle erfolgte mit folgendem \acs{SQL}-Statement:
+
+\lstinputlisting[
+    language=sql, 
+    caption={\acs{SQL}-Statement für \texttt{user\_table}}, 
+    label={lst:sql_statement_user_table}
+]{asset/code/Aufgabe1a.tex}
+
+% ======================================= b =====================================
+
+\section{Tabelle \texttt{survey\_table} (\textit{1b})}
+
+Die Tabelle \texttt{survey\_table} speichert die eigentlichen Umfrageantworten. Jeder Datensatz repräsentiert eine vollständig ausgefüllte Umfrage eines Nutzers.
+
+\subsection{Tabellenstruktur}
+
+Die Tabelle \texttt{survey\_table} wurde mit folgender Struktur angelegt:
+
+\begin{table}[h]
+\centering
+\begin{tabular}{|l|l|l|}
+\hline
+\textbf{Spalte} & \textbf{Datentyp} & \textbf{Besonderheit} \\
+\hline
+Id & INT & Primary Key, Auto Increment \\
+UserId & INT & NOT NULL, Fremdschlüssel \\
+Datum & DATE & NOT NULL \\
+Q1 & VARCHAR(255) & NOT NULL \\
+Q2 & VARCHAR(255) & NOT NULL \\
+Q3 & VARCHAR(255) & NOT NULL \\
+Q4 & VARCHAR(255) & NOT NULL \\
+Q5 & VARCHAR(255) & NOT NULL \\
+\hline
+\end{tabular}
+\caption{Struktur der Tabelle \texttt{survey\_table}}
+\label{tab:survey_table}
+\end{table}
+
+Die Spalte \texttt{UserId} ist ein Fremdschlüssel, der auf den Primärschlüssel der Tabelle \texttt{user\_table} verweist. Dadurch wird sichergestellt, dass jede Umfrage einem existierenden Nutzer zugeordnet wird. Die Spalte \texttt{Datum} speichert das Datum der Umfrageteilnahme. Die Spalten \texttt{Q1} bis \texttt{Q5} halten die Antworten zu den fünf Umfragefragen.
+
+Die Wahl des Datentyps \texttt{VARCHAR(\textit{255})} für die Antwortfelder ermöglicht sowohl kurze als auch längere Antwortformate und ist damit für verschiedene Fragetypen flexibel einsetzbar.
+
+\subsection{\acs{SQL}-Statement}
+
+Das Anlegen der Tabelle erfolgte mit folgendem \acs{SQL}-Statement:
+
+\lstinputlisting[
+    language=sql, 
+    caption={\acs{SQL}-Statement für \texttt{survey\_table}}, 
+    label={lst:sql_statement_survey_table}
+]{asset/code/Aufgabe1b.tex}
+
+% ======================================= c =====================================
+
+\section{Befüllen der \texttt{user\_table} (\textit{1c})}
+
+Gemäß der Aufgabenstellung wurde die Tabelle \texttt{user\_table} mit drei Datensätzen befüllt. Ein Datensatz repräsentiert den anonymen Teilnehmer, die beiden weiteren Datensätze repräsentieren namentlich registrierte Nutzer.
+
+\subsection{INSERT-Statements}
+
+Die folgenden \acs{SQL}-Statements wurden zur Befüllung der Tabelle ausgeführt:
+
+\lstinputlisting[
+    language=sql, 
+    caption={INSERT-Statements für \texttt{user\_table}}, 
+    label={lst:insert_statement_user_table}
+]{asset/code/Aufgabe1c.tex}
+
+\subsection{Ergebnis}
+
+Nach der Ausführung enthält die Tabelle \texttt{user\_table} folgende Datensätze:
+
+\begin{table}[h]
+\centering
+\begin{tabular}{|l|l|}
+\hline
+\textbf{Id} & \textbf{Name} \\
+\hline
+1 & anonymous \\
+2 & Lara \\
+3 & Luisa \\
+\hline
+\end{tabular}
+\caption{Datensätze der Tabelle \texttt{user\_table}}
+\label{tab:user_data}
+\end{table}
+
+\section{Export der Datenbank}
+
+Nach dem Anlegen der Tabellen und dem Einfügen der Testdatensätze wurde die gesamte Datenbank über die Export-Funktion von phpMyAdmin als SQL-Datei gesichert. Die exportierte Datei enthält alle SQL-Statements aus den Aufgaben 1a, 1b und 1c:
+
+\begin{itemize}
+    \item \texttt{CREATE TABLE user\_table ...}
+    \item \texttt{CREATE TABLE survey\_table ...}
+    \item \texttt{INSERT INTO user\_table ...} (drei Datensätze)
+    \item Fremdschlüssel-Constraints
+    \item Tabellen-Indizes
+\end{itemize}
+
+Die Export-Datei wurde von phpMyAdmin als \texttt{umfrage\_db.sql} bereitgestellt und gemäß der Aufgabenstellung in \texttt{db.sql} umbenannt. Sie liegt nun im Projektverzeichnis unter folgendem Pfad:
+
+\begin{forest}
+    for tree={
+        font=\ttfamily,
+        grow'=0,
+        child anchor=west,
+        parent anchor=south,
+        anchor=west,
+        calign=first,
+        edge path={
+            \noexpand\path [draw, \forestoption{edge}] (!u.south west) +(10pt,0) |- node[fill,inner sep=1.5pt] {} (.child anchor)\forestoption{edge label};
+        },
+        before typesetting nodes={
+            if n=1{
+                insert before={[,phantom,calign with current]}
+            }{}
+        },
+        fit=band,
+        before computing xy={l=22pt},
+    }
+    [\textbf{C:\textbackslash xampp\textbackslash htdocs\textbackslash survey}
+        [\textbf{inc\textbackslash}
+            [\textbf{db.sql}]
+        ]
+    ]
+\end{forest}
+
+Die vollständige Datenbank kann jederzeit durch Einspielen der \texttt{db.sql}-Datei wiederhergestellt werden:
+
+\section{Zusammenfassung}
+
+Die Datenbank \texttt{umfrage\_db} besteht aus den zwei Tabellen \texttt{user\_table} und \texttt{survey\_table}, die über einen Fremdschlüssel miteinander verbunden sind. Die Tabelle \texttt{user\_table} wurde mit den erforderlichen Testdatensätzen befüllt.
+
+Die physischen Datenbankdateien liegen im Verzeichnis \texttt{C:\textbackslash xampp\textbackslash mysql\textbackslash data\textbackslash umfrage\_db\textbackslash}.
+
+Die Datenbank ist nun bereit für die Anbindung an die \acs{PHP}-Anwendung.
+
+% ==============================================================================
+% =================================== Aufgabe 1 ================================
+% ==============================================================================

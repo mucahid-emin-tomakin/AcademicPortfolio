@@ -1,0 +1,66 @@
+// ============================================================
+// 5. Umfrageformular anzeigen (wenn alles OK ist)
+// ============================================================
+?>
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Umfrage - <?php echo $displayName; ?></title>
+</head>
+<body>
+
+    <h1>Umfrage zum Studium</h1>
+    <p>Teilnehmer: <strong><?php echo $displayName; ?></strong></p>
+
+    <form action="save.php" method="post">
+
+        <!-- Frage 1: Jahr -->
+        <p><strong>Frage 1:</strong> In welchem Jahr hast du mit dem Studium begonnen?</p>
+        <select name="Q1" required>
+            <option value="">Bitte wählen...</option>
+            <option value="2020">2020</option>
+            <option value="2021">2021</option>
+            <option value="2022">2022</option>
+            <option value="2023">2023</option>
+            <option value="2024">2024</option>
+            <option value="2025">2025</option>
+            <option value="2026">2026</option>
+        </select>
+
+        <!-- Frage 2: Zufriedenheit -->
+        <p><strong>Frage 2:</strong> Bist du mit deinem Studium bis jetzt zufrieden?</p>
+        <label><input type="radio" name="Q2" value="JA" required> JA</label><br>
+        <label><input type="radio" name="Q2" value="NEIN"> NEIN</label>
+
+        <!-- Frage 3: Dauer für B-Aufgabe -->
+        <p><strong>Frage 3:</strong> Wie lange benötigst du für die Lösung einer B-Aufgabe?</p>
+        <select name="Q3" required>
+            <option value="">Bitte wählen...</option>
+            <option value="1 Woche">1 Woche</option>
+            <option value="2 Wochen">2 Wochen</option>
+            <option value="1 Monat">1 Monat</option>
+            <option value="2 Monate">2 Monate</option>
+            <option value="3 Monate">3 Monate</option>
+            <option value="länger">länger</option>
+        </select>
+
+        <!-- Frage 4: Lieblingsmodul -->
+        <p><strong>Frage 4:</strong> Welches ist dein Lieblingsmodul im Studium?</p>
+        <input type="text" name="Q4" placeholder="z.B. DBI15" required>
+
+        <!-- Frage 5: Warum dieses Studium? -->
+        <p><strong>Frage 5:</strong> Warum hast du dich für dieses Studium entschieden?</p>
+        <textarea name="Q5" rows="4" cols="50" placeholder="Deine Antwort..." required></textarea>
+
+        <!-- Hidden-Felder für UserId und Name (für save.php) -->
+        <input type="hidden" name="userId" value="<?php echo $userId; ?>">
+        <input type="hidden" name="displayName" value="<?php echo $displayName; ?>">
+
+        <br><br>
+        <button type="submit">Umfrage absenden</button>
+    </form>
+
+</body>
+</html>

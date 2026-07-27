@@ -1,0 +1,76 @@
+<?php
+// save.php - Speichert die Umfragedaten in der Datenbank
+
+// Datenbankverbindung einbinden
+require __DIR__ . '/inc/db.php';
+
+// ============================================================
+// 1. POST-Daten auslesen
+// ============================================================
+$userId = isset($_POST['userId']) ? (int)$_POST['userId'] : 0;
+$q1     = isset($_POST['Q1']) ? trim($_POST['Q1']) : '';
+$q2     = isset($_POST['Q2']) ? trim($_POST['Q2']) : '';
+$q3     = isset($_POST['Q3']) ? trim($_POST['Q3']) : '';
+$q4     = isset($_POST['Q4']) ? trim($_POST['Q4']) : '';
+$q5     = isset($_POST['Q5']) ? trim($_POST['Q5']) : '';
+
+// ============================================================
+// 2. Validierung: UserId muss vorhanden sein
+// ============================================================
+if ($userId === 0) {
+    die("Fehler: Kein Nutzer gefunden. Bitte die Umfrage erneut starten.");
+}
+
+// ============================================================
+// 3. Aktuelles Datum mit date() erzeugen
+// ============================================================
+$datum = date('Y-m-d');  // Format: Jahr-Monat-Tag (z.B. 2026-07-25)
+
+// ============================================================
+// 4. Daten in survey_table speichern
+// ============================================================
+try {
+    $stmt = $pdo->prepare("
+        INSERT INTO survey_table (UserId, Datum, Q1, Q2, Q3, Q4, Q5)
+        VALUES (?, ?, ?, ?, ?, ?, ?)
+    ");
+    
+    $stmt->execute([$userId, $datum, $q1, $q2, $q3, $q4, $q5]);
+    
+    $success = true;
+} catch (PDOException $e) {
+    $error = "Speicherung fehlgeschlagen: " . $e->getMessage();
+    $success = false;
+}
+
+// ============================================================
+// 5. Ergebnis anzeigen
+// ============================================================
+?>
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <title>Umfrage gespeichert</title>
+</head>
+<body>
+    <h1>Umfrage zum Studium</h1>
+
+    <?php if ($success): ?>
+        <hr>
+        <p style="color: green; font-size: 1.2em; font-weight: bold; text-align: left;">
+            Die Umfrage wurde erfolgreich gespeichert!
+        </p>
+        <hr>
+        <p style="text-align: left;">
+            <a href="report.php">Report</a>
+        </p>
+    <?php else: ?>
+        <p style="color: red; font-weight: bold;">
+            <?php echo htmlspecialchars($error, ENT_QUOTES, 'UTF-8'); ?>
+        </p>
+        <p><a href="index.php">Zurück zur Startseite</a></p>
+    <?php endif; ?>
+
+</body>
+</html>

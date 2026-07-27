@@ -1,0 +1,13 @@
+<?php
+require 'inc/db.php';
+
+echo "Verbindung erfolgreich!<br>";
+
+// Test: Alle Nutzer abfragen
+$stmt = $pdo->query("SELECT * FROM user_table");
+$users = $stmt->fetchAll();
+
+echo "<pre>";
+print_r($users);
+echo "</pre>";
+?>

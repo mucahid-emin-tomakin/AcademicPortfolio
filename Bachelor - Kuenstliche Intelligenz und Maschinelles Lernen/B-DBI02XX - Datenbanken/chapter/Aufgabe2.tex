@@ -1,0 +1,227 @@
+% ==============================================================================
+% ================================= Aufgabe 2 =================================
+% ==============================================================================
+
+\chapter{Aufgabe 2: Projektstruktur und Datenbankanbindung}
+\label{chap:aufgabe2}
+\thispagestyle{fancy}
+
+In dieser Aufgabe wird die eingerichtete Projektstruktur für die Umfrageanwendung verwendet und die Verbindung zur Datenbank aus Aufgabe 1 implementiert.
+
+\section{Projektstruktur}
+
+Die folgende Darstellung zeigt den Pfad, der im \texttt{\acs{htdocs}}-Verzeichnis von \acs{XAMPP} eingerichtet wurde:
+
+\begin{forest}
+    for tree={
+        font=\ttfamily,
+        grow'=0,
+        child anchor=west,
+        parent anchor=south,
+        anchor=west,
+        calign=first,
+        edge path={
+            \noexpand\path [draw, \forestoption{edge}] (!u.south west) +(10pt,0) |- node[fill,inner sep=1.5pt] {} (.child anchor)\forestoption{edge label};
+        },
+        before typesetting nodes={
+            if n=1{
+                insert before={[,phantom,calign with current]}
+            }{}
+        },
+        fit=band,
+        before computing xy={l=22pt},
+    }
+    [\textbf{C:\textbackslash xampp\textbackslash htdocs\textbackslash survey}
+        [\textbf{inc\textbackslash}
+            [\textbf{db.php}]
+        ]
+    ]
+\end{forest}
+
+\begin{itemize}
+    \item Der Ordner \texttt{survey} dient als Hauptverzeichnis der Anwendung.
+    \item Der Unterordner \texttt{\acs{inc}} (\textit{für \textit{include}}) enthält wiederverwendbare \acs{PHP}-Komponenten.
+    \item Die Datei \texttt{db.php} implementiert die zentrale Datenbankverbindung.
+\end{itemize}
+
+Diese Struktur entspricht dem gängigen \acs{MVC}-ähnlichen Aufbau, bei dem Konfigurations- und Verbindungsdateien zentral in einem \texttt{\acs{inc}}-Ordner verwaltet werden.
+
+\section{Datei \texttt{db.php}}
+
+Die Datei \texttt{db.php} enthält alle erforderlichen Informationen für die Verbindung zur My\acs{SQL}-Datenbank. Sie verwendet die \acs{PHP}-Erweiterung \texttt{PDO} (\textit{\acs{PHP} Data Objects}), die eine sichere und objektorientierte Schnittstelle für den Datenbankzugriff bietet.
+
+\subsection{Vollständiger Code}
+
+Der vollständige Quellcode der Datei \texttt{db.php} lautet:
+
+\lstinputlisting[
+    language=php, 
+    caption={Datenbankverbindung in \texttt{db.php}}, 
+    label={lst:db-php}
+]{asset/code/Aufgabe2.tex}
+
+\subsection{Erläuterung der einzelnen Bestandteile}
+
+\subsubsection{Konfigurationsparameter}
+
+Die Verbindungsparameter werden als \acs{PHP}-Variablen definiert:
+
+\begin{table}[h]
+\centering
+\begin{tabular}{|l|l|l|}
+\hline
+\textbf{Variable} & \textbf{Wert} & \textbf{Bedeutung} \\
+\hline
+\texttt{\$host} & \texttt{localhost} & Datenbankserver (lokal bei \acs{XAMPP}) \\
+\texttt{\$database} & \texttt{umfrage\_db} & Name der Datenbank aus Aufgabe 1 \\
+\texttt{\$username} & \texttt{root} & Standard-Benutzer bei \acs{XAMPP} \\
+\texttt{\$password} & \texttt{''} (leer) & Standard-Passwort bei \acs{XAMPP} \\
+\hline
+\end{tabular}
+\caption{Konfigurationsparameter der Datenbankverbindung}
+\label{tab:db-config}
+\end{table}
+
+\subsubsection{\acs{PDO}-Verbindung}
+
+Die Verbindung wird mit folgendem Aufruf hergestellt:
+
+\begin{lstlisting}[language=php]
+$pdo = new PDO("mysql:host=$host;dbname=$database;charset=utf8mb4", $username, $password);
+\end{lstlisting}
+
+Der DSN (\textit{Data Source Name}) enthält:
+\begin{itemize}
+    \item \texttt{mysql:} – Treiber für My\acs{SQL}
+    \item \texttt{host=\$host} – Server-Adresse
+    \item \texttt{dbname=\$database} – Datenbankname
+    \item \texttt{charset=utf8mb4} – Zeichensatz (\textit{unterstützt auch Emojis und Sonderzeichen})
+\end{itemize}
+
+\subsubsection{\acs{PDO}-Konfiguration}
+
+Nach der Verbindung werden folgende Attribute gesetzt:
+
+\begin{lstlisting}[language=php]
+$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+$pdo->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
+\end{lstlisting}
+
+\begin{itemize}
+    \item \texttt{PDO::ATTR\_ERRMODE} auf \texttt{PDO::ERRMODE\_EXCEPTION}: Fehler werden als Exceptions geworfen, was eine saubere Fehlerbehandlung ermöglicht.
+    \item \texttt{PDO::ATTR\_DEFAULT\_FETCH\_MODE} auf \texttt{PDO::FETCH\_ASSOC}: Abfrageergebnisse werden standardmäßig als assoziative Arrays zurückgegeben.
+\end{itemize}
+
+\subsubsection{Fehlerbehandlung}
+
+Die Verbindung wird in einem \texttt{try-catch}-Block durchgeführt:
+
+\begin{lstlisting}[language=php]
+try {
+    // Verbindungsaufbau
+} catch (PDOException $e) {
+    die("Datenbankverbindung fehlgeschlagen: " . $e->getMessage());
+}
+\end{lstlisting}
+
+Bei einem Verbindungsfehler wird eine aussagekräftige Fehlermeldung ausgegeben und die Skriptausführung abgebrochen. Dies verhindert, dass die Anwendung mit einer defekten Datenbankverbindung weiterläuft.
+
+\subsection{Einbindung über \texttt{require}}
+
+Die Datei \texttt{db.php} wird in anderen \acs{PHP}-Skripten über die \texttt{require}-Anweisung eingebunden:
+
+\begin{lstlisting}[language=php]
+require __DIR__ . '/inc/db.php';
+\end{lstlisting}
+
+\texttt{require} wird verwendet, da es im Fehlerfall eine \texttt{E\_COMPILE\_ERROR} auslöst und die Skriptausführung abbricht – im Gegensatz zu \texttt{include}, das nur eine Warnung generiert. Dies ist für die Datenbankverbindung kritisch, da die Anwendung ohne funktionierende Verbindung nicht nutzbar wäre.
+
+\section{Test der Datenbankverbindung}
+
+Um die Funktionalität der Verbindung zu überprüfen, wurde eine Testdatei \texttt{test.php} im Hauptverzeichnis \texttt{survey} erstellt:
+
+\lstinputlisting[
+    language=php, 
+    caption={Testdatei \texttt{test.php}}, 
+    label={lst:test-php}
+]{asset/code/Aufgabe2II.tex}
+
+\subsection{Erwartete Ausgabe}
+
+Bei erfolgreicher Verbindung und korrektem Datenbankinhalt zeigt die Testseite (\textit{\textsl{\url{http://localhost/survey/test.php}}}) folgende Ausgabe:
+
+\begin{verbatim}
+Verbindung erfolgreich!
+Array
+(
+    [0] => Array
+        (
+            [Id] => 1
+            [Name] => anonymous
+        )
+
+    [1] => Array
+        (
+            [Id] => 2
+            [Name] => Lara
+        )
+
+    [2] => Array
+        (
+            [Id] => 3
+            [Name] => Luisa
+        )
+
+)
+\end{verbatim}
+
+Die Ausgabe bestätigt:
+\begin{itemize}
+    \item Die Verbindung zur Datenbank \texttt{umfrage\_db} wurde erfolgreich hergestellt.
+    \item Die Tabelle \texttt{user\_table} existiert und enthält die drei erwarteten Datensätze.
+    \item Die \acs{PDO}-Abfrage (\textit{\texttt{query}}) und das Auslesen der Ergebnisse (\textit{\texttt{fetchAll}}) funktionieren korrekt.
+\end{itemize}
+
+\section{Zusammenfassung}
+
+Die Projektstruktur wurde wie gefordert eingerichtet:
+
+\begin{itemize}
+    \item Ordner \texttt{survey} und Unterordner \texttt{\acs{inc}} wurden erstellt.
+    \item Die Datei \texttt{db.php} implementiert die Datenbankverbindung mit \acs{PDO}.
+    \item Die Verbindung wurde erfolgreich getestet und liefert die korrekten Daten aus der \texttt{user\_table}.
+\end{itemize}
+
+Die Datei \texttt{db.php} liegt unter folgendem Pfad:
+
+\begin{forest}
+    for tree={
+        font=\ttfamily,
+        grow'=0,
+        child anchor=west,
+        parent anchor=south,
+        anchor=west,
+        calign=first,
+        edge path={
+            \noexpand\path [draw, \forestoption{edge}] (!u.south west) +(10pt,0) |- node[fill,inner sep=1.5pt] {} (.child anchor)\forestoption{edge label};
+        },
+        before typesetting nodes={
+            if n=1{
+                insert before={[,phantom,calign with current]}
+            }{}
+        },
+        fit=band,
+        before computing xy={l=22pt},
+    }
+    [\textbf{C:\textbackslash xampp\textbackslash htdocs\textbackslash survey}
+        [\textbf{inc\textbackslash}
+            [\textbf{db.php}]
+        ]
+    ]
+\end{forest}
+
+Die Anbindung der Datenbank ist damit abgeschlossen. Die Anwendung kann nun auf die Datenbank zugreifen und in den folgenden Aufgaben um weitere Funktionalitäten erweitert werden.
+
+% ==============================================================================
+% =================================== Aufgabe 2 ================================
+% ==============================================================================
