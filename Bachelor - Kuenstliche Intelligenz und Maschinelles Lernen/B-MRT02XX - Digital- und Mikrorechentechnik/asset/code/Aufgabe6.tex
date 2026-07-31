@@ -1,0 +1,59 @@
+/*
+ * Aufgabe 6: Ampelsteuerung
+ * 
+ * Die Ampel durchläuft vier Zustände:
+ * 1. Rot
+ * 2. Rot + Gelb
+ * 3. Grün
+ * 4. Gelb
+ * 
+ * Zwischen den Zuständen wird jeweils 5 Sekunden pausiert.
+ */
+
+// Pin-Definitionen
+const int LED_ROT   = 2;
+const int LED_GELB  = 3;
+const int LED_GRUEN = 4;
+
+// Pausendauer in Millisekunden
+const unsigned long PAUSE = 5000;  // 5 Sekunden
+
+void setup() {
+    // Alle LED-Pins als Ausgang konfigurieren
+    pinMode(LED_ROT, OUTPUT);
+    pinMode(LED_GELB, OUTPUT);
+    pinMode(LED_GRUEN, OUTPUT);
+    
+    // Alle LEDs zunächst ausschalten
+    digitalWrite(LED_ROT, LOW);
+    digitalWrite(LED_GELB, LOW);
+    digitalWrite(LED_GRUEN, LOW);
+}
+
+void loop() {
+    // ===== Zustand 1: Rot =====
+    digitalWrite(LED_ROT, HIGH);
+    digitalWrite(LED_GELB, LOW);
+    digitalWrite(LED_GRUEN, LOW);
+    delay(PAUSE);
+    
+    // ===== Zustand 2: Rot + Gelb =====
+    digitalWrite(LED_ROT, HIGH);
+    digitalWrite(LED_GELB, HIGH);
+    digitalWrite(LED_GRUEN, LOW);
+    delay(PAUSE);
+    
+    // ===== Zustand 3: Grün =====
+    digitalWrite(LED_ROT, LOW);
+    digitalWrite(LED_GELB, LOW);
+    digitalWrite(LED_GRUEN, HIGH);
+    delay(PAUSE);
+    
+    // ===== Zustand 4: Gelb =====
+    digitalWrite(LED_ROT, LOW);
+    digitalWrite(LED_GELB, HIGH);
+    digitalWrite(LED_GRUEN, LOW);
+    delay(PAUSE);
+    
+    // Nach Zustand 4 wird die Schleife von vorne begonnen (Rot)
+}

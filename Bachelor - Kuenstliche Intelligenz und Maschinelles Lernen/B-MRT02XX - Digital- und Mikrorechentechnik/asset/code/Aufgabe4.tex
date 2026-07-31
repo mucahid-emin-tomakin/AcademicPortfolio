@@ -1,0 +1,30 @@
+; ============================================================
+; Aufgabe 4 - Stack-Programmierung
+; ============================================================
+
+; 1. Register mit Konstanten laden
+    MOV a, #20h      ; a = 0x20
+    MOV b, #10h      ; b = 0x10
+    MOV r0, #80h     ; r0 = 0x80
+    MOV r1, #40h     ; r1 = 0x40
+
+; 2. Werte auf Stack pushen (Reihenfolge: a, b, r0, r1)
+    PUSH a           ; Stack: a
+    PUSH b           ; Stack: a, b
+    PUSH r0          ; Stack: a, b, r0
+    PUSH r1          ; Stack: a, b, r0, r1
+
+; 3. Alle Register löschen (auf 0 setzen)
+    MOV a, #00h
+    MOV b, #00h
+    MOV r0, #00h
+    MOV r1, #00h
+
+; 4. Werte vom Stack in umgekehrter Reihenfolge restaurieren
+    POP r1           ; r1 = letzter gepushter Wert (0x40)
+    POP r0           ; r0 = vorletzter Wert (0x80)
+    POP b            ; b  = zweiter Wert (0x10)
+    POP a            ; a  = erster Wert (0x20)
+
+; Ende des Programms
+    END

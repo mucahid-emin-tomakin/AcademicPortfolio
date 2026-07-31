@@ -1,0 +1,65 @@
+% ==============================================================================
+% ================================ AUFGABE 6 ===================================
+% ==============================================================================
+
+%\chapter{Aufgabe 6: Arduino – Ampelsteuerung}
+%\label{chap:aufgabe6}
+%\thispagestyle{fancy}
+
+\section{Aufgabe 6: Arduino – Ampelsteuerung}
+In diesem Kapitel wird ein Arduino-Sketch entwickelt, der eine einfache Ampelsteuerung mit vier Zuständen realisiert.  
+Die Ampel durchläuft zyklisch die Phasen Rot, Rot-Gelb, Grün und Gelb, wobei zwischen jedem Zustand eine Pause von 5 Sekunden eingelegt wird.  
+Das Programm läuft in einer Endlosschleife.
+Die Umsetzung erfolgt mit der Arduino-IDE gemäß Studienheft MRT13 \cite{3}.
+\subsection{Arduino-Sketch}
+Der folgende Sketch steuert die Ampel mithilfe von drei LEDs (\textit{Rot}, \textit{Gelb}, \textit{Grün}), die an den digitalen Pins 2, 3 und 4 angeschlossen sind.
+
+\refstepcounter{mylisting}
+\begin{minipage}[t]{0.48\textwidth}
+    \lstinputlisting[
+        language={C},
+        style={arduino},
+        firstline=1,
+        lastline=31,
+        frame=tb,
+        numbers=left,
+        title=\empty,
+    ]{asset/code/Aufgabe6.tex}
+\end{minipage}
+\hfill
+\begin{minipage}[t]{0.48\textwidth}
+    \lstinputlisting[
+        language={C},
+        style={arduino},
+        firstline=32,
+        lastline=59,
+        frame=tb,
+        numbers=left,
+        title=\empty,
+    ]{asset/code/Aufgabe6.tex}
+\end{minipage}
+\begin{minipage}{\linewidth}
+    \captionof{lstlisting}{Arduino-Sketch zur Ampelsteuerung (\textit{Quelle: Eigene Darstellung})}
+    \label{lst:ampel}
+\end{minipage}
+\subsection{Schaltungsaufbau}
+Die folgende Tabelle zeigt die Pinbelegung der LEDs:
+\begin{table}[h]
+\centering
+\begin{tabular}{c|c|c}
+\toprule
+\textbf{LED} & \textbf{Arduino-Pin} & \textbf{Farbe} \\
+\midrule
+Rot   & 2 & Rot \\
+Gelb  & 3 & Gelb \\
+Grün  & 4 & Grün \\
+\bottomrule
+\end{tabular}
+\caption{Pinbelegung der Ampel-LEDs (\textit{Quelle: Eigene Darstellung})}
+\label{tab:ampel_pins}
+\end{table}
+Jede LED wird über einen Vorwiderstand (\textit{ca. 220~$\Omega$}) mit GND verbunden.
+
+% ==============================================================================
+% ================================ AUFGABE 6 ===================================
+% ==============================================================================

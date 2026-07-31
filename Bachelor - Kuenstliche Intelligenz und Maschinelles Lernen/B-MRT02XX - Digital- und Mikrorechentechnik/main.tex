@@ -1,0 +1,71 @@
+% ==============================================================================
+% ===================================== MAIN ===================================
+% ==============================================================================
+
+\documentclass[
+    a4paper,
+    10pt,
+    numbers=noenddot,
+    toc=sectionentrydotfill,
+    toc=chapterentrydotfill,
+    chapter=atstart,
+    open=any
+]{scrreprt}
+
+% ================= Settings =================
+
+\input{config/settings.tex}
+
+% ================= Settings =================
+
+\begin{document}
+
+% ================= Deckblatt =================
+
+\input{config/titlepage.tex}
+
+% ================= Deckblatt =================
+% ================= Inhaltsverzeichnis =================
+
+\pagenumbering{Roman}
+\setcounter{page}{1}
+\tableofcontents
+\cleardoublepage
+
+% ================= Inhaltsverzeichnis =================
+% ================= Hauptteil =================
+
+\pagenumbering{arabic}
+\setcounter{page}{1}
+\pagestyle{fancy}
+\input{chapter/Einleitung.tex}
+\input{chapter/Aufgabe1.tex}
+\input{chapter/Aufgabe2.tex}
+\input{chapter/Aufgabe3.tex}
+\input{chapter/Aufgabe4.tex}
+\input{chapter/Aufgabe5.tex}
+\input{chapter/Aufgabe6.tex}
+\input{chapter/Aufgabe7.tex}
+\input{chapter/Zusammenfassung.tex}
+\cleardoublepage
+
+% ================= Hauptteil =================
+% ================= Verzeichnisse =================
+
+\pagenumbering{Roman}
+\setcounter{page}{2}
+\section*{Abkürzungsverzeichnis}
+\addcontentsline{toc}{section}{Abkürzungsverzeichnis}
+\input{config/acronym.tex}
+\listoffigures
+\listoftables
+\listofcode
+\printbibliography[title={Literaturverzeichnis}, heading=subbibintoc]
+
+% ================= Verzeichnisse =================
+
+\end{document}
+
+% ==============================================================================
+% ===================================== MAIN ===================================
+% ==============================================================================

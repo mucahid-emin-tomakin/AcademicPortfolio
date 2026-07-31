@@ -1,0 +1,91 @@
+% ==============================================================================
+% ================================ AUFGABE 7 ===================================
+% ==============================================================================
+
+%\chapter{Aufgabe 7: Arduino – Würfelsteuerung}
+%\label{chap:aufgabe7}
+%\thispagestyle{fancy}
+
+\section{Aufgabe 7: Arduino – Würfelsteuerung}
+In diesem Kapitel wird eine Logik für einen elektronischen Würfel mit neun Anzeigeleuchten (\textit{a–i}) entwickelt.  
+Mithilfe von vier Schaltern \textit{(\(S_1\)–\(S_4\))} werden verschiedene Würfelmuster dargestellt.  
+Zunächst wird eine Zuordnungs- und Wahrheitstabelle erstellt, anschließend werden die minimierten Funktionsgleichungen in disjunktiver Normalform (\textit{\acs{DNF}}) ermittelt gemäß Studienheft MRT13 \cite{3}.
+% ======================================= 7a =====================================
+\subsection{Aufgabe 7a: Zuordnungs- und Wahrheitstabelle}
+Die neun Anzeigeleuchten sind wie folgt angeordnet: \hspace{4cm} \[\begin{matrix}a & d & g \\b & e & h \\c & f & i\end{matrix}\]
+Die vier Schalter \(S_1\)–\(S_4\) bilden eine 4‑Bit‑Binärzahl, wobei \(S_1\) das niedrigstwertige Bit (\textit{\acs{LSB}}) und \(S_4\) das höchstwertige Bit (\textit{\acs{MSB}}) darstellt.  
+Die folgenden neun Zustände (\textit{Binärcodes 1 bis 9}) sind definiert:
+\begin{table}[h]
+\centering
+\begin{tabular}{c|c|c}
+\toprule
+\textbf{Zustand} & \(S_4 S_3 S_2 S_1\) & \textbf{Leuchtende \acs{LED}s} \\
+\midrule
+1 & 0001 & e \\
+2 & 0010 & a, i \\
+3 & 0011 & a, e, i \\
+4 & 0100 & a, c, g, i \\
+5 & 0101 & a, c, e, g, i \\
+6 & 0110 & a, c, e, g, h, i \\
+7 & 0111 & d, e, f, g, h, i \\
+8 & 1000 & a, c, d, f, g, i \\
+9 & 1001 & a, c, d, e, f, g, i \\
+\bottomrule
+\end{tabular}
+\caption{Zuordnung der Schalterzustände zu den Würfelmustern (\textit{Quelle: Eigene Darstellung})}
+\label{tab:wuerfel_muster}
+\end{table}
+Die nicht aufgeführten Zustände (\textit{0}, \textit{10–15}) werden als „Don’t Care“ (\textit{\(X\)}) behandelt.
+\subsubsection{Wahrheitstabelle}
+Die folgende Tabelle zeigt für jede Schalterkombination den Zustand der neun \acs{LED}s (\textit{1 = an}, \textit{0 = aus}, \textit{X = egal}).
+\begin{longtable}{c|c|ccccccccc}
+\toprule
+\(S_4 S_3 S_2 S_1\) & \textbf{Zustand} & \(a\) & \(b\) & \(c\) & \(d\) & \(e\) & \(f\) & \(g\) & \(h\) & \(i\) \\
+\midrule
+\endfirsthead
+\multicolumn{11}{c}{\textit{Fortsetzung der Wahrheitstabelle}} \\
+\toprule
+\(S_4 S_3 S_2 S_1\) & \textbf{Zustand} & \(a\) & \(b\) & \(c\) & \(d\) & \(e\) & \(f\) & \(g\) & \(h\) & \(i\) \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+% ====== Hier kommt der untere Tabellenfuß (nur auf der letzten Seite) ======
+\bottomrule
+\caption{Vollständige Wahrheitstabelle für alle neun \acs{LED}s (\textit{Quelle: Eigene Darstellung})} \\
+\endlastfoot
+% ====== Hier kommen jetzt die eigentlichen Datenzeilen ======
+0000 & 0  & X & X & X & X & X & X & X & X & X \\
+0001 & 1  & 0 & 0 & 0 & 0 & 1 & 0 & 0 & 0 & 0 \\
+0010 & 2  & 1 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 1 \\
+0011 & 3  & 1 & 0 & 0 & 0 & 1 & 0 & 0 & 0 & 1 \\
+0100 & 4  & 1 & 0 & 1 & 0 & 0 & 0 & 1 & 0 & 1 \\
+0101 & 5  & 1 & 0 & 1 & 0 & 1 & 0 & 1 & 0 & 1 \\
+0110 & 6  & 1 & 0 & 1 & 0 & 1 & 0 & 1 & 1 & 1 \\
+0111 & 7  & 0 & 0 & 0 & 1 & 1 & 1 & 1 & 1 & 1 \\
+1000 & 8  & 1 & 0 & 1 & 1 & 0 & 1 & 1 & 0 & 1 \\
+1001 & 9  & 1 & 0 & 1 & 1 & 1 & 1 & 1 & 0 & 1 \\
+1010 & 10 & X & X & X & X & X & X & X & X & X \\
+1011 & 11 & X & X & X & X & X & X & X & X & X \\
+1100 & 12 & X & X & X & X & X & X & X & X & X \\
+1101 & 13 & X & X & X & X & X & X & X & X & X \\
+1110 & 14 & X & X & X & X & X & X & X & X & X \\
+1111 & 15 & X & X & X & X & X & X & X & X & X \\
+\end{longtable}
+% ======================================= 7b =====================================
+\subsection{Aufgabe 7b: Minimierte Funktionsgleichungen (\textit{\acs{DNF}})}
+Aus der Wahrheitstabelle werden für jede \acs{LED} die Einsen und Don't-Cares zu möglichst großen Blöcken zusammengefasst.  
+Die folgenden minimierten Gleichungen in disjunktiver Normalform (\textit{\acs{DNF}}) werden ermittelt:
+\subsubsection{\texorpdfstring{\acs{LED} \(a\)}{LED a}} \hspace{4cm} \(\boxed{a = \overline{S_4} \cdot S_3 \;\cup\; S_4 \cdot \overline{S_3} \;\cup\; \overline{S_4} \cdot \overline{S_2}}\)
+\subsubsection{\texorpdfstring{\acs{LED} \(b\)}{LED b}} \hspace{4cm} \(\boxed{b = 0}\)
+\subsubsection{\texorpdfstring{\acs{LED} \(c\)}{LED c}} \hspace{4cm} \(\boxed{c = \overline{S_4} \cdot S_2 \cdot \overline{S_1} \;\cup\; S_4 \cdot \overline{S_3} \cdot \overline{S_1}}\)
+\subsubsection{\texorpdfstring{\acs{LED} \(d\)}{LED d}} \hspace{4cm} \(\boxed{d = \overline{S_3} \cdot S_2 \cdot S_1 \;\cup\; S_4 \cdot \overline{S_2} \cdot S_1}\)
+\subsubsection{\texorpdfstring{\acs{LED} \(e\)}{LED e}} \hspace{4cm} \(\boxed{e = \overline{S_4} \cdot S_1 \;\cup\; S_4 \cdot \overline{S_2} \cdot \overline{S_1} \;\cup\; S_4 \cdot S_3 \cdot \overline{S_1}}\)
+\subsubsection{\texorpdfstring{\acs{LED} \(f\)}{LED f}} \hspace{4cm} \(\boxed{f = S_4 \cdot \overline{S_2} \;\cup\; S_3 \cdot S_2 \cdot S_1}\)
+\subsubsection{\texorpdfstring{\acs{LED} \(g\)}{LED g}} \hspace{4cm} \(\boxed{g = \overline{S_4} \cdot S_2 \;\cup\; S_4 \cdot \overline{S_3} \;\cup\; S_4 \cdot \overline{S_2} \cdot S_1}\)
+\subsubsection{\texorpdfstring{\acs{LED} \(h\)}{LED h}} \hspace{4cm} \(\boxed{h = S_3 \cdot S_2 \cdot S_1 \;\cup\; S_4 \cdot S_3 \cdot \overline{S_2}}\)
+\subsubsection{\texorpdfstring{\acs{LED} \(i\)}{LED i}} \hspace{4cm} \(\boxed{i = \overline{S_4} \;\cup\; S_4 \cdot \overline{S_3}}\)
+
+% ==============================================================================
+% ================================ AUFGABE 7 ===================================
+% ==============================================================================

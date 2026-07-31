@@ -1,0 +1,90 @@
+% ==============================================================================
+% ================================ AUFGABE 1 ===================================
+% ==============================================================================
+
+%\chapter{Aufgabe 1: Boolesche Algebra}
+%\label{chap:aufgaben}
+%\thispagestyle{fancy}
+
+\section{Aufgabe 1: Boolesche Algebra}
+In diesem Kapitel werden die beiden gegebenen booleschen Gleichungen schrittweise vereinfacht. 
+Alle Zwischenschritte werden angegeben und mit den angewandten Gesetzen der Booleschen Algebra kommentiert, so wie Fleury, M. Otten \cite{2} es beschreibt.
+% ======================================= 1a =====================================
+\subsection{Aufgabe 1a}
+\begin{equation}
+    \boldsymbol{y}_1 = \overline{ \overline{(\overline{\boldsymbol{x}_1} \cdot \overline{\boldsymbol{x}_2} \cdot \overline{\boldsymbol{x}_4})} 
+    \cap \overline{(\overline{\boldsymbol{x}_1} \cup \overline{\boldsymbol{x}_2} \cup \overline{\boldsymbol{x}_3})} } \tag{\textit{Angabe}}
+\end{equation}
+\subsubsection{Vereinfachung}
+Zunächst wird die äußere Negation mit dem Gesetz von De Morgan aufgelöst:
+\begin{align}
+    y_1 &= \overline{ A \cap B } \quad \text{mit} \quad 
+    A = \overline{(\overline{x_1} \cdot \overline{x_2} \cdot \overline{x_4})},\; 
+    B = \overline{(\overline{x_1} \cup \overline{x_2} \cup \overline{x_3})} \nonumber \\
+    &= \overline{A} \cup \overline{B} \tag{\textit{De Morgan}}
+\end{align}
+Nun werden die doppelten Negationen aufgelöst:
+\begin{align}
+    \overline{A} &= \overline{ \overline{(\overline{x_1} \cdot \overline{x_2} \cdot \overline{x_4})} } 
+    = \overline{x_1} \cdot \overline{x_2} \cdot \overline{x_4} \tag{\textit{Doppelte Negation}} \\
+    \overline{B} &= \overline{ \overline{(\overline{x_1} \cup \overline{x_2} \cup \overline{x_3})} } 
+    = \overline{x_1} \cup \overline{x_2} \cup \overline{x_3} \tag{\textit{Doppelte Negation}} \\
+    y_1 &= (\overline{x_1} \cdot \overline{x_2} \cdot \overline{x_4}) 
+    \cup (\overline{x_1} \cup \overline{x_2} \cup \overline{x_3}) \tag{\textit{Zwischen Ergebnis}}
+\end{align}
+Der Term $\overline{x_1} \cdot \overline{x_2} \cdot \overline{x_4}$ ist eine Teilmenge 
+von $\overline{x_1} \cup \overline{x_2} \cup \overline{x_3}$, da er die Konjunktion 
+dreier Literale ist, während die zweite Klammer die Disjunktion dieser Literale darstellt. 
+Somit gilt das Absorptionsgesetz:
+\begin{equation}
+    y_1 = \overline{x_1} \cup \overline{x_2} \cup \overline{x_3} \tag{\textit{Absorptionsgesetz}}
+\end{equation}
+Die endgültige vereinfachte Gleichung lautet:
+\begin{equation}
+    \boxed{ \boldsymbol{y}_1 = \overline{\boldsymbol{x}_1} \cup \overline{\boldsymbol{x}_2} \cup \overline{\boldsymbol{x}_3} } \tag{\textit{Ergebnis}}
+\end{equation}
+% ======================================= 1b =====================================
+\subsection{Aufgabe 1b}
+\begin{equation}
+    \boldsymbol{y}_2 = \overline{(\overline{\boldsymbol{x}_1} \cdot \boldsymbol{x}_2 \cdot \overline{\boldsymbol{x}_3} \cup \overline{(\boldsymbol{x}_1 \cup \boldsymbol{x}_2 \cup \boldsymbol{x}_3)})} \cap (\boldsymbol{x}_1 \cup \overline{\boldsymbol{x}_2}) \tag{\textit{Angabe}}
+\end{equation}
+\subsubsection*{Vereinfachung}
+Zunächst wird die Negation der gesamten ersten Klammer mit De Morgan aufgelöst:
+\begin{align}
+    y_2 &= \overline{ A \cup B } \cap (x_1 \cup \overline{x_2}) \quad \text{mit} \quad
+    A = \overline{x_1} \cdot x_2 \cdot \overline{x_3},\; 
+    B = \overline{(x_1 \cup x_2 \cup x_3)} \nonumber \\
+    &= (\overline{A} \cap \overline{B}) \cap (x_1 \cup \overline{x_2}) \tag{\textit{De Morgan}}
+\end{align}
+Die doppelten Negationen werden aufgelöst:
+\begin{align}
+    \overline{A} &= \overline{(\overline{x_1} \cdot x_2 \cdot \overline{x_3})} 
+    = x_1 \cup \overline{x_2} \cup x_3 \tag{\textit{De Morgan}} \\
+    \overline{B} &= \overline{ \overline{(x_1 \cup x_2 \cup x_3)} } 
+    = x_1 \cup x_2 \cup x_3 \tag{\textit{Doppelte Negation}}
+\end{align}
+Somit wird der erste Faktor:
+\begin{equation}
+    \overline{A} \cap \overline{B} 
+    = (x_1 \cup \overline{x_2} \cup x_3) 
+    \cap (x_1 \cup x_2 \cup x_3)
+    = x_1 \cup x_3 \tag{\textit{Absorption}}
+\end{equation}
+Eingesetzt in die ursprüngliche Gleichung ergibt sich:
+\begin{equation}
+    y_2 = (x_1 \cup x_3) 
+    \cap (x_1 \cup \overline{x_2}) \tag{\textit{Eingesetzt}}
+\end{equation}
+Da $x_1$ in beiden Klammern vorkommt, kann das Absorptionsgesetz 
+angewendet werden:
+\begin{equation}
+    y_2 = x_1 \cup (x_3 \cap \overline{x_2}) \tag{\textit{Absorptionsgesetz}}
+\end{equation}
+Die endgültige vereinfachte Gleichung lautet:
+\begin{equation}
+    \boxed{ \boldsymbol{y}_2 = \boldsymbol{x}_1 \cup (\boldsymbol{x}_3 \cap \overline{\boldsymbol{x}_2}) } \tag{\textit{Ergebnis}}
+\end{equation}
+
+% ==============================================================================
+% ================================ AUFGABE 1 ===================================
+% ==============================================================================

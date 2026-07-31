@@ -1,0 +1,131 @@
+% ==============================================================================
+% ================================ AUFGABE 3 ===================================
+% ==============================================================================
+
+%\chapter{Aufgabe 3: KV-Diagramm}
+%\label{chap:aufgabe3}
+%\thispagestyle{fancy}
+
+\section{Aufgabe 3: KV-Diagramm}
+In diesem Kapitel wird die gegebene Wertetabelle für die vier Ausgänge \(Q_0, Q_1, Q_2, Q_3\) in Abhängigkeit von den vier Eingangssignalen \(A, B, C, D\) ausgewertet. 
+Es werden die KV‑Diagramme aller Ausgänge gezeichnet, die zugehörigen minimierten logischen Gleichungen ermittelt und abschließend die Gesamtschaltung skizziert, so wie in dem Studienheft \cite{2} beschrieben.
+\subsection{Wertetabelle}
+Die Tabelle enthält die 16 möglichen Eingangskombinationen (\textit{DCBA}) und die zugehörigen Ausgänge \(Q_3 Q_2 Q_1 Q_0\) gemäß der Aufgabenstellung.
+\begin{table}[h]
+\centering
+\begin{tabular}{c|c|c|c|c|c|c|c}
+\toprule
+\(D\) & \(C\) & \(B\) & \(A\) & \(Q_3\) & \(Q_2\) & \(Q_1\) & \(Q_0\) \\
+\midrule
+0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+0 & 0 & 0 & 1 & 0 & 0 & 0 & 1 \\
+0 & 0 & 1 & 0 & 0 & 0 & 1 & 1 \\
+0 & 0 & 1 & 1 & 0 & 0 & 1 & 0 \\
+0 & 1 & 0 & 0 & 0 & 1 & 1 & 0 \\
+0 & 1 & 0 & 1 & 0 & 1 & 1 & 1 \\
+0 & 1 & 1 & 0 & 0 & 1 & 0 & 1 \\
+0 & 1 & 1 & 1 & 0 & 1 & 0 & 0 \\
+1 & 0 & 0 & 0 & 1 & 1 & 0 & 0 \\
+1 & 0 & 0 & 1 & 1 & 1 & 0 & 1 \\
+1 & 0 & 1 & 0 & 1 & 1 & 1 & 1 \\
+1 & 0 & 1 & 1 & 1 & 1 & 1 & 0 \\
+1 & 1 & 0 & 0 & 1 & 0 & 1 & 0 \\
+1 & 1 & 0 & 1 & 1 & 0 & 1 & 1 \\
+1 & 1 & 1 & 0 & 1 & 0 & 0 & 1 \\
+1 & 1 & 1 & 1 & 1 & 0 & 0 & 0 \\
+\bottomrule
+\end{tabular}
+\caption{Wertetabelle für \(Q_0 \dots Q_3\) (\textit{Quelle: Eigene Darstellung})}
+\label{tab:wahrheit}
+\end{table}
+\subsection{KV-Diagramme und minimierte Gleichungen}
+Für jeden Ausgang wird ein KV‑Diagramm mit der Anordnung \(AB\) (\textit{horizontal}) und \(CD\) (\textit{vertikal}) im Gray‑Code \((\textit{00}, \textit{01}, \textit{11}, \textit{10})\) erstellt. 
+Die Einsen werden zu möglichst großen Blöcken zusammengefasst.
+\subsubsection{\texorpdfstring{Ausgang \(Q_0\)}{Ausgang Q0}}
+\begin{table}[h]
+\centering
+\begin{tabular}{c|cccc}
+\multicolumn{1}{c}{} & \multicolumn{4}{c}{\(AB\)} \\
+\cline{2-5}
+\(CD\) & 00 & 01 & 11 & 10 \\
+\hline
+00 & 0 & 1 & 0 & 1 \\
+01 & 0 & 1 & 0 & 1 \\
+11 & 0 & 1 & 0 & 1 \\
+10 & 0 & 1 & 0 & 1 \\
+\hline
+\end{tabular}
+\caption{KV-Diagramm für \(Q_0\) (\textit{Quelle: Eigene Darstellung})}
+\end{table}
+Die minimierte Gleichung lautet: \hspace{4cm} \[\boxed{Q_0 = \overline{A} \cdot B \;\cup\; A \cdot \overline{B}}\]
+\subsubsection{\texorpdfstring{Ausgang \(Q_1\)}{Ausgang Q1}}
+\begin{table}[h]
+\centering
+\begin{tabular}{c|cccc}
+\multicolumn{1}{c}{} & \multicolumn{4}{c}{\(AB\)} \\
+\cline{2-5}
+\(CD\) & 00 & 01 & 11 & 10 \\
+\hline
+00 & 0 & 0 & 1 & 1 \\
+01 & 1 & 1 & 0 & 0 \\
+11 & 1 & 1 & 0 & 0 \\
+10 & 0 & 0 & 1 & 1 \\
+\hline
+\end{tabular}
+\caption{KV-Diagramm für \(Q_1\) (\textit{Quelle: Eigene Darstellung})}
+\end{table}
+Die minimierte Gleichung lautet: \hspace{4cm} \[\boxed{Q_1 = A \cdot \overline{C} \;\cup\; \overline{A} \cdot C}\]
+\subsubsection{\texorpdfstring{Ausgang \(Q_2\)}{Ausgang Q2}}
+\begin{table}[h]
+\centering
+\begin{tabular}{c|cccc}
+\multicolumn{1}{c}{} & \multicolumn{4}{c}{\(AB\)} \\
+\cline{2-5}
+\(CD\) & 00 & 01 & 11 & 10 \\
+\hline
+00 & 0 & 0 & 0 & 0 \\
+01 & 1 & 1 & 1 & 1 \\
+11 & 0 & 0 & 0 & 0 \\
+10 & 1 & 1 & 1 & 1 \\
+\hline
+\end{tabular}
+\caption{KV-Diagramm für \(Q_2\) (\textit{Quelle: Eigene Darstellung})}
+\end{table}
+Die minimierte Gleichung lautet: \hspace{4cm} \[\boxed{Q_2 = \overline{C} \cdot D \;\cup\; C \cdot \overline{D}}\]
+\subsubsection{\texorpdfstring{Ausgang \(Q_3\)}{Ausgang Q3}}
+\begin{table}[h]
+\centering
+\begin{tabular}{c|cccc}
+\multicolumn{1}{c}{} & \multicolumn{4}{c}{\(AB\)} \\
+\cline{2-5}
+\(CD\) & 00 & 01 & 11 & 10 \\
+\hline
+00 & 0 & 0 & 0 & 0 \\
+01 & 1 & 1 & 1 & 1 \\
+11 & 1 & 1 & 1 & 1 \\
+10 & 0 & 0 & 0 & 0 \\
+\hline
+\end{tabular}
+\caption{KV-Diagramm für \(Q_3\) (\textit{Quelle: Eigene Darstellung})}
+\end{table}
+Die minimierte Gleichung lautet: \hspace{4cm} \[\boxed{Q_3 = D}\]
+\subsection{Gesamtschaltung}
+Die folgende Abbildung zeigt die Gesamtschaltung aller Ein- und Ausgänge unter Verwendung der Logik-Bausteine UND, ODER und NEGATION (\textit{Inverter}).
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.44\textwidth]{asset/image/Aufgabe3.png}
+\caption{Gesamtschaltung aller Ein- und Ausgänge mit UND-, ODER- und NICHT-Gattern (\textit{Quelle: Eigene Darstellung})}
+\label{fig:aufgabe3_schaltung}
+\end{figure}
+Die Schaltung realisiert die minimierten Gleichungen: \hspace{4cm} \[\boxed{
+\begin{aligned}
+    Q_0 &= \overline{A} \cdot B \;\cup\; A \cdot \overline{B} \\
+    Q_1 &= A \cdot \overline{C} \;\cup\; \overline{A} \cdot C \\
+    Q_2 &= \overline{C} \cdot D \;\cup\; C \cdot \overline{D} \\
+    Q_3 &= D
+\end{aligned}
+}\]
+
+% ==============================================================================
+% ================================ AUFGABE 3 ===================================
+% ==============================================================================

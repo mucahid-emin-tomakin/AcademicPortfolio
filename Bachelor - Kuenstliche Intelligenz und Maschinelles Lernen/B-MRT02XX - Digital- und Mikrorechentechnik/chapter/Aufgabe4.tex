@@ -1,0 +1,92 @@
+% ==============================================================================
+% ================================ AUFGABE 4 ===================================
+% ==============================================================================
+
+%\chapter{Aufgabe 4: Digitaltechnik – Stack-Programmierung}
+%\label{chap:aufgabe4}
+%\thispagestyle{fancy}
+
+\section{Aufgabe 4: Digitaltechnik – Stack-Programmierung}
+In diesem Kapitel wird ein maschinenorientiertes Programm entwickelt, das den Stack als kurzzeitigen Zwischenspeicher nutzt.  
+Die Aufgabenstellung umfasst das Laden von vier Registern mit 8‑Bit‑Konstanten, das Sichern dieser Werte auf dem Stack, das Löschen der Register und das anschließende Wiederherstellen der Originalwerte ausschließlich über den Stack.
+Die Stack-Programmierung basiert auf der Rechnerarchitektur aus MRT11 \cite{1}.
+\subsection{Programmablauf}
+Das Programm führt folgende Schritte aus:
+\begin{enumerate}
+    \item Laden der Register mit den vorgegebenen Hexadezimalwerten:
+    \begin{itemize}
+        \item Akkumulator \(a \leftarrow 20_h\)
+        \item B‑Register \(b \leftarrow 10_h\)
+        \item Register 0 \(r0 \leftarrow 80_h\)
+        \item Register 1 \(r1 \leftarrow 40_h\)
+    \end{itemize}
+    \item Pushen aller vier Registerinhalte auf den Stack in der Reihenfolge: \(a\), \(b\), \(r0\), \(r1\).
+    \item Löschen aller vier Register durch Zuweisung von \(00_h\).
+    \item Wiederherstellen der ursprünglichen Werte durch Poppen vom Stack in der \emph{umgekehrten} Reihenfolge (\textit{LIFO-Prinzip}), das heißt \(r1\), \(r0\), \(b\), \(a\).
+\end{enumerate}
+Die Stack‑Organisation folgt dem Prinzip, dass der Stack‑Pointer bei jedem PUSH inkrementiert und bei jedem POP dekrementiert wird. Daher müssen die Werte in umgekehrter Reihenfolge vom Stack geholt werden, um die Register korrekt zu restaurieren.
+\subsection{Assembler-Programm}
+Das Programm wird mit den in der Aufgabenstellung definierten Maschinenbefehlen notiert. 
+Die Kommentare erläutern jeden Schritt.
+
+\refstepcounter{mylisting}
+\begin{minipage}[t]{0.48\textwidth}
+    \lstinputlisting[
+        language={[x86masm]Assembler},
+        style={assembler},
+        firstline=1,
+        lastline=16,
+        frame=tb,
+        numbers=left,
+        title=\empty,
+    ]{asset/code/Aufgabe4.tex}
+\end{minipage}
+\hfill
+\begin{minipage}[t]{0.48\textwidth}
+    \lstinputlisting[
+        language={[x86masm]Assembler},
+        style={assembler},
+        firstline=17,
+        lastline=30,
+        firstnumber=17,
+        frame=tb,
+        numbers=left,
+        title=\empty,
+    ]{asset/code/Aufgabe4.tex}
+\end{minipage}
+\begin{minipage}{\linewidth}
+    \captionof{lstlisting}{Assembler-Programm zur Stack-Nutzung (\textit{Quelle: Eigene Darstellung})}
+    \label{lst:stack_prog}
+\end{minipage}
+\subsection{Test des Programms}
+Die Korrektheit des Programms wird durch eine manuelle Simulation aller Registerinhalte und des Stacks nach jedem Befehl überprüft. 
+Die folgende Tabelle zeigt die Werte nach der Ausführung der kritischen Schritte:
+\begin{table}[h]
+\centering
+\begin{tabular}{c|c|c|c|c|c|c}
+\toprule
+\textbf{Schritt} & \textbf{Befehl} & \textbf{a} & \textbf{b} & \textbf{r0} & \textbf{r1} & \textbf{Stack (SP)} \\
+\midrule
+1 & Initialisierung & 20h & 10h & 80h & 40h & -- \\
+2 & Nach PUSH a,b,r0,r1 & 20h & 10h & 80h & 40h & 20h, 10h, 80h, 40h \\
+3 & Nach Löschen & 00h & 00h & 00h & 00h & 20h, 10h, 80h, 40h \\
+4 & Nach POP r1 & 00h & 00h & 00h & 40h & 20h, 10h, 80h \\
+5 & Nach POP r0 & 00h & 00h & 80h & 40h & 20h, 10h \\
+6 & Nach POP b & 00h & 10h & 80h & 40h & 20h \\
+7 & Nach POP a & 20h & 10h & 80h & 40h & -- \\
+\bottomrule
+\end{tabular}
+\caption{Manuelle Simulation der Register- und Stackinhalte (\textit{Quelle: Eigene Darstellung})}
+\label{tab:stack_test}
+\end{table}
+\subsubsection{Ergebnis des Tests}
+Nach der vollständigen Abarbeitung des Programms haben alle Register wieder ihre ursprünglichen Werte:\\
+\(a = 20_h\), \(b = 10_h\), \(r0 = 80_h\) und \(r1 = 40_h\)
+Der Stack ist nach dem letzten POP wieder leer (\textit{Stack-Pointer zeigt auf den ursprünglichen Wert}). Somit arbeitet das Programm korrekt gemäß der Aufgabenstellung.
+\begin{center}
+    \boxed{\text{Das Programm besteht den manuellen Test.}}
+\end{center}
+
+% ==============================================================================
+% ================================ AUFGABE 4 ===================================
+% ==============================================================================
