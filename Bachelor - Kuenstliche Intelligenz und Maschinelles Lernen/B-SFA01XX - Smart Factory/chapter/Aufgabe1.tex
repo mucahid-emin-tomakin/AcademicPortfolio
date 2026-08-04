@@ -1,0 +1,67 @@
+% ==============================================================================
+% ================================= Aufgabe 1 =================================
+% ==============================================================================
+
+\chapter{Grundlagen der Smart Factory und Datenintegration \textit{(1)}}
+\label{chap:aufgabe1}
+\thispagestyle{fancy}
+
+% ================================= 1a =================================
+
+\section{Datengesteuertes Smart Manufacturing \textit{(1a)}}
+\label{sec:1a}
+
+Der Ansatz des \textit{datengesteuerten Smart Manufacturing} für \acs{SMT} markiert den Übergang zur vierten industriellen Revolution. Gemäß Zotter und Metzler basiert dieser Ansatz grundlegend auf der effizienten Erfassung von Echtzeitdaten \cite[2]{2}, um anspruchsvollere Prozesse durch konsequente Digitalisierung einzuführen.
+
+Das technologische Rückgrat bilden \textit{Cyber-Physische Systeme} \textit{(\acs{CPS})}. Zotter und Metzler strukturieren diese in fünf Ebenen \cite[4-5]{2}, von der \glqq Intelligente Verbindung\grqq{} zur Datensammlung via Sensoren bis hin zur autonomen \glqq Systemselbstkonfiguration\grqq. Ergänzend wird die Konnektivität durch das \textit{(\acs{IIoT})} sichergestellt, welches Maschinen und Produkte als \glqq Smart Objects\grqq{} direkt in den Informationsfluss einbindet \textit{(\acs{vgl.} Steven/Dörseln \cite[10]{1})}
+
+Für fundierte Echtzeitentscheidungen kommen \textit{Big Data Analytics} und die \glqq \acs{4Vs}\grqq{} \textit{(Datenmenge, Vielfalt, Geschwindigkeit und Genauigkeit)} zum Einsatz \cite[8-9]{2}, um fundierte Entscheidungen in Echtzeit zu treffen. Steven und Dörseln definieren das übergeordnete Ziel für \acs{SMT} als ein Produktionsumfeld, das kundenindividuelle Anforderungen, bis hin zur wirtschaftlichen Realisierung der \textit{Losgröße 1}, zu Kosten der Massenfertigung realisiert \cite[11]{1}.
+
+% ================================= 1b =================================
+
+\section{Überschneidung von \acs{ERP}- und \acs{MES}-Software \textit{(1b)}}
+\label{sec:1b}
+
+Hinsichtlich der Softwarearchitektur für \acs{SMT} empfehle ich eine klare funktionale Trennung bei gleichzeitiger tiefer Integration von \textit{\acs{ERP}- und \acs{MES}-Systemen}. Die primäre Überschneidung liegt in der Fertigungssteuerung und Produktionsplanung \cite[28]{2}.
+
+\begin{itemize}[leftmargin=*]
+    \item \textbf{\acs{ERP}-System \textit{(Strategische Ebene)}}: Das \acs{ERP} übernimmt die kaufmännische Sicht und die langfristige Planung \cite[10]{1}. Es verwaltet die Kundenaufträge der Automobilkunden und den globalen Ressourcenbedarf.
+    
+    \item \textbf{\acs{MES}-System \textit{(Operative Ebene)}}: Das \acs{MES} dient als operative Drehscheibe für die Echtzeit-Transparenz direkt auf dem Shop Floor \cite[10]{1}. Es bricht die \acs{ERP}-Pläne auf die konkrete Belegung der 20 \acs{CNC}-Maschinen herunter.
+\end{itemize}
+
+Die Systeme arbeiten beim Auftragsmanagement Hand in Hand: Das \acs{ERP} gibt vor, was produziert werden soll, während das \acs{MES} in Echtzeit zurückmeldet, wie der Status an den Maschinen ist \cite[85]{2}.
+
+\textbf{Handlungsempfehlung}: Für \acs{SMT} ist diese Integration entscheidend, da nur so die von der technischen Leitung geforderte Fehlerfrüherkennung möglich wird. Ohne den Echtzeit-Datenfluss vom \acs{MES} wäre das \acs{ERP} \glqq blind\grqq{} für kurzfristige Störungen in der mechanischen Fertigung, was eine wirtschaftliche Realisierung der Losgröße 1 verhindern würde \textit{(\acs{vgl.} \cite[11]{1})}.
+
+% ================================= 1c =================================
+
+\section{Erfassung von Sensordaten in der Produktionslinie \textit{(1c)}}
+\label{sec:1c}
+
+Um die Ziele der technischen Leitung Effizienzsteigerung, Qualitätsverbesserung und Fehlerfrüherkennung zu realisieren, sollten in der \acs{SMT}-Produktionslinie folgende Datenkategorien in Echtzeit erfasst werden:
+
+\begin{itemize}[leftmargin=*]
+    \item \textbf{Maschinen- und Betriebsdaten}: Status der 20 \acs{CNC}-Maschinen, Stückzahlen und Taktzeiten. Die Erfassung dieser Daten auf der Ebene der \glqq Intelligente Verbindung\grqq{} bildet, so Zotter und Metzler, die unverzichtbare Basis für jede weitere Analyse \cite[5]{2}.
+    
+    \item \textbf{Prozessparameter zur Zustandsüberwachung}: Erfassung von Temperatur, Vibration und Druck. Diese Parameter sind essenziell, um maschinelle Lernmodelle für die vorausschauende Wartung \textit{(Predictive Maintenance)} zu trainieren und Ausfälle zu minimieren \cite[39]{2}.
+    
+    \item \textbf{Qualitätsdaten}: Bilddaten zur Identifikation von Defekten. Zotter/Metzler heben hervor, dass der Einsatz von \textit{Deep-Learning}-Modellen in der Smart Factory eine automatisierte Inspektion und damit eine kontinuierliche Qualitätssteigerung ermöglicht \cite[20]{2}.
+    
+    \item \textbf{Identifikations- und Bestandsdaten}: Einsatz von \acs{RFID}-Technologie. Werkstücke werden so zu \glqq Smart Objects\grqq, die ihren Status und ihre Bearbeitungshistorie autonom im Informationsfluss kommunizieren \textit{(\acs{vgl.} Steven/Dörseln \cite[10]{1})}.
+\end{itemize}
+
+Diese umfassende Datenbasis bildet das Fundament für ein reaktionsfähiges Produktionsumfeld.
+
+% ================================= 1d =================================
+
+\section{Definition des Begriffs Cloud \textit{(1d)}}
+\label{sec:1d}
+
+Für \acs{SMT} bedeutet der Begriff \glqq Cloud\grqq{} den Abschied von starrer, lokaler \acs{IT}-Hardware hin zu einem dynamischen, internetbasierten Ressourcenpool. Anstatt eigene Server für die massiven Datenmengen der 20 \acs{CNC}-Maschinen zu betreiben, mieten wir Rechenleistung, Speicherplatz und Fachanwendungen flexibel nach Bedarf an \cite[75]{1}.
+
+Man kann sich die Cloud als einen digitalen Werkzeugkasten vorstellen: \acs{SMT} nutzt nur die Dienste, die im aktuellen Produktionsprozess benötigt werden – sei es die reine Infrastruktur \textit{(\acs{IaaS})}, eine Entwicklungsplattform für eigene Apps \textit{(\acs{PaaS})} oder fertige Portale zur Lieferantenanbindung \textit{(\acs{SaaS})} \cite[75]{1}. Der entscheidende Vorteil liegt in der Skalierbarkeit: Die \acs{IT}-Kapazität wächst automatisch mit den Anforderungen, während die Kosten durch das \glqq Pay-per-Use\grqq-Prinzip kalkulierbar bleiben \cite[76]{1}.
+
+% ==============================================================================
+% ================================= Aufgabe 1 =================================
+% ==============================================================================

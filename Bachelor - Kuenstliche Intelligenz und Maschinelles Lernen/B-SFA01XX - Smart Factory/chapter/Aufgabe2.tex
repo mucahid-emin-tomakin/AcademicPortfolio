@@ -1,0 +1,79 @@
+% ==============================================================================
+% ================================= Aufgabe 2 =================================
+% ==============================================================================
+
+\chapter{Netzwerkkonnektivität, Cloud-Computing und Nachhaltigkeit \textit{(2)}}
+\label{chap:aufgabe2}
+\thispagestyle{fancy}
+
+% ================================= 2a =================================
+
+\section{Netzwerkkonnektivität in \acs{IIoT}-Systemen \textit{(2a)}}
+\label{sec:2a}
+
+Hinsichtlich der Netzwerkkonnektivität empfehle ich für \acs{SMT} ein hochverfügbares Design, das als stabiles Rückgrat für die Echtzeit-Erfassung der Produktionsdaten fungiert \cite[6]{2}. Die primäre Herausforderung liegt in der Instabilität drahtloser Übertragungen bei großen Datenmengen sowie der mangelnden Interoperabilität zwischen Geräten unterschiedlicher Hersteller \cite[7,72]{2}.
+
+\begin{itemize}[leftmargin=*]
+    \item \textbf{Empfehlung und Vergleich der Netzwerktopologien}: Ich rate explizit zur Implementierung eines \textit{Mesh-Netzwerks}. Im Vergleich zu klassischen Topologien bietet dies für \acs{SMT} die höchste Ausfallsicherheit:
+    \begin{itemize}
+        \item \textit{Stern-Topologie}: Diese ist zu stark von einem zentralen Switch abhängig \textit{(Single Point of Failure)}.
+        \item \textit{Bus- oder Ring-Topologien}: Hier kann ein einzelner Kabelbruch oder der Ausfall einer \acs{CNC}-Maschine die gesamte Kommunikation der Linie unterbrechen.
+    \end{itemize}
+    Für die mechanische Fertigung mit 20 \acs{CNC}-Maschinen bietet das Mesh-Netzwerk hingegen den entscheidenden Vorteil der Selbstheilung: Da jede Maschine als aktiver Netzknoten fungiert, wird der Datenfluss bei einer lokalen Störung autonom über benachbarte Maschinen umgeleitet \cite[79]{2}. Dies kompensiert die von Zotter und Metzler \cite[7]{2} beschriebene Instabilität drahtloser Netze effektiver als jede hierarchische Struktur.
+    
+    Ergänzend zu einem Mesh-Netzwerk sollten für \acs{SMT} moderne Standards wie \textit{\acs{5G}} und \textit{Time-Sensitive Networking} in Betracht gezogen werden \cite[132]{2}:
+    \begin{itemize}
+        \item \textit{\acs{5G}}: Ermöglicht durch extrem niedrige Latenzzeiten eine kabellose, hochperformante Vernetzung, was besonders bei der Integration mobiler Roboter oder autonomer Transportsysteme in der Montageabteilung vorteilhaft ist.
+        \item \textit{\acs{TSN}}: Erlaubt im kabelgebundenen Netz eine garantierte, zeitkritische Datenübertragung. Dies ist für \acs{SMT} essenziell, um die 20 \acs{CNC}-Maschinen im Mikrosekundenbereich zu synchronisieren und so eine absolute Präzision in der Fertigung sicherzustellen.
+    \end{itemize}
+    
+    \item \textbf{Sicherheitsstrategie}: Um das durch die Vernetzung steigende Risiko von Malware-Angriffen zu minimieren, implementieren wir, angelehnt an Zotter/Metzler \cite[70]{2}, eine \glqq Defense-in-Depth\grqq-Architektur. Dabei orientieren wir uns strikt am \textit{\acs{IEC} 62443}-Standard, um durch redundante Auslegung und Zonentrennung eine stabile und sichere Konnektivität zu garantieren \cite[73]{2}.
+\end{itemize}
+
+\textbf{Handlungsempfehlung}: Für \acs{SMT} ist diese Stabilität geschäftskritisch: Ohne eine ausfallsichere Vernetzung der \acs{CNC}-Maschinen bricht die Datenbasis für die vorausschauende Wartung zusammen, was die von der technischen Leitung geforderte Reduzierung von Stillständen gefährden würde. Diese Kombination aus ausfallsicherem Mesh und modernen Standards wie \acs{5G} sichert \acs{SMT} die notwendige technologische Agilität, um auf künftige Marktanforderungen reagieren zu können \cite[75]{2}.
+
+% ================================= 2b =================================
+
+\section{Anwendungsbeispiele für Cloud-Computing in der Industrie \textit{(2b)}}
+\label{sec:2b}
+
+Für die strategische Optimierung der \acs{SMT} empfehle ich die Implementierung der folgenden drei Cloud-Anwendungsmodelle, um die \acs{IT}-Infrastruktur agil und kosteneffizient zu gestalten:
+
+\begin{itemize}[leftmargin=*]
+    \item \textbf{Cloud Manufacturing}: Hierbei binden wir die \acs{CNC}-Maschinen virtuell in ein Netzwerk ein, um ungenutzte Kapazitäten flexibel bereitzustellen oder externe Ressourcen zuzuschalten \cite[10]{2}. Dies ermöglicht \acs{SMT} eine enorme Skalierbarkeit, um Auftragsspitzen der Automobilkunden ohne sofortige Investitionen in neue physische Anlagen abzufangen \cite[76]{1}.
+    
+    \item \textbf{\acs{PMaaS}}: Über diesen skalierbaren Dienst werden die sensorisch erfassten Vibrations- und Druckdaten Ihrer \acs{CNC}-Maschinen direkt in der Cloud analysiert \cite[31]{2}. Der Vorteil liegt in der Flexibilität: \acs{SMT} muss keine eigene komplexe Analyse-Software entwickeln, sondern nutzt bewährte Algorithmen, um Wartungsintervalle proaktiv zu steuern und teure Stillstände zu vermeiden \cite[39]{2}.
+    
+    \item \textbf{SaaS für die Beschaffung}: Durch \textit{Software-as-a-Service} nutzen wir fertige Lieferantenportale über den Webbrowser \cite[75]{1}. Dies führt zu signifikanten Kosteneinsparungen, da \acs{SMT} keine eigenen Server für die Partneranbindung betreiben muss und neue Lieferanten innerhalb kürzester Zeit digital integrieren kann \cite[76]{1}.
+\end{itemize}
+
+\textbf{Handlungsempfehlung}: Die Cloud transformiert \acs{SMT} von einem starren Fertigungsbetrieb zu einem agilen Teilnehmer am Markt. Besonders der Übergang von fixen Hardware-Investitionen hin zu nutzungsabhängigen Cloud-Kosten \textit{(Pay-per-Use)} sichert die Liquidität, während gleichzeitig die technologische Basis für die wirtschaftliche Fertigung der Losgröße 1 geschaffen wird \textit{(\acs{vgl.} \cite[11]{1})}.
+
+% ================================= 2c =================================
+
+\section{\acs{IIoT} für nachhaltige Produktionsprozesse \textit{(2c)}}
+\label{sec:2c}
+
+Die Transformation der \acs{SMT} zur nachhaltigen \glqq Green Factory\grqq{} ist nicht nur eine ökologische Notwendigkeit, sondern ein strategischer Hebel zur Kostensenkung. Ich empfehle folgende \acs{IIoT}-gestützte Ansätze:
+
+\begin{itemize}[leftmargin=*]
+    \item \textbf{\acs{IIoT}-gestütztes Energiemanagement}: Durch das \glqq Green \acs{IIoT}\grqq{} realisieren wir eine intelligente Überwachung des Energieverbrauchs der 20 \acs{CNC}-Maschinen, um Lastspitzen zu vermeiden und Ressourcen zu schonen \cite[79]{2}.
+    
+    \item \textbf{Ressourceneffizienz \textit{(Zero Waste)}}: Die Integration von \textit{(\acs{CPS})} führt zu einer präziseren Produktionsplanung. Dies minimiert den Materialausschuss \textit{(Ausschussreduzierung)} und steigert die Rohstoffproduktivität direkt am Entstehungsort \cite[15]{1}.
+    
+    \item \textbf{Nachhaltiges Design}: Wir priorisieren energieeffiziente Hardware und systematisches Recycling, Um eine \glqq Herstellung ohne Umweltbelastung\grqq{} als ökonomischen Vorteil zu etablieren, verweisen Zotter und Metzler auf diesen Ansatz \cite[11]{2}.
+\end{itemize}
+
+Erfolgreiche Praxisbeispiele:
+
+\begin{itemize}[leftmargin=*]
+    \item \textbf{Intelligente Überwachung}: Der Einsatz von \textit{\acs{RFID}}-Tags zur Kontrolle von Umgebungsparametern wie Temperatur verhindert den Verderb empfindlicher Güter in der Logistikkette \cite[247]{1}.
+    
+    \item \textbf{Vorausschauende Wartung}: \textit{Predictive Maintenance} verhindert energieintensive Fehlbetriebe und verlängert die Lebensdauer der Anlagen, was direkt zur ökologischen Nachhaltigkeit beiträgt \cite[79]{2}.
+\end{itemize}
+
+\textbf{Handlungsempfehlung}: Für \acs{SMT} bedeutet Nachhaltigkeit vor allem Effizienz. In der Automobilindustrie ist die \acs{CO2}-Bilanz zunehmend ein Vergabekriterium. Durch die \glqq Green Factory\grqq-Strategie sichert sich \acs{SMT} somit nicht nur Kostenvorteile durch geringeren Ressourcenverbrauch, sondern auch den Marktzugang zu umweltbewussten Großkunden.
+
+% ==============================================================================
+% ================================= Aufgabe 2 =================================
+% ==============================================================================
