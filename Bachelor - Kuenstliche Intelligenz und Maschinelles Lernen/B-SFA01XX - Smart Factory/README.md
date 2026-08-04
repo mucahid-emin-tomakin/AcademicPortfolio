@@ -14,7 +14,7 @@
 - [🚀 TOOL](#-tool)
 - [📁 STRUKTUR](#-struktur)
 - [⚡ QUICK START](#-quick-start)
-- [⚠️ WICHTIGE HINWEISE](#-wichtige-hinweise)
+- [⚠️ WICHTIGE HINWEISE](#️-wichtige-hinweise)
 - [📝 LIZENZ](#-lizenz)
 - [👤 AUTOR](#-autor)
 - [📊 REPOSITORY STATISTIK](#-repository-statistik)
