@@ -1,0 +1,127 @@
+% ==============================================================================
+% ================================= Aufgabe 1 =================================
+% ==============================================================================
+
+%\chapter{Visualisierungskonzept für medizinische Sensordaten \textit{(1)}}
+%\label{chap:aufgabe1}
+%\thispagestyle{fancy}
+
+\section{Visualisierungskonzept für medizinische Sensordaten \textit{(1)}}
+
+% ================================= 1a =================================
+
+\subsection{Mehrwert der Datenvisualisierung im medizinischen Setting \textit{(1a)}}
+\label{sec:1a}
+
+Theoretisch betrachtet transformiert die Datenvisualisierung Rohdaten in handlungsleitende Informationen \cite[5]{2}. Wie \citeauthor{2} in seinem Werk ausführt, gewinnt dieser Prozess im medizinischen Kontext besondere Bedeutung, da hier große und komplexe Datenmengen bewältigt werden müssen \cite[5]{2}. Das menschliche Gehirn ist in der Lage, grafische Muster wesentlich schneller und effizienter zu verarbeiten als abstrakte Zahlenlisten. Durch geeignete grafische Darstellungen werden die Daten für das Gehirn leichter erfassbar, was die kognitive Belastung reduziert und den Fokus auf das Wesentliche lenkt.
+
+Durch den gezielten Einsatz von Visualisierungen sind Medizinerinnen und Mediziner in der Lage, Muster, Trends und Ausreißer in vielschichtigen Datensätzen wesentlich schneller zu identifizieren, was die explorative Datenanalyse maßgeblich unterstützt \textit{(\acs{vgl.} \cite[7]{2})}. Diese Form der visuellen Exploration ermöglicht es, Informationen aufzudecken, die in reinen Zahlenlisten verborgen bleiben würden. Somit wird die Datenvisualisierung zu einem unverzichtbaren Werkzeug für die hypothesengenerierende Forschung und die frühzeitige Erkennung klinisch relevanter Auffälligkeiten.
+
+Über den rein analytischen Nutzen hinaus dient die Visualisierung als wirksames Instrument der Kommunikation, um Patientinnen und Patienten medizinische Zusammenhänge anschaulich und nachvollziehbar zu vermitteln \cite[8]{2}. Eine gut gestaltete Visualisierung stärkt somit nicht nur das Verständnis für die eigene Gesundheitssituation, sondern unterstützt auch eine gemeinsame, fundierte Entscheidungsfindung im Rahmen der partizipativen Patientenversorgung.
+
+% ================================= 1b =================================
+
+\subsection{Bestimmung der \acs{E-Notation} und Attributzuordnung \textit{(1b)}}
+\label{sec:1b}
+
+Der vorliegende Datensatz aus dem Bereich der Wearable-Sensortechnik lässt sich nach der von \citeauthor{1} referenzierten Taxonomie von Brodlie als punktförmiges Datenvorkommen charakterisieren, da er aus einer Menge homomorpher Datensätze besteht, bei denen jedem Patienten verschiedene Attribute zugeordnet werden (vgl. \cite[33, 36]{1}). Da die Daten verschiedene Skalenniveaus – quantitative und nominale Merkmale – mischen, wird die Kategorie \(E^{P}\) \textit{(Punktdaten)} gewählt, wie von \citeauthor{1} für derartige heterogene Datenstrukturen vorgeschlagen wird \textit{(\acs{vgl.} \cite[61, 63]{1})}.
+
+Die Notation für einen einzelnen Datensatz lautet demnach:
+
+\begin{equation}
+E_{7}^{P}(6q + n) \tag{\textit{enotation}}
+\label{eq:enotation}
+\end{equation}
+
+Die Dimension \(n = 7\) ergibt sich aus der Anzahl der betrachteten Merkmale pro Beobachtungspunkt, in diesem Fall pro Patient.. Die Zuordnung der einzelnen Attribute zu den Skalenniveaus erfolgt dabei wie folgt \textit{(\acs{vgl.} \cite[33, 39]{1})}:
+
+\begin{itemize}
+    \item \textbf{Herzfrequenz}: Diesen Messwert werden als \textit{quantitativ (\(q\))} eingeordnet, da es sich um einen metrischen, kontinuierlich erfassbaren Vitalparameter handelt.
+    
+    \item \textbf{Blutdruck, systolisch}: \textit{quantitativ (\(q\))}, messbarer Druckwert als eigenständige metrische Größe.
+    
+    \item \textbf{Blutdruck, diastolisch}: \textit{quantitativ (\(q\))}, analog zum systolischen Wert als separate metrische Größe.
+    
+    \item \textbf{Sauerstoffsättigung \textit{(\acs{SpO2})}}: Als prozentualer Messwert ebenfalls dem \textit{quantitativen} Skalenniveau zuzuordnen.
+    
+    \item \textbf{Schlafdauer}: Da es sich um einen Zeitwert in Stunden oder Minuten handelt, wird auch dieses Merkmal als \textit{quantitativ (\(q\))} eingeordnet.
+    
+    \item \textbf{Bewegungsprofil \textit{(Schrittzahl)}}: Die Schrittzahl pro Stunde stellt eine diskrete Zähleinheit dar und ist somit dem \textit{quantitativen} Skalenniveau zuzuordnen.
+    
+    \item \textbf{Patientengruppe}: Dieses Merkmal wird als \textit{nominal (\(n\))} klassifiziert, da es sich um eine kategorische Einteilung ohne inhärente Rangfolge handelt, beispielsweise die Unterscheidung zwischen Kontrollgruppe und Risikogruppe.
+\end{itemize}
+
+Die gewählte Notation \(E_{7}^{P}(6q + n)\) bildet somit die Grundlage für die weitere visuelle Aufbereitung der Daten, da sie die strukturellen Eigenschaften des Datensatzes präzise abbildet und die Auswahl geeigneter Visualisierungstechniken erleichtert \textit{(\acs{vgl.} \cite[61]{1})}.
+
+% ================================= 1c =================================
+
+\subsection{Prozessschritte von der Datenvorbereitung bis zur Visualisierung \textit{(1c)}}
+\label{sec:1c}
+
+Um die Sensordaten der Wearables in eine aussagekräftige grafische Darstellung zu überführen, ist ein strukturierter Vorbereitungsprozess unerlässlich. \citeauthor{1} betont in diesem Zusammenhang, dass die tabellarische Form die Grundvoraussetzung für eine automatisierte Visualisierung bildet \textit{(\acs{vgl.} \cite[11-13]{1})}. Dieser Prozess gliedert sich in folgende Phasen:
+
+\subsubsection{Bereinigung}
+
+Zunächst müssen die Rohdaten von Messfehlern, Rauschen oder Aussetzern bereinigt werden, die bei der automatisierten Erfassung durch Wearables häufig auftreten. \citeauthor{1} hebt hervor, dass dies im medizinischen Kontext von entscheidender Bedeutung ist, um Artefakte von realen pathologischen Ereignissen unterscheiden zu können.
+
+\subsubsection{Selektion}
+
+In diesem Schritt erfolgt eine gezielte Filterung der Daten. Horizontal werden irrelevante Attribute entfernt, während vertikal gezielt Zeiträume oder Patientengruppen ausgewählt werden, die für die aktuelle Fragestellung – beispielsweise die Detektion von Herzfrequenz-Anomalien – relevant sind.
+
+\subsubsection{Normalisierung}
+
+\citeauthor{1} beschreibt diesen Schritt als die Überführung der Daten in ein einheitliches, verbindliches Format. Dies stellt sicher, dass beispielsweise Blutdruckwerte verschiedener Sensortypen vergleichbar sind und keine transitiven Abhängigkeiten die Analyse verfälschen.
+
+\subsubsection{Kodierung}
+
+Da für eine automatisierte Visualisierung in einem kartesischen Koordinatensystem ordinal-numerische Räume erforderlich sind, müssen nominale Daten – wie die Patientengruppe – in eine Ordnungsrelation gebracht und numerisch kodiert werden, wie \citeauthor{1} ausführt.
+
+% ================================= 1d =================================
+
+\subsection{Auswahl und Begründung der Visualisierungstypen \textit{(1d)}}
+\label{sec:1d}
+
+\subsubsection{Mapping und Wahl des Grafiktyps}
+
+Nach der Vorverarbeitung erfolgt die Zuordnung der Datenarten zu visuellen Merkmalen, dem sogenannten Mapping, wie Position, Farbe oder Form. \citeauthor{1} erläutert, dass die Wahl des Diagrammtyps sich schließlich nach dem jeweiligen Ziel richtet \cite[31, 35]{1}. Während für die ärztliche Exploration hochdimensionale Darstellungen geeignet sind, werden für die Patientenkommunikation intuitive und leicht verständliche Formate bevorzugt.
+
+Die beschriebenen Phasen bilden einen iterativen Prozess, der je nach Erkenntnisstand und Zielsetzung mehrfach durchlaufen werden kann. Insbesondere die Wahl des geeigneten Diagrammtyps erfordert dabei eine enge Abstimmung zwischen den Anforderungen der explorativen Analyse und den Kommunikationsbedürfnissen der Zielgruppe \textit{(\acs{vgl.} \cite[8]{2})}.
+
+Für die beiden Zielgruppen des Frühwarnsystems werden aufgrund ihrer gegensätzlichen Anforderungen und unterschiedlichen Nutzungskontexte folgende Visualisierungstypen vorgeschlagen:
+
+\subsubsection{Visualisierung für Ärzte \textit{(Exploration)}: Streudiagramm-Matrix}
+
+Medizinerinnen und Mediziner benötigen leistungsfähige Werkzeuge für die explorative Datenanalyse, um in den hochdimensionalen Sensordaten verborgene Muster, Cluster oder Anomalien aufzuspüren. \citeauthor{1} beschreibt die Streudiagramm-Matrix als besonders geeignet für diese Anforderung, da sie die gleichzeitige Visualisierung und den Vergleich mehrerer Variablenpaare, beispielsweise die Herzfrequenz im Verhältnis zur Schrittzahl, ermöglicht \textit{(\acs{vgl.} \cite[39]{1})}. Dieses Verfahren unterstützt Ärztinnen und Ärzte dabei, Korrelationen und multivariate Zusammenhänge effizient zu identifizieren, was die Grundlage für eine fundierte Diagnose bildet. Die parallele Darstellung aller relevanten Attributkombinationen erlaubt es, Auffälligkeiten schnell zu erkennen und gezielt weiterzuverfolgen.
+
+\subsubsection{Visualisierung für Patienten \textit{(Kommunikation)}: Liniendiagramm}
+
+Für die Patientenseite steht die leicht verständliche Vermittlung des eigenen Gesundheitszustands im Vordergrund. Wie \citeauthor{2} betont, geht es hier vor allem darum, das Verständnis zu fördern und die Therapietreue zu stärken \textit{(\acs{vgl.} \cite[8]{2})}. Ein Liniendiagramm ist für diese Zielsetzung ideal, da es den zeitlichen Verlauf von Vitalparametern intuitiv darstellt und durch die Verbindung der Datenpunkte eine logische Beziehung zwischen den Messwerten suggeriert \textit{(\acs{vgl.} \cite[63]{1})}. Diese vertraute Darstellungsform erlaubt es medizinischen Laien, Trends – wie etwa eine Stabilisierung des Blutdrucks oder eine sinkende Herzfrequenz – ohne aufwendige Interpretation sofort zu erfassen.
+
+Die Kombination beider Visualisierungstypen ermöglicht eine zielgruppengerechte Aufbereitung derselben zugrundeliegenden Daten: Während die Streudiagramm-Matrix den klinischen Blick für komplexe Zusammenhänge schärft, bietet das Liniendiagramm den Patienten eine klare, nachvollziehbare und handlungsleitende Darstellung ihres individuellen Gesundheitsverlaufs.
+
+% ================================= 1e =================================
+
+\subsection{Risiken und Gegenmaßnahmen bei der Datenvisualisierung \textit{(1e)}}
+\label{sec:1e}
+
+Bei der grafischen Aufbereitung der medizinischen Sensordaten bestehen potenzielle Risiken, die die Objektivität der Darstellung gefährden und zu Fehlinterpretationen führen können. \citeauthor{2} weist darauf hin, dass selbst gut gemeinte Visualisierungen durch unbedachte Gestaltungsentscheidungen ihre Aussagekraft verlieren können (vgl. \cite[31]{2}). Im Folgenden werden zwei zentrale Risiken und die entsprechenden Gegenmaßnahmen erläutert.
+
+\subsubsection{Manipulative Achsenskalierung}
+
+Ein häufiges und zugleich folgenschweres Risiko ist das bewusste oder unbewusste Abschneiden der \(y\)-Achse, wie \citeauthor{1} in seinem Werk zur Datenvisualisierung beschreibt (vgl. \cite[50]{1}). Wenn die Achse nicht bei Null beginnt, werden geringfügige Schwankungen in den Vitalwerten – wie etwa ein minimaler Anstieg der Herzfrequenz – optisch dramatisiert, was unnötige Besorgnis auslösen und zu voreiligen klinischen Entscheidungen führen kann (vgl. \cite[31, 43]{2}). Dieses Phänomen ist \citeauthor{2} zufolge besonders tückisch, da es dem Betrachter nicht unmittelbar bewusst wird und die Fehlwahrnehmung unbemerkt bleibt (vgl. \cite[31]{2}).
+
+\subsubsection{Gegenmaßnahme}
+Für eine objektive und ehrliche Darstellung sollte die \(y\)-Achse grundsätzlich bei Null beginnen, um die tatsächlichen Verhältnisse korrekt abzubilden (vgl. \cite[50]{1}, \cite[44]{2}). \citeauthor{2} empfiehlt darüber hinaus, die Achsenskalierung transparent zu kommunizieren, sodass Betrachter die Darstellung stets im richtigen Maßstab einordnen können (vgl. \cite[44]{2}).
+
+\subsubsection{Verzerrung durch Dreidimensionalität}
+
+Die Nutzung von 3D-Effekten birgt das Risiko, dass Datenwerte aufgrund der perspektivischen Verkürzung verzerrt wahrgenommen werden (vgl. \cite[54, 58]{2}). \citeauthor{2} führt aus, dass beispielsweise im Hintergrund liegende Elemente kleiner wirken als im Vordergrund stehende, was einen präzisen Vergleich der Patientenattribute unmöglich macht (vgl. \cite[54]{2}). Diese vermeintlich ästhetische Aufwertung einer Visualisierung führt in der Praxis häufig zu erheblichen Fehlinterpretationen, insbesondere bei der Beurteilung von Verlaufsdaten.
+
+\subsubsection{Gegenmaßnahme}
+Es sollte konsequent auf 2D-Darstellungen zurückgegriffen werden, da diese für das menschliche Gehirn wesentlich einfacher und präziser zu interpretieren sind (vgl. \cite[54]{2}). \citeauthor{2} betont, dass eine reduzierte, klare Darstellung stets einer überladenen, dreidimensionalen Visualisierung vorzuziehen ist, wenn es um die korrekte Vermittlung medizinischer Sachverhalte geht (vgl. \cite[54]{2}).
+
+Die beschriebenen Maßnahmen tragen dazu bei, die Integrität der Datenvisualisierung zu wahren und sowohl Klinikpersonal als auch Patienten eine verlässliche Grundlage für ihre Entscheidungen zu bieten.
+
+% ==============================================================================
+% ================================= Aufgabe 1 =================================
+% ==============================================================================

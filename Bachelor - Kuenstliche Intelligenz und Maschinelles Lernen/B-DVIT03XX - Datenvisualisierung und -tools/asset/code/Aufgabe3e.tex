@@ -1,0 +1,64 @@
+title: "CO2-Datenanalyse - Eine Datengeschichte"
+author: "Mücahid Emin Tomakin"
+date: "2026-08-06"
+output:
+  html_document:
+    toc: true
+    toc_float: true
+    theme: united
+---
+
+# Einleitung
+
+Dieser Bericht analysiert den Zusammenhang zwischen CO2-Ausstoß pro Kopf und 
+der Nutzung erneuerbarer Energien in ausgewählten europäischen Ländern.
+
+# Daten
+
+```{r setup, include=FALSE}
+library(ggplot2)
+library(knitr)
+```
+
+```{r daten}
+co2_daten <- data.frame(
+  Land = c("Deutschland", "Frankreich", "Polen", "Spanien", "Schweden", "Italien"),
+  CO2_pro_Kopf = c(8.5, 5.2, 7.8, 6.0, 3.9, 5.9),
+  Erneuerbare = c(47, 56, 22, 51, 68, 46),
+  BIP_pro_Kopf = c(48000, 44000, 32000, 38000, 55000, 36000)
+)
+
+kable(co2_daten, caption = "Übersicht der Länderdaten")
+```
+
+# Visualisierung 1: Erneuerbare Energien
+
+```{r balken}
+  ggplot(co2_daten, aes(x = reorder(Land, -Erneuerbare), y = Erneuerbare, fill = Land)) +
+  geom_bar(stat = "identity") +
+  labs(title = "Nutzung erneuerbarer Energien", 
+       x = "Land", y = "Anteil (%)") +
+  theme_minimal() +
+  theme(legend.position = "none") +
+  geom_text(aes(label = paste0(Erneuerbare, "%")), vjust = -0.5, size = 4)
+```
+
+# Visualisierung 2: CO2 vs. Erneuerbare
+
+```{r scatter}
+ggplot(co2_daten, aes(x = Erneuerbare, y = CO2_pro_Kopf)) +
+  geom_point(size = 4, color = "darkblue") +
+  geom_smooth(method = "lm", se = TRUE, color = "red", alpha = 0.2) +
+  geom_text(aes(label = Land), vjust = -1, hjust = 0.5, size = 3.5) +
+  labs(
+    title = "CO2-Ausstoß vs. erneuerbare Energien",
+    x = "Anteil erneuerbarer Energien (%)",
+    y = "CO2-Ausstoß pro Kopf (Tonnen)"
+  ) +
+  theme_minimal()
+```
+
+# Fazit
+
+Die Analyse zeigt einen negativen Zusammenhang zwischen dem Anteil
+erneuerbarer Energien und dem CO2-Ausstoß pro Kopf.

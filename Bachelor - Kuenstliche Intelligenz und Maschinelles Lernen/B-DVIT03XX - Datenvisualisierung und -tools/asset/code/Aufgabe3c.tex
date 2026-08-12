@@ -1,0 +1,18 @@
+# Paket laden
+library(ggplot2)
+
+# Scatterplot erstellen
+ggplot(co2_daten, aes(x = Erneuerbare, y = CO2_pro_Kopf)) +
+  geom_point(size = 4, color = "darkblue") +
+  geom_smooth(method = "lm", se = TRUE, color = "red", alpha = 0.2) +
+  geom_text(aes(label = Land), vjust = -1, hjust = 0.5, size = 3.5) +
+  labs(
+    title = "Zusammenhang zwischen CO2-Ausstoß und erneuerbaren Energien",
+    subtitle = "Daten für ausgewählte europäische Länder (2023)",
+    x = "Anteil erneuerbarer Energien (%)",
+    y = "CO2-Ausstoß pro Kopf (Tonnen)"
+  ) +
+  theme_minimal()
+
+# Diagramm speichern
+ggsave("scatter_co2_erneuerbar.png", width = 8, height = 6, dpi = 300)

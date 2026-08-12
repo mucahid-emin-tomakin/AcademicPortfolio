@@ -1,0 +1,18 @@
+# Paket laden
+library(ggplot2)
+
+# Balkendiagramm erstellen
+ggplot(co2_daten, aes(x = reorder(Land, -Erneuerbare), y = Erneuerbare, fill = Land)) +
+  geom_bar(stat = "identity") +
+  labs(
+    title = "Nutzung erneuerbarer Energien in ausgewählten Ländern (2023)",
+    subtitle = "Anteil erneuerbarer Energien am Gesamtenergiemix",
+    x = "Land",
+    y = "Anteil erneuerbarer Energien (%)"
+  ) +
+  theme_minimal() +
+  theme(legend.position = "none") +
+  geom_text(aes(label = paste0(Erneuerbare, "%")), vjust = -0.5, size = 4)
+
+# Diagramm speichern
+ggsave("balken_erneuerbar.png", width = 8, height = 6, dpi = 300)

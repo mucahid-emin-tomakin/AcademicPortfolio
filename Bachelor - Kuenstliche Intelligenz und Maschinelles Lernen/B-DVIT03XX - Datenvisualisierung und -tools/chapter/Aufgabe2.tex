@@ -1,0 +1,87 @@
+% ==============================================================================
+% ================================= Aufgabe 2 =================================
+% ==============================================================================
+
+%\chapter{Ethische und gestalterische Aspekte der Datenvisualisierung \textit{(2)}}
+%\label{chap:aufgabe2}
+%\thispagestyle{fancy}
+
+\section{Ethische und gestalterische Aspekte der Datenvisualisierung \textit{(2)}}
+
+% ================================= 2a =================================
+
+\subsection{Typische Fehler und Manipulationen in Datenvisualisierungen \textit{(2a)}}
+\label{sec:2a}
+
+In der Praxis der Datenvisualisierung treten häufig Fehler oder gezielte Manipulationen auf, welche die Objektivität der Darstellung verzerren und die Integrität der präsentierten Informationen gefährden. \citeauthor{1} und \citeauthor{2} identifizieren in ihren Werken wiederkehrende Problemfelder, die im Folgenden dargestellt werden \cite[50]{1}\cite[31]{2}.
+
+\subsubsection{Abgeschnittene \texorpdfstring{\(y\)-Achse}{y-Achse}}
+
+Ein gebräuchlicher Trick ist das Abschneiden der y-Achse, sodass sie nicht bei Null beginnt. Dadurch werden geringfügige Unterschiede optisch massiv übersteigert \cite[50, 51]{1}. Befunde werden dramatisiert und Trends erscheinen signifikanter, als sie tatsächlich sind – ein Effekt, der dem ungeübten Auge oft nicht auffällt \cite[55]{2}.
+
+\subsubsection{Verwendung von 3D-Effekten}
+
+Die Nutzung dreidimensionaler Darstellungen für eigentlich zweidimensionale Daten führt zu perspektivischen Verkürzungen, wie \citeauthor{2} darlegt \textit{(\acs{vgl.} \cite[54, 58]{2})}. Problematisch ist hierbei, dass das menschliche Gehirn Flächen und Volumina ohnehin nur schwer präzise vergleichen kann \cite[27, 53]{2}. Durch den räumlichen Effekt werden Werte verzerrt wahrgenommen, wobei im Vordergrund stehende Elemente dominanter wirken, während im Hintergrund liegende Datenpunkte künstlich verkleinert erscheinen. Diese vermeintlich ästhetische Aufwertung führt in der Praxis zu einer systematischen Verfälschung der quantitativen Interpretation und macht einen präzisen Vergleich zwischen verschiedenen Datenreihen nahezu unmöglich.
+
+\subsubsection{Selektive Datendarstellung \textit{(„Cherry Picking“)}}
+
+Eine besonders problematische Form der Manipulation ist die selektive Datendarstellung, auch bekannt als \textit{Cherry Picking}. \citeauthor{2} beschreibt diese Praxis als das bewusste Auswählen und Visualisieren nur bestimmter Ausschnitte oder Teilmengen eines Datensatzes, welche die gewünschte Botschaft des Urhebers stützen \textit{(\acs{vgl.} \cite[71]{2})}. Dies ist hochgradig problematisch, da wesentliche Kontextinformationen unterschlagen werden und somit ein irreführendes Bild der Realität entsteht. Die Wahrnehmung der Betrachtenden wird so gesteuert, dass sie falsche Schlüsse ziehen oder vermeintliche Trends erkennen, die bei Betrachtung des Gesamtdatensatzes schlicht nicht existieren. \citeauthor{2} warnt eindringlich vor dieser Praxis, da sie das Vertrauen in datenbasierte Entscheidungen nachhaltig untergräbt \cite[71]{2}.
+
+Diese drei Fehlerquellen zeigen eindrucksvoll, wie durch scheinbar kleine gestalterische Entscheidungen, sei es aus Unachtsamkeit oder mit Absicht, die objektive Aussagekraft von Datenvisualisierungen erheblich beeinträchtigt werden kann. Ein Bewusstsein für diese Risiken ist daher die erste Voraussetzung für eine verantwortungsvolle Visualisierungspraxis.
+
+% ================================= 2b =================================
+
+\subsection{Maßnahmen für korrektes und ethisches Design \textit{(2b)}}
+\label{sec:2b}
+
+\citeauthor{2} betont, dass verantwortungsvoller Umgang mit Daten bereits bei der Auswahl und Aufbereitung beginnt \cite[39]{2}. Im Folgenden werden drei zentrale Maßnahmen für ein ethisches Design erläutert.
+
+\subsubsection{Transparenz durch korrekte Datenzitation und Quellenoffenlegung}
+
+Eine der fundamentalsten Maßnahmen ist die lückenlose Dokumentation der Datenherkunft sowie der Prozesse der Recherche und Aufbereitung. \citeauthor{2} hebt hervor, dass dies nicht nur eine formale Pflicht, sondern ein essenzieller Bestandteil wissenschaftlicher Redlichkeit ist \cite[11, 40]{2}. \textbf{Diese Transparenz} stärkt die Glaubwürdigkeit der Darstellung und ermöglicht es Dritten, die Ergebnisse zu überprüfen und den gesamten Analyseprozess nachzuvollziehen. Wie \citeauthor{2} ausführt, schafft diese Praxis Vertrauen bei den Betrachtenden und etabliert die Visualisierung als verlässliche Grundlage für Entscheidungen \cite[10]{2}. Darüber hinaus fördert sie die Reproduzierbarkeit wissenschaftlicher Arbeiten und trägt zur Qualitätssicherung im gesamten Forschungsprozess bei \cite[40]{2}.
+
+\subsubsection{Verzicht auf manipulative Gestaltungselemente}
+
+Erstellerinnen und Ersteller von Visualisierungen sollten konsequent auf Techniken verzichten, welche die Wahrnehmung verzerren, wie etwa abgeschnittene Achsen oder irreführende 3D-Effekte. \citeauthor{2} bezeichnet diese Praktiken als "manipulative Gestaltungselemente", die die Objektivität der Darstellung gezielt untergraben \cite[39]{2}. \textbf{Die objektive Darstellung}, beispielsweise durch die Verwendung einer Null-Basislinie, verhindert die künstliche Dramatisierung von Trends und stellt sicher, dass die Kernaussage der Daten ehrlicher Natur ist. \citeauthor{2} führt aus, dass eine reduzierte, klare Darstellung stets einer überladenen, manipulativen Visualisierung vorzuziehen ist, wenn es um die korrekte Vermittlung von Sachverhalten geht \cite[39, 44]{2}. Diese Maßnahme schützt sowohl die Urheber vor dem Vorwurf der Täuschung als auch die Betrachter vor Fehlinterpretationen.
+
+\subsubsection{Förderung der Barrierefreiheit und inklusiven Gestaltung}
+
+Ein weiterer wichtiger Aspekt ethischer Datenvisualisierung ist die barrierefreie Aufbereitung der Inhalte. Die Visualisierung sollte so gestaltet werden, dass sie für Menschen mit unterschiedlichen Fähigkeiten und Vorkenntnissen zugänglich ist – beispielsweise durch den Einsatz hoher Kontraste, klarer Schriftarten und einfacher Sprache. \citeauthor{2} argumentiert, dass Barrierefreiheit kein optionales Extra, sondern ein integraler Bestandteil professioneller Visualisierungsarbeit ist \cite[37, 40]{2}. \textbf{Diese Maßnahme} stellt sicher, dass Informationen fair verteilt werden und keine Nutzergruppen aufgrund physischer Einschränkungen oder fehlender technischer Expertise ausgeschlossen werden. \citeauthor{2} betont, dass eine inklusive Gestaltung nicht nur ethisch geboten, sondern auch praktisch sinnvoll ist, da sie die Reichweite und Wirkung der Visualisierung erheblich vergrößert \cite[39, 40]{2}. Eine barrierefreie Visualisierung ist letztlich eine bessere Visualisierung für alle.
+
+Die drei Maßnahmen – Transparenz, Verzicht auf Manipulation und Barrierefreiheit – bilden das Fundament für eine verantwortungsvolle Visualisierungspraxis und stärken das Vertrauen in die präsentierten Informationen.
+
+% ================================= 2cI =================================
+
+\subsection{Rolle von Farben und präattentiven Merkmalen \textit{(2cI)}}
+
+Präattentive Merkmale wie Farbe, Form, Größe und Position spielen eine entscheidende Rolle in der Datenvisualisierung, da sie vom ikonischen Gedächtnis blitzschnell und ohne bewusste Anstrengung verarbeitet werden \textit{(\acs{vgl.} \cite[16, 31]{2})}. \citeauthor{2} beschreibt diese Merkmale als Werkzeuge, die dazu dienen, die Aufmerksamkeit des Betrachters sofort auf spezifische Informationen zu lenken und eine klare visuelle Hierarchie zu schaffen (vgl. \cite[52, 60]{2}). Im vorliegenden Diagramm – einem 3D-Balkendiagramm mit den Jahren 2020 bis 2023 auf der \(x\)-Achse und den Unfallzahlen \textit{(100 bis 6100)} auf der \(y\)-Achse, wird dieses Prinzip besonders deutlich.
+
+Die Farbe ist ein besonders mächtiges Instrument zur Steuerung der Wahrnehmung. Während kühle Farben wie Blau oft als neutral wahrgenommen werden, fungieren Signalfarben wie Rot als "magische Anziehungspunkte", die einen visuellen Fokuspunkt bilden. Rot wird – wie \citeauthor{1} ausführt, kulturell und emotional stark mit Wärme, hohen Zahlen oder, wie im Kontext von Unfallstatistiken, mit Gefahr assoziiert \textit{(\acs{vgl.} \cite[48, 49]{1}, \cite[31, 84]{2})}. Im analysierten Diagramm wird diese Wirkung gezielt genutzt: Während die Balken für die Jahre 2020 bis 2022 in einem neutralen Blau gehalten sind und auf ähnlichem Niveau \textit{(jeweils etwa 2100 Unfälle)} liegen, wird der Balken für das Jahr 2023 mit einer Signalfarbe \textit{(Rot)} hervorgehoben, obwohl er sich mit etwa 4900 Unfällen bereits durch seine Höhe von den anderen abhebt. Durch diesen gezielten Farbeinsatz wird das Jahr 2023 als besonders kritisch markiert – noch bevor der Betrachter die tatsächlichen Zahlenwerte rational analysiert hat. Die Farbwahl verstärkt also die visuelle Wirkung der Daten und lenkt die Aufmerksamkeit unmittelbar auf den vermeintlichen Anstieg der Unfallzahlen, ohne dass der Betrachter bewusst die Achsenskalierung prüfen muss.
+
+% ================================= 2cII =================================
+
+\subsection{Analyse der Darstellungsprobleme \textit{(2cII)}}
+
+Die vorliegende Visualisierung der Unfallzahlen weist zwei signifikante Probleme auf, welche die Objektivität gefährden und zu Fehlinterpretationen führen können. \citeauthor{2} hebt hervor, dass bereits kleine gestalterische Entscheidungen die Aussagekraft einer Visualisierung erheblich beeinträchtigen können \textit{(\acs{vgl.} \cite[54]{2})}. Im Folgenden werden diese Probleme im Detail analysiert.
+
+\subsubsection{Verzerrung durch Dreidimensionalität:}
+Die Verwendung einer 3D-Optik für die Säulen führt zu perspektivischen Verzerrungen, die eine präzise quantitative Interpretation der Unfallzahlen erheblich erschweren. \citeauthor{2} führt aus, dass das menschliche Gehirn Volumina und Tiefeninformationen weitaus schlechter vergleichen kann als einfache Längen in einer Ebene, ein Umstand, der durch die räumliche Darstellung zusätzlich verschärft wird \textit{(\acs{vgl.} \cite[27, 54, 58]{2})}. Im vorliegenden Diagramm wirken die Säulen aufgrund der perspektivischen Verkürzung in unterschiedlichen Tiefenpositionen unterschiedlich groß, obwohl sie dieselben Werte repräsentieren. Dadurch wird ein präziser Vergleich zwischen den Jahren, insbesondere zwischen 2023 und den Vorjahren, unnötig erschwert, da das Auge nicht mehr allein die Höhe, sondern auch die räumliche Tiefe berücksichtigen muss.
+
+\subsubsection{Irreführender Achsenbeginn \textit{(Non-Zero Baseline)}:}
+Ein weiteres, besonders gravierendes Problem ist der irreführende Achsenbeginn. Die \(y\)-Achse beginnt bei einem Wert von 100 statt bei Null, was \citeauthor{1} als ein klassisches Instrument zur Manipulation der Wahrnehmung bezeichnet \textit{(\acs{vgl.} \cite[50]{1})}. Durch das Abschneiden der Basislinie werden die optischen Unterschiede zwischen den Balken künstlich aufgebläht, da die verbleibende Balkenlänge nicht mehr proportional zur Gesamtzahl der Unfälle steht. \citeauthor{2} warnt eindringlich vor dieser Praxis, da sie die tatsächlichen Verhältnisse systematisch verzerrt \cite[31, 55]{2}. Im konkreten Fall führt dies dazu, dass der Anstieg im Jahr 2023 \textit{(von etwa 2100 auf 4900 Unfälle)} im Vergleich zu den Vorjahren weitaus dramatischer erscheint, als er es bei einer ehrlichen Darstellung ab der Nulllinie wäre, wo der prozentuale Anstieg bei Betrachtung der Gesamtwerte deutlich geringer ausfiele. Die Kombination aus rot hervorgehobenem Balken und abgeschnittener \(y\)-Achse verstärkt diesen Effekt zusätzlich und suggeriert eine Krise, die bei objektiver Betrachtung möglicherweise gar nicht existiert.
+
+% ================================= 2cIII =================================
+
+\subsection{Maßnahmen für eine ethisch korrekte Gestaltung \textit{(2cIII)}}
+
+Um die manipulative Wirkung des vorliegenden Diagramms aufzuheben und eine objektive Informationsvermittlung sicherzustellen, sollten die im Folgenden dargestellten Maßnahmen ergriffen werden. \citeauthor{2} betont, dass eine ethisch verantwortungsvolle Visualisierung nicht nur auf korrekten Daten, sondern vor allem auf einer integren Darstellungsweise beruht \textit{(\acs{vgl.} \cite[54]{2})}.
+
+\subsubsection{Umstellung auf eine zweidimensionale Darstellung \textit{(2D)}:}
+Es sollte konsequent auf die 3D-Optik verzichtet werden, da die räumliche Tiefe keinen Mehrwert bietet und lediglich die Ablesbarkeit erschwert. \citeauthor{2} führt aus, dass eine 2D-Darstellung es dem menschlichen Gehirn ermöglicht, die Längen der Balken präzise und verzerrungsfrei miteinander zu vergleichen, was im Sinne der Datenintegrität essenziell ist \textit{(\acs{vgl.} \cite[27, 54]{2})}. Im konkreten Fall würde die Eliminierung der dritten Dimension die perspektivische Verkürzung aufheben und einen direkten, unverzerrten Vergleich der Balkenhöhen ermöglichen.
+
+\subsubsection{Korrektur der \(y\)-Achse \textit{(Start bei Null)}:}
+Die Skalierung muss zwingend bei einem Wert von Null beginnen \textit{(Zero Baseline)}, anstatt bei 100. \citeauthor{1} bezeichnet dies als die grundlegendste Voraussetzung für eine objektive Darstellung quantitativer Daten \cite[50]{1}. Nur wenn die Achse bei Null startet, stehen die visuellen Längen der Balken in einem mathematisch korrekten Verhältnis zu den tatsächlichen Werten. \citeauthor{2} warnt, dass jede Abweichung von dieser Regel die Gefahr einer systematischen Verzerrung birgt \cite[55]{2}. Im vorliegenden Fall würde die Korrektur verhindern, dass die Zunahme im Jahr 2023 künstlich dramatisiert wird, und gewährleistet eine ehrliche, wissenschaftlich fundierte Kommunikation der Unfallzahlen.
+
+% ==============================================================================
+% ================================= Aufgabe 2 =================================
+% ==============================================================================
