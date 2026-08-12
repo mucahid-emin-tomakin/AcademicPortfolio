@@ -143,6 +143,17 @@ Die Arbeit gliedert sich in **drei Hauptaufgaben** mit insgesamt **zwölf Teilau
 ├── 📄 README.md                                       # Diese Datei
 ├── 📄 main.tex                                        # LaTeX‑Hauptdokument
 │
+└── 📁 B-DVIT03XX/                                     # Hauptprojektordner
+    ├── 📄 .RData                                      # R-Arbeitsumgebung (Workspace)
+    ├── 📄 co2_analyse.Rmd                             # RMarkdown-Report (Quellcode)
+    ├── 📄 co2_analyse.html                            # RMarkdown-Export (HTML)
+    ├── 📄 co2_analyse.tex                             # RMarkdown-Export (LaTeX)
+    │
+    └── 📁 LaTeX/                                      # LaTeX-Dokumentation
+        ├── 📄 main.tex                                # LaTeX‑Hauptdokument
+        ├── 🖼️ Aufgabe3b.png                           # Balkendiagramm
+        └── 🖼️ Aufgabe3c.png                           # Scatterplot
+│
 ├── 📁 asset/
 │   ├── 📁 code/                                       # R-Code-Dateien
 │   │   ├── 📝 Aufgabe3a.tex
@@ -167,7 +178,6 @@ Die Arbeit gliedert sich in **drei Hauptaufgaben** mit insgesamt **zwölf Teilau
     ├── 📝 bibliography.bib                            # Literaturverzeichnis
     ├── 📝 settings.tex                                # Dokument‑Einstellungen
     └── 📝 titlepage.tex                               # Titelseite mit Matrikelnummer
-
 ```
 
 ### 📁 Struktur-Legende
