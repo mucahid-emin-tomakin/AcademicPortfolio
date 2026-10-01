@@ -1,0 +1,1023 @@
+% ==============================================================================
+% ================================= Aufgabe 3 =================================
+% ==============================================================================
+
+\chapter{Wegsuche \textit{3}}
+\label{chap:aufgabe3}
+\thispagestyle{fancy}
+
+% ==============================================================================
+% ================ Aufgabe 3A - Graph-Erzeugung aus der Karte =================
+% ==============================================================================
+
+\section{Graph-Erzeugung aus der Karte \textit{3a}}
+\label{sec:aufgabe3a}
+
+\subsection{Aufgabenstellung}
+
+Erzeugen Sie aus der Karte einen Graphen. Dabei sind die Knoten \((x,y)\)-Positionen; Kanten legen Bewegungen mit Kosten in Abhängigkeit vom Agententyp fest. Sie können optional Zusatzkosten für Engpässe definieren.
+
+\subsection{Theoretische Grundlagen}
+
+Die Überführung der diskreten \acs{2D}-Karte in einen gewichteten Graphen folgt dem in \textcite[S. 67\,ff.]{4} eingeführten Zustandsraum-Modell: Eine Problemlösungsaufgabe wird als gerichteter Graph \(G = (V, E)\) repräsentiert, dessen Knoten die Zustände und dessen Kanten die Aktionen zwischen den Zuständen darstellen. Für die vorliegende Simulation ergibt sich daraus unmittelbar:
+\begin{itemize}
+    \item \textbf{Knoten} sind die befahrbaren Zellen \((x, y)\) der Karte -- insgesamt 753 Positionen.
+    \item \textbf{Kanten} sind die 4-direktionalen Übergänge zwischen benachbarten freien Zellen -- insgesamt 1276 ungerichtete Kanten.
+\end{itemize}
+
+Diese Überführung einer zweidimensionalen Zellstruktur in ein gewichtetes Graphenmodell wird im Studienheft KII12 am Beispiel einer Staubsaugerwelt mit Hindernissen explizit vorgeführt \cite[S. 20\,f., Abb.~1.6]{5}: Die einzelnen begehbaren Rasterquadrate bilden die Knoten, während die begehbaren Übergänge als Kanten mit gewichteten Wegabschnitten annotiert werden.
+
+Diese Modellierung entspricht exakt dem in \textcite[S. 67\,ff.]{4} beschriebenen Vorgehen für Blockwelt-Zustände, wird hier jedoch auf einen allgemeinen \acs{2D}-Gitterraum übertragen.
+
+Die Kantengewichte werden in Abhängigkeit vom Agententyp festgelegt. Da ein Express-Agent gemäß Aufgabe~1b zwei Zellen pro Simulationsschritt zurücklegt, benötigt er pro zurückgelegter Zelle die halbe Zeit eines Standard-Agenten. Das Kantengewicht wird daher als \textit{Zeitaufwand pro Zelle} modelliert:
+
+\[
+\text{cost}(\text{Agent}, \text{Kante}) = \frac{\text{Basis-Kosten}}{\text{Geschwindigkeit}(\text{Agent})}
+\]
+
+Diese zeitbasierte Interpretation des Kantengewichts entspricht dem in \textcite[S. 21\,ff.]{5} eingeführten Kostenbegriff beim \acs{Astern}-Algorithmus: Die Suche minimiert die Gesamtkosten des Pfades, wobei die Kosten die aufsummierten Zeitaufwände der Teilbewegungen sind.
+
+Ergänzend können Zellen als \textit{Engpässe} identifiziert werden. Eine Zelle gilt in dieser Aufgabe als Engpass, wenn sie höchstens zwei begehbare Nachbarn besitzt -- also einen schmalen Korridor oder eine Sackgasse darstellt. Solche Zellen sind in der Wegsuche problematisch, weil sie bei mehreren Agenten leicht zu Blockaden führen können. Der Aufgabensteller sieht daher optional Zusatzkosten für Engpässe vor, die den \acs{Astern}-Algorithmus dazu bewegen, engere Passagen wenn möglich zu umgehen.
+
+\subsection{Implementierung}
+
+Aufgabe~3a führt ein neues Modul \texttt{graph.py} ein, das die Graph-Struktur als Wrapper um die Karte kapselt. Der Graph wird einmalig beim Programmstart in \texttt{main.py} erzeugt. Die Konfiguration folgt weiterhin dem \textit{Single-Source-of-Truth}-Prinzip: Basis-Kosten, Engpass-Parameter und Sample-Log-Templates sind zentral im Block \texttt{AUFGABE 3A} in \texttt{config.py} definiert.
+
+\paragraph{Design-Entscheidung: Eigenes Modul \texttt{graph.py}.}
+Die Graph-Erzeugung wird bewusst nicht als Methodenerweiterung in \texttt{map.py} umgesetzt. Zwei Gründe sprechen für ein eigenes Modul: Erstens folgt die Trennung dem bereits etablierten Prinzip der \textit{Separation of Concerns} -- die Karte ist für Topologie und Zellinhalte zuständig, der Graph für das gewichtete Zustandsraum-Modell. Zweitens erleichtert ein gekapseltes Graph-Objekt die spätere Anbindung an die in Aufgabe~4 geforderte \acs{PROLOG}-Wissensbasis, die eine Adjazenzdarstellung im Format \texttt{vertex((X1,Y1),(X2,Y2),Cost).} bzw. \texttt{kante(Start, Ziel, Bewertung).} erwartet \cite[S. 69\,f.]{4}. Ein Wrapper mit klarer Schnittstelle lässt sich dafür unmittelbar in prädikatenlogische Fakten exportieren.
+
+% ======= config.py – Block 3A =======
+
+\subsubsection{Konfiguration \texttt{config.py} – Graphparameter}
+
+Der neue Konfigurationsblock definiert alle graph-spezifischen Werte:
+
+\lstinputlisting[
+    language=python,
+    style=python,
+    caption={Graph-Konfiguration (\texttt{config.py})},
+    label={lst:config_3a},
+    firstline=298,
+    lastline=315
+]{asset/code/3A-config.py}
+
+Diese Konfiguration umfasst:
+\begin{itemize}
+    \item \texttt{TomaKing3A\_BaseCost} (1.0) -- Basis-Kosten einer Kante pro Zelle bei Geschwindigkeit~1.
+    \item \texttt{TomaKing3A\_BottleneckMaxNeighbors} (2) -- Schwellwert für die Engpass-Definition: Zellen mit höchstens zwei begehbaren Nachbarn gelten als Engpass.
+    \item \texttt{TomaKing3A\_BottleneckPenalty} (0.5) -- Zusatzkosten pro Kante auf eine Engpass-Zelle.
+    \item \texttt{TomaKing3A\_SampleSize} (3) -- Anzahl der Knoten, die im Ergebnisnachweis als Stichprobe ausgegeben werden.
+    \item \texttt{TomaKing3A\_LogNodeCountTemplate}, \texttt{\_LogEdgeCountTemplate}, \\ \texttt{\_LogBottleneckCountTemplate} -- Format-Strings für die Graph-Statistiken.
+    \item \texttt{TomaKing3A\_LogSampleHeader}, \texttt{\_LogSampleNodeTemplate}, \texttt{\_LogSampleEdgeTemplate} -- Format-Strings für die Nachbarschafts-Stichprobe.
+\end{itemize}
+
+Die Validierungsliste in \texttt{validate\_config()} wird um alle neuen Konstanten erweitert (vgl. Abschnitt~\ref{sssec:config_validierung}).
+
+% ======= graph.py – Imports =======
+
+\subsubsection{Modul \texttt{graph.py} – Imports}
+
+Das neue Modul importiert die beiden Geschwindigkeitskonstanten aus Aufgabe~1b sowie die Graph-Parameter und Log-Templates aus dem 3A-Block:
+
+\lstinputlisting[
+    language=python,
+    style=python,
+    caption={Imports (\texttt{graph.py})},
+    label={lst:graph_imports_3a},
+    firstline=5,
+    lastline=30
+]{asset/code/3A-graph.py}
+
+Die beiden Geschwindigkeitskonstanten \texttt{TomaKing1B\_SpeedStandard} und \\ \texttt{TomaKing1B\_SpeedExpress} werden für die Berechnung der typspezifischen Kantenkosten im Sample-Log verwendet. Die Konfiguration stammt damit vollständig aus der zentralen \texttt{config.py} -- es existiert keine Hardcodierung.
+
+% ======= graph.py – Graph-Klasse =======
+
+\subsubsection{Modul \texttt{graph.py} – Graph-Klasse}
+
+Die Klasse \texttt{Graph} kapselt den gewichteten Graphen als Wrapper um die Karte:
+
+\lstinputlisting[
+    language=python,
+    style=python,
+    caption={Graph-Klasse (\texttt{graph.py})},
+    label={lst:graph_class_3a},
+    firstline=32,
+    lastline=43
+]{asset/code/3A-graph.py}
+
+Der Konstruktor speichert die Karte, extrahiert die Knotenmenge über \texttt{map.get\_free\_cells()} und berechnet die Engpässe vorab. Die Vorab-Berechnung der Engpässe ist eine bewusste Optimierung: Die Überprüfung einer Zelle auf Engpass-Eigenschaft würde sonst bei jedem Kantenkosten-Aufruf erfolgen müssen -- mit der Vorabberechnung ist sie auf einen Set-Lookup reduziert.
+
+% ======= graph.py – Knoten und Nachbarschaft =======
+
+\subsubsection{Modul \texttt{graph.py} – Knoten und Nachbarschaft}
+
+Die Methoden für Knoten- und Kantenzugriff delegieren an die Karte:
+
+\lstinputlisting[
+    language=python,
+    style=python,
+    caption={Knoten und Nachbarschaft (\texttt{graph.py})},
+    label={lst:graph_nodes_3a},
+    firstline=45,
+    lastline=63
+]{asset/code/3A-graph.py}
+
+\begin{itemize}
+    \item \texttt{get\_node\_count()} -- Anzahl der Knoten (identisch mit den freien Zellen der Karte).
+    \item \texttt{get\_neighbors(x, y)} -- Nachbarn eines Knotens (delegiert an \texttt{Map.get\_neighbors}).
+    \item \texttt{get\_edge\_count()} -- Anzahl der ungerichteten Kanten, ermittelt als Summe aller Nachbarschaften geteilt durch~2 (da jede Kante in beiden Richtungen gezählt wird).
+    \item \texttt{get\_nodes()} -- Liste aller Knoten als Tupel.
+\end{itemize}
+
+Der Zugriff auf die Nachbarschaften erfolgt ausschließlich über die Karte -- der Graph speichert die Kanten nicht separat, sondern berechnet sie bei Bedarf aus der Topologie. Diese semi-explizite Modellierung spart Speicher: Bei 753 Knoten und 1276 Kanten wäre eine materialisierte Adjazenzliste unverhältnismäßig aufwendig, während die Topologie ohnehin in der Karte vorliegt.
+
+% ======= graph.py – Engpass-Analyse =======
+
+\subsubsection{Modul \texttt{graph.py} – Engpass-Analyse}
+
+Die Engpass-Analyse identifiziert Zellen mit maximal zwei begehbaren Nachbarn:
+
+\lstinputlisting[
+    language=python,
+    style=python,
+    caption={Engpass-Analyse (\texttt{graph.py})},
+    label={lst:graph_bottleneck_3a},
+    firstline=65,
+    lastline=81
+]{asset/code/3A-graph.py}
+
+\begin{itemize}
+    \item \texttt{\_compute\_bottlenecks()} -- iteriert über alle Knoten und prüft, ob die Anzahl der Nachbarn höchstens \texttt{TomaKing3A\_BottleneckMaxNeighbors} beträgt. Alle Engpass-Zellen werden in einem Set gespeichert.
+    \item \texttt{is\_bottleneck(x, y)} -- O(1)-Lookup über das Set.
+    \item \texttt{get\_bottleneck\_count()} -- Anzahl der Engpass-Zellen.
+\end{itemize}
+
+Im simulierten Kartenlayout wurden 55 Engpass-Zellen identifiziert. Dies sind Zellen, die entweder am Rand der freien Fläche liegen oder innerhalb des \acs{ASCII}-Art-Wandmusters schmale Korridore bilden.
+
+% ======= graph.py – Kanten-Kostenmodell =======
+
+\subsubsection{Modul \texttt{graph.py} – Kanten-Kostenmodell}
+\label{sssec:graph_edge_cost_3a}
+
+Die Methode \texttt{get\_edge\_cost} berechnet die Kosten einer Kante in Abhängigkeit von der Agentengeschwindigkeit:
+
+\lstinputlisting[
+    language=python,
+    style=python,
+    caption={Kanten-Kostenmodell (\texttt{graph.py})},
+    label={lst:graph_cost_3a},
+    firstline=83,
+    lastline=92
+]{asset/code/3A-graph.py}
+
+Die Kostenformel lautet:
+\begin{center}
+\footnotesize
+\[
+\text{cost}(\text{from}, \text{to}, \text{speed}) =
+\frac{\texttt{TomaKing3A\_BaseCost}}{\text{speed}} +
+\begin{cases}
+\texttt{TomaKing3A\_BottleneckPenalty} & \text{falls } \text{to} \text{ Engpass} \\
+0 & \text{sonst}
+\end{cases}
+\]
+\end{center}
+
+Zwei Eigenschaften sind hervorzuheben:
+\begin{enumerate}
+    \item \textbf{Typ-Abhängigkeit ohne Duplikation:} Die Geschwindigkeit wird als Parameter übergeben -- der Graph selbst kennt keine Agententypen. Der Agent übergibt in Aufgabe~3c seinen eigenen \texttt{self.speed}. Dadurch bleibt das \textit{Single-Source-of-Truth}-Prinzip gewahrt: Die Geschwindigkeiten sind ausschließlich in \texttt{TomaKing1B\_SpeedStandard} und \texttt{TomaKing1B\_SpeedExpress} definiert.
+    \item \textbf{Richtungsabhängige Engpass-Kosten:} Der Engpass-Aufschlag wird nur dann gewährt, wenn die \textit{Ziel-Zelle} ein Engpass ist. Dadurch werden Wege, die durch einen Engpass führen, teurer -- unabhängig davon, aus welcher Richtung der Agent kommt.
+\end{enumerate}
+
+% ======= graph.py – Statistiken und Logging =======
+
+\subsubsection{Modul \texttt{graph.py} – Statistiken und Logging}
+
+Die Methoden für Statistik und Log-Ausgabe erfassen die Graph-Kennzahlen und geben sie auf der Konsole aus:
+
+\lstinputlisting[
+    language=python,
+    style=python,
+    caption={Statistiken und Logging (\texttt{graph.py})},
+    label={lst:graph_stats_3a},
+    firstline=94,
+    lastline=120
+]{asset/code/3A-graph.py}
+
+\begin{itemize}
+    \item \texttt{get\_statistics()} -- liefert ein Dictionary mit Knoten-, Kanten- und Engpass-Anzahl.
+    \item \texttt{\_log\_statistics()} -- gibt die drei Kennzahlen auf der Konsole aus.
+    \item \texttt{\_log\_sample()} -- gibt für die ersten \texttt{TomaKing3A\_SampleSize} Knoten ihre Nachbarschaften und die typspezifischen Kantenkosten aus.
+\end{itemize}
+
+Der Sample-Log dient dem Ergebnisnachweis: Er belegt, dass die typspezifischen Kantenkosten und der Engpass-Aufschlag korrekt berechnet werden.
+
+% ======= main.py – Erweiterung =======
+
+\subsubsection{Modul \texttt{main.py} – Erweiterung des Orchestrators}
+
+Erweiterung des Imports aus dem Graphen:
+
+\lstinputlisting[
+    language=python,
+    style=python,
+    caption={Erweiterter Import (\texttt{main.py})},
+    label={lst:main_import_3a},
+    firstline=13,
+    lastline=13
+]{asset/code/3A-main.py}
+
+Der Einstiegspunkt \texttt{main.py} wird um die Erzeugung des Graphen erweitert:
+
+\lstinputlisting[
+    language=python,
+    style=python,
+    caption={Erweiterter Orchestrator (\texttt{main.py})},
+    label={lst:main_3a},
+    firstline=27,
+    lastline=27
+]{asset/code/3A-main.py}
+
+Der Import \texttt{from graph import Graph} sowie der Aufruf \texttt{Graph(map\_instance)} werden ergänzt. Der Graph wird nach der Karte und den Agenten erzeugt -- die Reihenfolge ist bewusst gewählt, weil der Graph die bereits initialisierte Karte benötigt. Eine Übergabe an die Simulation erfolgt in~3a noch nicht; dies geschieht in Aufgabe~3c, wenn der \acs{Astern}-Algorithmus den Graphen aktiv verwendet.
+
+% ======= Ergebnisnachweis =======
+
+\subsection{Ergebnisnachweis}
+\label{sssec:graph_3a_nachweis}
+
+Die Graph-Erzeugung erfolgt einmalig beim Programmstart. Da der Graph während der Simulation unverändert bleibt, besteht der Ergebnisnachweis aus der \texttt{[GRAPH]}-Konsolenausgabe, die direkt nach dem Agenten-Log und vor dem ersten Simulationsschritt erscheint:
+
+\lstinputlisting[
+    style=console,
+    caption={Terminal-Ausgabe: Graph-Statistiken und Beispiel-Nachbarschaften},
+    label={lst:test_3a_output},
+    firstline=31,
+    lastline=47
+]{asset/code/3A-terminal.tex}
+
+Die Ausgabe zeigt drei Kennzahlen und eine Stichprobe:
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}{l r l}
+        \toprule
+        \textbf{Kennzahl} & \textbf{Wert} & \textbf{Quelle} \\
+        \midrule
+        Knoten   & 753 & Identisch mit den freien Zellen aus Aufgabe~1a \\
+        Kanten   & 1276 & Ungerichtete 4-Nachbarschaften (Summe/2) \\
+        Engpässe & 55  & Zellen mit \(\leq 2\) 2 begehbaren Nachbarn \\
+        \bottomrule
+    \end{tabular}
+    \caption{Graph-Kennzahlen}
+    \label{tab:graph_3a_stats}
+\end{table}
+
+Die Stichprobe zeigt drei Knoten mit ihren Nachbarschaften und den berechneten Kantenkosten. Besonders aufschlussreich ist die Kante von Knoten~\((1, 0)\) nach~\((0, 0)\): Da die Ziel-Zelle~\((0, 0)\) nur zwei Nachbarn hat (siehe Eintrag für Knoten~\((0, 0)\) oben), ist sie ein Engpass, und die Kante erhält den Aufschlag:
+
+\begin{itemize}
+    \item Kante~\((1,0) \to (1,1)\): keine Engpass-Zielzelle -- Standard 1.00, Express 0.50
+    \item Kante~\((1,0) \to (2,0)\): keine Engpass-Zielzelle -- Standard 1.00, Express 0.50
+    \item Kante~\((1,0) \to (0,0)\): Engpass-Zielzelle -- Standard \textbf{1.50}, Express \textbf{1.00}
+\end{itemize}
+
+Damit ist der typspezifische Kostenfaktor (Basis-Kosten / Geschwindigkeit) sowie der Engpass-Aufschlag (Bottleneck-Penalty) in der Ausgabe unmittelbar nachweisbar. Der Express-Agent erreicht dieselben Kanten bei halben Kosten -- der zeitbasierte Vorteil der höheren Geschwindigkeit wird damit im Kostenmodell abgebildet.
+
+Die Kantenanzahl ist ein direktes Maß für die Konnektivität der Karte: Bei einer vollständig offenen 71~\(\times\)~15-Karte würden etwa 2000 Kanten entstehen; das \acs{ASCII}-Art-Wandmuster aus Aufgabe~1a reduziert diese Zahl um etwa 36\,\%.
+
+% ==============================================================================
+% ======================== Aufgabe 3B - A*-Algorithmus ========================
+% ==============================================================================
+
+\section{\acs{Astern}-Algorithmus \textit{3b}}
+\label{sec:aufgabe3b}
+
+\subsection{Aufgabenstellung}
+
+Implementieren Sie A* mit der Open-Liste als Prioritätswarteschlange und der Closed-Menge wie im Heft beschrieben. Implementieren Sie die heuristische Funktion \(h(n)\), die die Distanz zum Ziel nicht überschätzt.
+
+\subsection{Theoretische Grundlagen}
+
+Der \acs{Astern}-Algorithmus ist ein \textit{informierter Suchalgorithmus}, der aus der Klasse der Graphensuche-Verfahren stammt. \textcite[S. 21\,f.]{5} beschreibt ihn als Verallgemeinerung des Dijkstra-Algorithmus: Während Dijkstra ausschließlich die bekannten Kosten \(g(x)\) vom Startknoten bis zum aktuellen Knoten minimiert, berücksichtigt \acs{Astern} zusätzlich einen heuristischen Schätzwert \(h(x)\), der die erwarteten Restkosten bis zum Ziel abschätzt:
+
+\[
+f(x) = g(x) + h(x)
+\]
+
+Der Algorithmus wählt in jedem Schritt den Knoten mit dem geringsten \(f\)-Wert aus der Open-Liste aus. Die Open-Liste ist dabei als \textit{Prioritätswarteschlange} implementiert -- der Knoten mit dem kleinsten \(f\)-Wert steht stets an erster Position. Die Closed-Menge enthält alle bereits vollständig expandierten Knoten und dient der Vermeidung von Mehrfachbesuchen. Wird das Ziel erreicht, wird der Pfad über eine Vorgänger-Zuordnung rekonstruiert \cite[S. 21\,ff.]{5}.
+
+Eine zentrale Anforderung an die Heuristik \(h(x)\) ist ihre \textit{Zulässigkeit}: Sie darf die tatsächlichen Restkosten niemals überschätzen, damit \acs{Astern} den optimalen Pfad findet \cite[S. 21\,ff.]{5}. Die in Aufgabe~2c eingeführte \textit{Manhattan-Distanz} ist in einem 4-nachbarigen Gitterraum eine solche zulässige Heuristik. Da die Kantenkosten in Aufgabe~3a zusätzlich einen Engpass-Aufschlag enthalten können, wird für die Heuristik ausschließlich der \textit{minimale} Kantenaufwand angesetzt:
+
+\[
+h(n) = d_{\text{Manhattan}}(n, \text{Ziel}) \cdot \frac{\texttt{TomaKing3A\_BaseCost}}{\text{Geschwindigkeit}}
+\]
+
+Der Engpass-Aufschlag wird in \(h(n)\) bewusst \textbf{nicht} berücksichtigt, weil er die Kosten nur erhöhen kann -- damit bleibt die Heuristik eine Unterschätzung und die Optimalität von \acs{Astern} ist gewährleistet.
+
+\subsection{Implementierung}
+
+Aufgabe~3b führt ein neues Modul \texttt{astar.py} ein, das den \acs{Astern}-Algorithmus als eigenständige Funktion kapselt. Die Trennung zwischen Graph-Struktur (\texttt{graph.py}) und Suchalgorithmus (\texttt{astar.py}) folgt dem bereits etablierten \textit{Separation-of-Concerns}-Prinzip. Die Konfiguration folgt weiterhin dem \textit{Single-Source-of-Truth}-Prinzip: Demo-Parameter, Logging-Templates und algorithmische Basiswerte sind zentral im Block \texttt{AUFGABE 3B} in \texttt{config.py} definiert.
+
+\paragraph{Design-Entscheidung: Eigenes Modul \texttt{astar.py}.}
+Der \acs{Astern}-Algorithmus wird nicht als Methode in \texttt{graph.py} oder \texttt{agent.py} umgesetzt. Der Graph ist ein reines Strukturmodell (Knoten, Kanten, Kantengewichte), während \acs{Astern} eine konkrete Suchstrategie über diesem Modell darstellt. Eine spätere Erweiterung um alternative Suchstrategien (z.~B. Dijkstra ohne Heuristik, Greedy Best-First) würde durch diese Trennung ohne Eingriff in \texttt{graph.py} möglich. Zusätzlich ist die spätere Einbindung in den Agenten (Aufgabe~3c) einfacher, wenn der Algorithmus als eigenständige Funktion mit klarer Signatur vorliegt.
+
+% ======= config.py – Block 3B =======
+
+\subsubsection{Konfiguration \texttt{config.py} – \acs{Astern}-Parameter}
+
+Der neue Konfigurationsblock definiert alle algorithmus-spezifischen Werte:
+
+\lstinputlisting[
+    language=python,
+    style=python,
+    caption={\acs{Astern}-Konfiguration (\texttt{config.py})},
+    label={lst:config_3b},
+    firstline=317,
+    lastline=337
+]{asset/code/3B-config.py}
+
+Diese Konfiguration umfasst:
+\begin{itemize}
+    \item \texttt{TomaKing3B\_InitialCost} (0.0) -- Startwert für \(g(\text{Start})\) und den initialen \(f\)-Wert der Open-Liste.
+    \item \texttt{TomaKing3B\_LogStartIndex} (1) -- Startindex für die 1-basierte Nummerierung der Log-Schritte.
+    \item \texttt{TomaKing3B\_LogSplitDivisor} (2) -- Divisor zur Berechnung der Halbierungsgrenze in der Log-Reduktion.
+    \item \texttt{TomaKing3B\_DemoStart}, \texttt{\_DemoGoal}, \texttt{\_DemoAgentSpeed} -- Parameter des Demo-Testlaufs.
+    \item \texttt{TomaKing3B\_LogMaxSteps} (9) -- Maximale Anzahl der im reduzierten Log gezeigten Schritte.
+    \item \texttt{TomaKing3B\_Log*Template} -- Format-Strings für Start, Step, Skip-Linie, Pfad, Kosten und Fehlerfall.
+\end{itemize}
+
+Die Validierungsliste in \texttt{validate\_config()} wird um alle neuen Konstanten erweitert (vgl. Abschnitt~\ref{sssec:config_validierung}).
+
+% ======= astar.py – Imports =======
+
+\subsubsection{Modul \texttt{astar.py} – Imports}
+
+Das neue Modul importiert die Prioritätswarteschlange aus der Python-Standardbibliothek, die Manhattan-Funktion aus Aufgabe~2c sowie die algorithmus-spezifischen Parameter aus dem 3B-Block:
+
+\lstinputlisting[
+    language=python,
+    style=python,
+    caption={Imports (\texttt{astar.py})},
+    label={lst:astar_imports_3b},
+    firstline=5,
+    lastline=34
+]{asset/code/3B-astar.py}
+
+Die Standardbibliothek \texttt{heapq} stellt die in \textcite[S. 21\,f.]{5} geforderte Prioritätswarteschlange bereit. \texttt{manhattan} stammt aus dem in Aufgabe~2c eingeführten Modul \texttt{geometry.py} und wird in der Heuristik verwendet.
+
+% ======= astar.py – Heuristik und Pfad-Rekonstruktion =======
+
+\subsubsection{Modul \texttt{astar.py} – Heuristik und Pfad-Rekonstruktion}
+\label{sssec:astar_heuristic_3b}
+
+Zwei Hilfsfunktionen bereiten den Algorithmus vor:
+
+\lstinputlisting[
+    language=python,
+    style=python,
+    caption={Heuristik und Pfad-Rekonstruktion (\texttt{astar.py})},
+    label={lst:astar_helpers_3b},
+    firstline=36,
+    lastline=50
+]{asset/code/3B-astar.py}
+
+\begin{itemize}
+    \item \texttt{\_heuristic(node, goal, agent\_speed)} -- berechnet den Schätzwert \(h(n)\). Der Faktor \texttt{TomaKing3A\_BaseCost}~\(/\)~\texttt{agent\_speed} liefert die minimalen Kosten pro Zelle. Da der Engpass-Aufschlag hier nicht einfließt, ist die Heuristik garantiert zulässig.
+    \item \texttt{\_reconstruct\_path(came\_from, current)} -- rekonstruiert den gefundenen Pfad, indem er über die Vorgänger-Zuordnung rückwärts läuft und die Reihenfolge anschließend umkehrt.
+\end{itemize}
+
+% ======= astar.py – A*-Suchfunktion =======
+
+\subsubsection{Modul \texttt{astar.py} – \acs{Astern}-Suchfunktion}
+\label{sssec:astar_main_3b}
+
+Die Hauptfunktion implementiert die \acs{Astern}-Schleife:
+
+\lstinputlisting[
+    language=python,
+    style=python,
+    caption={\acs{Astern}-Suchfunktion (\texttt{astar.py})},
+    label={lst:astar_main_3b},
+    firstline=51,
+    lastline=75
+]{asset/code/3B-astar.py}
+
+Die Implementierung der Suchschleife in \texttt{a\_star()} folgt exakt der Struktur
+von Algorithmus~2 in \textcite[S. 21\,f.]{5}: In jeder Iteration wird das Element
+mit minimalem \(f\)-Wert aus der Prioritätswarteschlange entnommen, gegen das
+Closed-Set geprüft und seine Nachfolger bezüglich kürzerer \(g\)-Pfade expandiert.
+
+Der Ablauf ist:
+\begin{enumerate}
+    \item \textbf{Initialisierung:} Open-Liste als Liste mit einem einzigen Tupel \texttt{(f, g, node)}; \texttt{came\_from} als leeres Dict; \texttt{g\_score} mit Startknoten zu \texttt{TomaKing3B\_InitialCost}; \texttt{closed\_set} als leeres Set.
+    \item \textbf{Schleife:} Solange die Open-Liste gefüllt ist, wird der Knoten mit dem kleinsten \(f\)-Wert gepoppt. Bereits besuchte Knoten werden übersprungen.
+    \item \textbf{Zielprüfung:} Bei Erreichen des Ziels wird der Pfad über \texttt{\_reconstruct\_path} rekonstruiert.
+    \item \textbf{Expansion:} Für jeden Nachbarn wird geprüft, ob der neue Pfad über den aktuellen Knoten kürzer ist als der bisher bekannte. Falls ja, werden Vorgänger und \(g\)-Wert aktualisiert sowie der Nachbar mit seinem \(f\)-Wert in die Open-Liste eingefügt.
+    \item \textbf{Abbruch:} Wenn die Open-Liste leer wird, existiert kein Pfad -- die Funktion liefert \texttt{None}.
+\end{enumerate}
+
+Die Schritt-Daten (\texttt{current}, \texttt{f}, \texttt{g}, Größe von Open- und Closed-Liste) werden in \texttt{steps} mitgeführt, um sie im Anschluss zu loggen. Die Tupel-Reihenfolge in der Open-Liste \texttt{(f, g, node)} sorgt bei gleichem \(f\)-Wert für einen deterministischen Tie-Break über den \(g\)-Wert -- analog zum in Aufgabe~2d eingeführten Prinzip.
+
+% ======= astar.py – Log-Ausgabe =======
+
+\subsubsection{Modul \texttt{astar.py} – Reduzierte Log-Ausgabe}
+
+Da ein vollständiger \acs{Astern}-Lauf schnell über 100 Schritte umfassen kann, wird im Log eine reduzierte Darstellung gewählt: die ersten und letzten Schritte werden gezeigt, dazwischen eine Auslassungsmarkierung:
+
+\lstinputlisting[
+    language=python,
+    style=python,
+    caption={Reduzierte Log-Ausgabe (\texttt{astar.py})},
+    label={lst:astar_log_3b},
+    firstline=77,
+    lastline=109
+]{asset/code/3B-astar.py}
+
+\begin{itemize}
+    \item \texttt{\_select\_steps(steps)} -- wählt bis zu \texttt{TomaKing3B\_LogMaxSteps} Schritte aus: die erste Hälfte vom Anfang und die zweite Hälfte vom Ende. Bei weniger als der maximalen Anzahl werden alle Schritte gezeigt.
+    \item \texttt{log\_run(start, goal, agent\_speed, path, cost, steps)} -- gibt den Start-Header, die ausgewählten Schritte, den finalen Pfad und die Gesamtkosten auf der Konsole aus. Die vollständigen Open-/Closed-Listen werden bewusst nicht ausgegeben -- stattdessen deren Knotenzahlen.
+\end{itemize}
+
+Die Reduktion auf \texttt{TomaKing3B\_LogMaxSteps}~=~9 Schritte ist eine bewusste Wahl: Die Aufgabenstellung verlangt einen ``Schritt-für-Schritt''-Log, aber nicht zwingend alle Schritte. Durch die Kombination aus Anfang und Ende bleibt der Verlauf nachvollziehbar -- insbesondere der Übergang vom Startknoten zum ersten expandierten Nachbarn sowie die letzten Schritte bis zum Ziel.
+
+% ======= astar.py – Demo-Testlauf =======
+
+\subsubsection{Modul \texttt{astar.py} – Demo-Testlauf}
+
+Am Ende des Moduls steht ein isolierter Demo-Block, der einen Testlauf mit festen Parametern ausführt:
+
+\lstinputlisting[
+    language=python,
+    style=python,
+    caption={Demo-Testlauf (\texttt{astar.py})},
+    label={lst:astar_demo_3b},
+    firstline=111,
+    lastline=121
+]{asset/code/3B-astar.py}
+
+Der Demo-Block instanziiert Karte und Graph, führt einen \acs{Astern}-Lauf vom konfigurierten Start- zum Zielknoten aus und gibt das Ergebnis über \texttt{log\_run} aus. Er ist über die \texttt{if \_\_name\_\_ == "\_\_main\_\_"}-Konvention isoliert -- ein Import des Moduls löst keinen Testlauf aus. Damit bleibt der Testcode vollständig von der produktiven Nutzung in Aufgabe~3c getrennt.
+
+\paragraph{Warum nicht in \texttt{main.py}?}
+Der Orchestrator \texttt{main.py} ist ausschließlich für den Start der interaktiven Simulation zuständig (Karte, Agenten, Depots, Graph, GUI). Der Testlauf des \acs{Astern}-Algorithmus ist eine reine Entwicklungs-Verifikation und hat nichts mit dem Simulationsablauf zu tun. Eine Integration in \texttt{main.py} würde den Orchestrator unnötig aufblähen. Der Demo-Block in \texttt{astar.py} kann nach Aufgabe~3c ersatzlos entfernt werden, sobald \acs{Astern} produktiv durch die Agenten aufgerufen wird.
+
+% ======= Ergebnisnachweis =======
+
+\subsection{Ergebnisnachweis}
+\label{sssec:astar_3b_nachweis}
+
+Der Testlauf wird durch Aufruf des Moduls gestartet und gibt einen reduzierten Log aus:
+
+\lstinputlisting[
+    style=console,
+    caption={Terminal-Ausgabe: \acs{Astern}-Lauf von \((37,13)\) nach \((25,0)\)},
+    label={lst:test_3b_output},
+    firstline=41,
+    lastline=60
+]{asset/code/3B-terminal.tex}
+
+Das Log protokolliert den Zustand der Open- und Closed-Liste \textbf{nach} dem Pop
+des aktuellen Knotens, aber \textbf{vor} dessen Expansion. Daher zeigt Step~1
+\texttt{Open: 0} -- der Startknoten wurde bereits aus der Open-Liste entnommen und
+in die Closed-Menge übernommen, die Expansion seiner Nachbarn steht noch aus.
+
+Die Ausgabe zeigt im Detail:
+\begin{itemize}
+    \item Startkopf mit Start, Ziel und Agentengeschwindigkeit.
+    \item Die ersten vier Expansionsschritte: \acs{Astern} expandiert zunächst den
+          horizontalen Nachbarn \((36,13)\), dann den vertikalen Nachbarn \((37,12)\)
+          und schließlich den äußeren Nachbarn \((35,13)\) -- die Reihenfolge folgt
+          dem \(f\)-Wert der Knoten.
+    \item Eine Auslassungsmarkierung, die die übersprungenen Schritte zusammenfasst.
+    \item Die letzten fünf Schritte bis zum Erreichen des Ziels \texttt{(25, 0)}.
+    \item Den finalen Pfad mit 26 Knoten sowie die Gesamtkosten.
+\end{itemize}
+
+Das Ergebnis ist in Tabelle~\ref{tab:astar_3b} zusammengefasst.
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}{l r}
+        \toprule
+        \textbf{Kenngröße} & \textbf{Wert} \\
+        \midrule
+        Startknoten                  & (37, 13) \\
+        Zielknoten                   & (25, 0) \\
+        Agentengeschwindigkeit       & 1 (Standard) \\
+        Manhattan-Distanz Start--Ziel & 25 \\
+        Expansionsschritte           & 105 \\
+        Pfadlänge (Knoten)           & 26 \\
+        Gesamtkosten                 & 25.0 \\
+        \bottomrule
+    \end{tabular}
+    \caption{\acs{Astern}-Ergebnis des Demo-Laufs}
+    \label{tab:astar_3b}
+\end{table}
+
+Die \textbf{Gesamtkosten von 25.0} entsprechen exakt der Manhattan-Distanz zwischen Start und Ziel. Dies beweist, dass \acs{Astern} den \textit{optimalen} Pfad gefunden hat: Kein kürzerer Weg kann existieren, weil Manhattan-Distanz die minimale Zellendistanz im 4-Nachbar-Gitter darstellt und der Engpass-Aufschlag in diesem Lauf nicht fällig wurde.
+
+Der Pfad verläuft in drei Phasen:
+\begin{enumerate}
+    \item \textbf{Vertikal von (37, 13) nach (37, 5)} -- der Agent bewegt sich acht Schritte nach oben durch einen freien Korridor.
+    \item \textbf{Diagonal-artig durch das Wandmuster} -- ab (36, 5) muss der Agent dem \acs{ASCII}-Art-Muster folgen.
+    \item \textbf{Horizontal entlang der Zielebene} -- von (31, 1) bis (25, 0) direkt zum Ziel.
+\end{enumerate}
+
+Damit ist die Kernanforderung der Aufgabenstellung erfüllt: Der \acs{Astern}-Algorithmus findet über die zulässige Manhattan-Heuristik den optimalen Pfad zwischen Start und Ziel und protokolliert seinen Verlauf nachvollziehbar.
+
+\paragraph{Hinweis zur Expansionszahl.}
+Die 105 Expansionsschritte bei einer Pfadlänge von 26 Knoten sind für einen ungewichteten Gitterraum mit vielen gleichwertigen Knoten typisch. Da viele Knoten denselben \(f\)-Wert besitzen (alle Manhattan-Nachbarn mit gleicher Distanz zum Ziel), muss \acs{Astern} sie alle expandieren, um sicherzustellen, dass keiner davon zu einem kürzeren Pfad führt. In gewichteten Graphen mit eindeutigen Kantenkosten wäre die Expansionszahl deutlich niedriger.
+
+% ==============================================================================
+% ============ Aufgabe 3C - Agenten-Integration des A*-Algorithmus ============
+% ==============================================================================
+
+\section{Agenten-Integration des \acs{Astern}-Algorithmus \textit{3c}}
+\label{sec:aufgabe3c}
+
+\subsection{Aufgabenstellung}
+
+Jeder Agent nutzt nun \acs{Astern} zur Routenplanung. Bei einem neuen Auftrag wird der Weg vom aktuellen Standort zum Depot und dann weiter zum Ziel berechnet; bei Kollisionen oder Blockaden (z.\,B.\ durch andere Agenten auf der Route) wird eine neue Routenplanung durchgeführt.
+
+\subsection{Theoretische Grundlagen}
+
+Aufgabe~3c wandelt die Agenten aus Aufgabe~1c in \textit{zielbasierte Agenten} um. \textcite[S. 24\,f., Abb.~1.7]{5} beschreibt diese Agentenklasse als Erweiterung des modellbasierten Agenten: Zusätzlich zum Weltmodell verfügt der Agent über eine Zieldefinition und eine \textit{Projektion der Zukunft}. In der vorliegenden Implementierung entspricht der Graph dem Weltmodell, die Zwischenziele Depot und Ziel liefern die Zieldefinition, und die von \acs{Astern} berechnete Route bildet die Projektion.
+
+Der Aufgabenablauf eines Agenten wird als \textit{Zustandsautomat} modelliert, der dem PDDL-Action-Schema aus \textcite[S. 25\,f.]{5} folgt. Jede Phase besitzt eine Vorbedingung (Precondition) und einen Effekt:
+\begin{itemize}
+    \item \textbf{TO\_DEPOT} -- Vorbedingung: \texttt{assigned\_tasks} nicht leer. Effekt: Agent navigiert zum Depot des zugewiesenen Pakets.
+    \item \textbf{PICKUP} -- Vorbedingung: Agent auf Depot-Position. Effekt: Paket wird in \texttt{cargo} übernommen; Phase wechselt zu TO\_TARGET.
+    \item \textbf{TO\_TARGET} -- Vorbedingung: Phase = TO\_TARGET und Paket geladen. Effekt: Agent navigiert zum Ziel des Pakets.
+    \item \textbf{DELIVER} -- Vorbedingung: Agent auf Ziel-Position und Paket geladen. Effekt: Paket wird abgeliefert; Task abgeschlossen; Phase zurück zu idle.
+\end{itemize}
+
+Die \textit{Neuplanung} bei Blockade oder Kollision folgt dem Konzept des \textit{Re-Planning}: Der Agent erkennt, dass seine bisherige Projektion nicht mehr gültig ist, und berechnet ab der aktuellen Position eine neue Route. In der PDDL-Planungssemantik, die in \textcite[S. 25\,f.]{5} eingeführt wird, entspricht dies dem Aktualisieren des Weltmodells bei unerwarteten Umgebungsänderungen.
+
+\subsection{Implementierung}
+
+Aufgabe~3c erweitert die Klasse \texttt{Agent} um einen Zustandsautomaten und um eine Routenverfolgungs-Logik. Der Graph wird über die \texttt{Simulation} an die Agenten weitergereicht. Das Modul \texttt{astar.py} wird um die Demo- und Log-Bestandteile aus Aufgabe~3b reduziert (siehe Abschnitt~\ref{sssec:refactoring_3b_demo}).
+
+% ======= config.py – Block 3C =======
+
+\subsubsection{Konfiguration \texttt{config.py} – Phasen und Log-Templates}
+
+Der neue Konfigurationsblock definiert die Phasennamen und alle Log-Templates für die Routenplanung:
+
+\lstinputlisting[
+    language=python,
+    style=python,
+    caption={3C-Konfiguration (\texttt{config.py})},
+    label={lst:config_3c},
+    firstline=324,
+    lastline=336
+]{asset/code/3C-config.py}
+
+Die Konfiguration umfasst:
+\begin{itemize}
+    \item \texttt{TomaKing3C\_PhaseToDepot}, \texttt{\_PhaseToTarget} -- Zustandsnamen des Agenten-Phasenautomaten.
+    \item \texttt{TomaKing3C\_LogPlanDepotTemplate}, \texttt{\_LogPlanTargetTemplate} -- Log-Ausgabe nach erfolgreicher Routenplanung mit Ziel, Pfadlänge und \acs{Astern}-Kosten.
+    \item \texttt{TomaKing3C\_LogReplanTemplate} -- Log-Ausgabe nach Neuplanung mit alter und neuer Zielposition.
+    \item \texttt{TomaKing3C\_LogNoPathTemplate} -- Warnung, wenn \acs{Astern} keinen Pfad findet.
+    \item \texttt{TomaKing3C\_LogTaskCompleteTemplate} -- Bestätigung nach erfolgreicher Ablieferung.
+\end{itemize}
+
+Die Validierungsliste in \texttt{validate\_config()} wird um alle neuen Konstanten erweitert (vgl. Abschnitt~\ref{sssec:config_validierung}).
+
+% ======= agent.py – Neue Imports =======
+
+\subsubsection{Modul \texttt{agent.py} – Neue Imports}
+
+Der Import \texttt{from astar import a\_star} bindet die in Aufgabe~3b implementierte Suchfunktion ein. Damit ist der Agent der erste produktive Nutzer des \acs{Astern}-Algorithmus.
+
+\lstinputlisting[
+    language=python,
+    style=python,
+    caption={Astar Import (\texttt{agent.py})},
+    label={lst:agent_imports_astar_3c},
+    firstline=12,
+    lastline=12
+]{asset/code/3C-agent.py}
+
+Der Agent importiert nun zusätzlich die \acs{Astern}-Funktion sowie die Phasen- und Log-Konstanten aus dem 3C-Block:
+
+\lstinputlisting[
+    language=python,
+    style=python,
+    caption={Neue Imports (\texttt{agent.py})},
+    label={lst:agent_imports_3c},
+    firstline=71,
+    lastline=80
+]{asset/code/3C-agent.py}
+
+% ======= agent.py – Neue Attribute =======
+
+\subsubsection{Modul \texttt{agent.py} – Neue Attribute im Konstruktor}
+
+Der Agent speichert seinen aktuellen Routenzustand in drei neuen Attributen:
+
+\lstinputlisting[
+    language=python,
+    style=python,
+    caption={Neue Attribute im Konstruktor (\texttt{agent.py})},
+    label={lst:agent_ctor_3c},
+    firstline=107,
+    lastline=109
+]{asset/code/3C-agent.py}
+
+\begin{itemize}
+    \item \texttt{current\_route} -- Liste von Wegpunkten. Das erste Element ist stets die aktuelle Position, das letzte der Zielknoten.
+    \item \texttt{task\_phase} -- Aktueller Phasenzustand (\texttt{None}, \texttt{TO\_DEPOT} oder \texttt{TO\_TARGET}).
+    \item \texttt{current\_task\_id} -- Paket-ID des aktuell bearbeiteten Tasks; \texttt{None} im Ruhezustand.
+\end{itemize}
+
+% ======= agent.py – decide_action =======
+
+\subsubsection{Modul \texttt{agent.py} – Neue \texttt{decide\_action}}
+
+Die Methode \texttt{decide\_action} gibt nun nicht mehr eine zufällige Richtung zurück, sondern die Richtung zur nächsten Zelle der aktuellen Route:
+
+\lstinputlisting[
+    language=python,
+    style=python,
+    caption={Neue \texttt{decide\_action} (\texttt{agent.py})},
+    label={lst:agent_decide_3c},
+    firstline=153,
+    lastline=164
+]{asset/code/3C-agent.py}
+
+Der Ablauf ist:
+\begin{enumerate}
+    \item Wenn kein Task läuft und \texttt{assigned\_tasks} gefüllt ist, wird der nächste Task gestartet.
+    \item Wenn keine Route existiert (idle), wird \texttt{(0, 0)} zurückgegeben -- der Agent bleibt stehen.
+    \item Wenn die nächste Zelle blockiert ist (durch einen anderen Agenten belegt), wird eine Neuplanung ausgelöst.
+    \item Andernfalls wird die Differenz zur nächsten Zelle der Route zurückgegeben.
+\end{enumerate}
+
+Die Signatur wurde um den \texttt{simulation}-Parameter erweitert, damit der Agent Zugriff auf \texttt{simulation.graph} und \texttt{simulation.agents} erhält.
+
+% ======= agent.py – Neue Methoden =======
+
+\subsubsection{Modul \texttt{agent.py} – Neue Methoden der Routenverwaltung}
+
+Die Kernlogik der Routenplanung und des Phasenübergangs ist in sieben Methoden gekapselt:
+
+\lstinputlisting[
+    language=python,
+    style=python,
+    caption={Neue Methoden der Routenverwaltung (\texttt{agent.py})},
+    label={lst:agent_methods_3c},
+    firstline=213,
+    lastline=298
+]{asset/code/3C-agent.py}
+
+\begin{itemize}
+    \item \texttt{\_try\_start\_next\_task} -- startet den ersten Task aus der FIFO-Liste, setzt \texttt{task\_phase} auf TO\_DEPOT und plant die Route zum Depot.
+    \item \texttt{\_plan} -- ruft \texttt{a\_star} auf und aktualisiert \texttt{current\_route}. Bei fehlendem Pfad wird der Task abgebrochen.
+    \item \texttt{\_replan} -- Neuplanung aus der aktuellen Position. Ermittelt das Ziel abhängig von \texttt{task\_phase} und ruft \texttt{a\_star} erneut auf.
+    \item \texttt{\_advance\_along\_route} -- wird von \texttt{Simulation.\_agent\_step} nach jedem erfolgreichen \texttt{try\_move} aufgerufen. Prüft den Phasenwechsel (PICKUP bei Depot-Erreichen, DELIVER bei Ziel-Erreichen).
+    \item \texttt{\_is\_next\_cell\_blocked} -- prüft, ob die nächste Zelle der Route durch einen anderen Agenten belegt ist.
+    \item \texttt{\_finish\_current\_task} -- schließt den Task ab: ID aus \texttt{assigned\_tasks} entfernen, Phasenzustand zurücksetzen.
+    \item \texttt{\_abandon\_current\_task} -- bricht den Task bei Pfadfehler ab.
+\end{itemize}
+
+Das Zusammenspiel dieser Methoden implementiert den oben beschriebenen Zustandsautomaten. Der Agent ist während seiner gesamten Task-Bearbeitung entweder im Zustand TO\_DEPOT oder TO\_TARGET; alle Übergänge sind an konkrete Positions- oder Ereignisbedingungen geknüpft.
+
+% ======= simulation.py – Änderungen =======
+
+\subsubsection{Modul \texttt{simulation.py} – Graph-Übergabe und Aufrufanpassungen}
+
+Der Konstruktor der \texttt{Simulation}-Klasse erhält einen neuen Parameter für den Graphen:
+
+\lstinputlisting[
+    language=python,
+    style=python,
+    caption={Erweiterter Konstruktor (\texttt{simulation.py})},
+    label={lst:sim_ctor_3c},
+    firstline=41,
+    lastline=42
+]{asset/code/3C-simulation.py}
+
+Der Graph wird über \texttt{self.graph} an alle Agenten weitergereicht. Er ist damit der einzige Ort, an dem der Graph zur Laufzeit verfügbar ist.
+
+Die Methode \texttt{\_agent\_step} wird angepasst: Der Aufruf von \texttt{decide\_action} übergibt nun auch die Simulation, der Idle-Fall wird durch einen Abbruch der Bewegungs-Schleife behandelt, und nach jedem erfolgreichen Zug wird \texttt{\_advance\_along\_route} aufgerufen:
+
+\lstinputlisting[
+    language=python,
+    style=python,
+    caption={Erweiterte \texttt{\_agent\_step} (\texttt{simulation.py})},
+    label={lst:sim_step_3c},
+    firstline=115,
+    lastline=119
+]{asset/code/3C-simulation.py}
+
+Die Idle-Behandlung \texttt{if (dx, dy) == (0, 0): break} verhindert zwei Fehlverhalten: (1) Idle-Agenten würden sonst durch \texttt{try\_move(0,0)} einen erfolgreichen „Bewegungsversuch" auf ihre eigene Zelle ausführen und dabei Batterie verbrauchen. (2) Der Express-Agent würde ohne diese Prüfung pro Schritt zweimal unnötig Batterie abziehen, ohne sich fortzubewegen.
+
+Die Methode \texttt{\_resolve\_collisions} ruft nach dem Zurücksetzen eines Agenten auf seine Vorposition nun dessen \texttt{\_replan}-Methode auf:
+
+\lstinputlisting[
+    language=python,
+    style=python,
+    caption={Erweiterte \texttt{\_resolve\_collisions} (\texttt{simulation.py})},
+    label={lst:sim_collision_3c},
+    firstline=165,
+    lastline=165
+]{asset/code/3C-simulation.py}
+
+Damit ist die zweite geforderte Neuplanungs-Bedingung -- Kollisionen -- abgedeckt. Die erste Bedingung -- Blockade durch einen anderen Agenten -- wird bereits in \texttt{decide\_action} behandelt.
+
+% ======= main.py – Graph-Übergabe =======
+
+\subsubsection{Modul \texttt{main.py} – Übergabe des Graphen an die Simulation}
+
+Der Orchestrator übergibt den in Aufgabe~3a erzeugten Graphen nun an die Simulation:
+
+\lstinputlisting[
+    language=python,
+    style=python,
+    caption={Erweiterter Orchestrator (\texttt{main.py})},
+    label={lst:main_3c},
+    firstline=28,
+    lastline=28
+]{asset/code/3C-main.py}
+
+Der Graph wird damit vom reinen Statistik-Objekt aus Aufgabe~3a zum produktiven Bestandteil der Simulationslogik.
+
+% ======= Refactoring: 3b-Demo entfernt =======
+
+\subsection{Refactoring: Reduktion des Moduls \texttt{astar.py}}
+\label{sssec:refactoring_3b_demo}
+
+In Aufgabe~3b enthielt \texttt{astar.py} neben dem Algorithmus selbst auch einen Demo-Block zur Verifikation (\texttt{log\_run}, \texttt{\_select\_steps}, \texttt{if \_\_name\_\_ == "\_\_main\_\_"}). Dieser Block wurde bereits in Abschnitt~\ref{sssec:astar_3b_nachweis} der 3b-Dokumentation als reine Entwicklungs-Verifikation gekennzeichnet und explizit als \textit{ersetzbar durch die produktive Nutzung in 3c} angekündigt.
+
+Mit der Integration in den Agenten (Abschnitt~\ref{sssec:astar_main_3b}) ist diese Ankündigung eingelöst: \texttt{astar.py} enthält nur noch die produktiven Funktionen \texttt{a\_star}, \texttt{\_heuristic} und \texttt{\_reconstruct\_path}. Die Imports wurden auf das Nötige reduziert (\texttt{heapq}, \texttt{manhattan}, \texttt{TomaKing3A\_BaseCost}, \texttt{TomaKing3B\_InitialCost}).
+
+Der Konfigurationsblock \texttt{AUFGABE 3B} in \texttt{config.py} wurde entsprechend auf die einzige verbleibende Konstante \texttt{TomaKing3B\_InitialCost} reduziert. Alle Demo-Parameter (\texttt{\_DemoStart}, \texttt{\_DemoGoal}, \texttt{\_DemoAgentSpeed}), Log-Konstanten (\texttt{\_Log*Template}, \texttt{\_LogMaxSteps}, \texttt{\_LogSplitDivisor}, \texttt{\_LogStartIndex}, \texttt{\_LogSkipMarker}) und zugehörige Templates wurden entfernt.
+
+Die 3b-Dokumentation bleibt unverändert erhalten -- die historische Schichtung bewahrt den ursprünglichen Nachweis. Der entfernte Demo-Block bleibt als Verweis auf den 3b-Ergebnisnachweis (Listing~\ref{lst:test_3b_output}) nachvollziehbar.
+
+% ======= Ergebnisnachweis =======
+
+\subsection{Ergebnisnachweis}
+\label{sssec:agent_3c_nachweis}
+
+Der Nachweis der Agenten-Integration erfolgt anhand von Agent~0, der in der Simulation den Task~0 (Depot $(37, 13)$, Ziel $(25, 0)$) zugeschlagen bekommt. Die folgenden Log-Zeilen sind ein Auszug aus einem längeren Lauf, der die vier Phasen des Zustandsautomaten (PLAN, PICKUP, DELIVER, REPLAN) abdeckt:
+
+\lstinputlisting[
+    style=console,
+    caption={Terminal-Ausgabe: vollständiger Task-Durchlauf von Agent~0 (Auszug)},
+    label={lst:test_3c_output},
+    firstline=48,
+    lastline=76
+]{asset/code/3C-terminal.tex}
+
+Der komplette Task-Durchlauf ist in Tabelle~\ref{tab:agent_3c} zusammengefasst:
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}{r l c c}
+        \toprule
+        \textbf{Step} & \textbf{Ereignis} & \textbf{Position} & \textbf{Ladung} \\
+        \midrule
+        5  & AWARD Task 0                            & (43, 13) & 0 \\
+        6  & PLAN zur Depot-Position                 & (42, 13) & 0 \\
+        10 & Fahrt zum Depot                         & (38, 13) & 0 \\
+        11 & PICKUP Paket 0, PLAN zur Ziel-Position  & (37, 13) & 1 \\
+        15 & Fahrt zum Ziel (vertikal)               & (37, 9)  & 1 \\
+        19 & Fahrt zum Ziel (vertikal)               & (37, 5)  & 1 \\
+        22 & REPLAN wegen Blockade durch Agent 1     & (36, 3)  & 1 \\
+        25 & Fortsetzung Fahrt zum Ziel              & (35, 1)  & 1 \\
+        36 & DELIVER Paket 0, Task abgeschlossen     & (25, 0)  & 0 \\
+        \bottomrule
+    \end{tabular}
+    \caption{Task-Durchlauf von Agent~0 (Task 0, Depot $(37,13)$, Ziel $(25,0)$)}
+    \label{tab:agent_3c}
+\end{table}
+
+Die drei Phasen sind im Log unmittelbar erkennbar:
+
+\begin{enumerate}
+    \item \textbf{Planung zum Depot (Steps 6--10).} Der Agent erhält in Step~5 den Zuschlag (\texttt{[AWARD]}), plant in Step~6 die Route zum Depot (\texttt{[PLAN] Agent 0 -> Depot (37, 13) (7 Schritte, Kosten 6.0)}) und folgt ihr bis zur Depot-Position.
+    \item \textbf{Phasenwechsel bei PICKUP (Step 11).} Nach Erreichen der Depot-Position wird das Paket in \texttt{cargo} übernommen (\texttt{[PICKUP]}) und unmittelbar eine neue Route zum Ziel berechnet (\texttt{[PLAN] Agent 0 -> Ziel (25, 0) (26 Schritte, Kosten 25.0)}).
+    \item \textbf{Neuplanung bei Blockade (Step 22).} Auf Position $(36, 4)$ stellt der Agent fest, dass die nächste Zelle $(36, 3)$ durch Agent~1 belegt ist. Die Blockade wird in \texttt{\_is\_next\_cell\_blocked} erkannt, und \texttt{\_replan} berechnet die Restroute neu (\texttt{[REPLAN] Agent 0 von (36, 4) nach (25, 0)}).
+    \item \textbf{Erfolgreiche Ablieferung (Step 36).} Nach Erreichen der Ziel-Position wird das Paket abgeliefert (\texttt{[DELIVER]}), der Task abgeschlossen (\texttt{[DONE]}) und der Agent kehrt in den Idle-Zustand zurück -- bereit für den nächsten Task aus \texttt{assigned\_tasks}.
+\end{enumerate}
+
+\paragraph{Konsistenz zwischen Biet- und Planungskosten.}
+Die in Step~5 gebotenen Kosten (31) entsprechen exakt der Summe der in den \texttt{[PLAN]}-Logs ausgewiesenen Kosten: $6{,}0$ (zum Depot) $+\ 25{,}0$ (zum Ziel) $= 31{,}0$. Damit ist die \textit{Single-Source-of-Truth}-Verletzung ausgeschlossen: Das Biet-Kostenmodell aus Aufgabe~2c (Manhattan-Distanz) und das \acs{Astern}-Kostenmodell aus Aufgabe~3a (typspezifische Kantenkosten mit Engpass-Aufschlag) liefern im vorliegenden Fall identische Werte, weil der optimale Pfad keine Engpass-Zellen durchläuft und der Agent vom Typ Standard ist (Speed = 1).
+
+\paragraph{Hinweis zu den Express-Agenten.}
+In dem oben dokumentierten Simulationslauf erhalten die Express-Agenten (Agent~2 und Agent~3) keinen Zuschlag. Ursache ist die in Aufgabe~2c festgelegte Bietlogik, die ausschließlich die Manhattan-Distanz ohne Speed-Faktor verwendet: Beide Express-Agenten starten an den Kartenrändern ($(26,0)$ und $(49,5)$) und sind damit geometrisch weiter von beiden Depots entfernt als die Standard-Agenten. Ihre Bietkosten liegen deshalb systematisch über denen der Standard-Agenten. Dieses Verhalten ist eine direkte Konsequenz des in Aufgabe~2c spezifizierten Kostenmodells und wird in Aufgabe~5 (Simulationsexperimente) als Vergleichskennzahl aufgegriffen.
+
+% ==============================================================================
+% ========== Aufgabe 3D - Bewegliche Hindernisse & bessere Heuristik ==========
+% ==============================================================================
+
+\section{Bewegliche Hindernisse und bessere Heuristik \textit{3d}}
+\label{sec:aufgabe3d}
+
+\subsection{Aufgabenstellung}
+
+Was geschieht, wenn sich Hindernisse auf der Karte bewegen? Können Sie eine bessere Heuristik entwerfen?
+
+\subsection{Theoretische Grundlagen}
+
+\paragraph{Bewegliche Hindernisse.}
+Bisher wurde der Graph aus Aufgabe~3a als statisches Modell behandelt: Wände ändern ihre Position nicht, und ein einmal berechneter Pfad bleibt bis zu seiner vollständigen Abarbeitung gültig. Diese Annahme trifft für die Simulationsumgebung jedoch nur eingeschränkt zu, denn die anderen Roboter sind selbst handelnde Entitäten. \textcite[S. 11]{5} klassifiziert eine solche Konstellation als \textit{Multiagentenumgebung}: Andere Agenten verfolgen eigene Ziele und verändern damit den Zustand der Welt, ohne dass der betrachtete Agent diese Veränderungen kontrollieren kann. In Kombination mit der bereits in Abschnitt~\ref{sec:aufgabe2b} diskutierten \textit{dynamischen Umgebung} -- in der sich der Weltzustand sogar während der Wahrnehmung und Planung ändert -- hat dies unmittelbare Konsequenzen für den \acs{Astern}-Algorithmus. Ein ursprünglich optimaler Pfad kann zu einem beliebigen Zeitpunkt durch einen anderen Agenten blockiert werden.
+
+Der \acs{Astern}-Algorithmus selbst kann diese Dynamik nicht vorhersehen, da er die zukünftigen Positionen anderer Agenten nicht kennt. \textcite[S. 25]{5} beschreibt Re-Planning als die praktische Antwort auf diese Situation: Der Agent erkennt die Invalidierung seiner Route und berechnet ab der aktuellen Position eine neue. Diese Re-Planning-Logik wurde bereits in Aufgabe~3c implementiert und produktiv verankert -- sie ist damit die konkrete Umsetzung des Umgangs mit beweglichen Hindernissen. Aufgabe~3d ergänzt hier keine neue Mechanik, sondern schärft die Effizienz des Planungsprozesses durch eine verbesserte Heuristik.
+
+\paragraph{Bessere Heuristik.}
+Die in Aufgabe~3b verwendete \textit{Manhattan-Heuristik} ist zulässig, aber lose: Sie schätzt die Restkosten als reine Luftlinien-Distanz und ignoriert die tatsächliche Wandtopologie der Karte. In einem Gitter mit ausgeprägten Hindernisstrukturen führt dies zu einer unnötig breiten Exploration von Knoten mit gleichem \(f\)-Wert. Eine bessere Heuristik sollte daher die tatsächlich zurückzulegende Wegstrecke enger unter­schätzen, ohne die Zulässigkeit (und damit die Optimalität von \acs{Astern}) zu verletzen.
+
+Als Alternative bietet sich die \textit{Breitensuche (\acs{BFS})} an \cite[S. 70\,f.]{4}: Ein einmaliger \acs{BFS}-Lauf vom Zielknoten aus liefert die minimale Schritt-Distanz zu jedem erreichbaren Knoten unter Berücksichtigung aller Wände. Diese Distanz multipliziert mit den minimalen Kantenkosten ergibt eine deutlich strammere Unterschätzung als die Manhattan-Distanz. Formal gilt für die \acs{BFS}-Heuristik:
+
+\[
+h_{\text{BFS}}(n) = d_{\text{BFS}}(n, \text{Ziel}) \cdot \frac{\texttt{TomaKing3A\_BaseCost}}{\text{Geschwindigkeit}}
+\]
+
+\textbf{Admissibility:} Die \acs{BFS}-Distanz ist die minimale Schrittzahl zwischen zwei Knoten im 4-Nachbar-Gitter. Jeder Schritt kostet mindestens \(\texttt{TomaKing3A\_BaseCost} / \text{speed}\), da der Engpass-Aufschlag die Kantenkosten ausschließlich erhöhen kann. Damit gilt \(h_{\text{BFS}}(n) \le h^*(n)\) für alle Knoten und die Optimalität von \acs{Astern} bleibt gewährleistet.
+
+\subsection{Implementierung}
+
+Aufgabe~3d ergänzt zwei Komponenten:
+\begin{enumerate}
+    \item Eine \textit{graph-seitige \acs{BFS}-Distanz-Berechnung} mit Lazy-Cache im \texttt{Graph}-Objekt. Die Distanz wird pro Ziel einmalig berechnet und für Folgeanfragen in \(\mathcal{O}(1)\) abgerufen.
+    \item Eine \textit{Heuristik-Auswahl} in \texttt{astar.py}: Die bisherige Manhattan-Heuristik bleibt erhalten, die neue \acs{BFS}-Heuristik kommt hinzu, und ein Dispatcher wählt über einen zentralen Config-Wert.
+\end{enumerate}
+
+% ======= config.py – Block 3D =======
+
+\subsubsection{Konfiguration \texttt{config.py} – Heuristik-Modus und Demo-Parameter}
+
+Der neue Konfigurationsblock definiert den aktiven Heuristik-Modus und die Parameter für den Vergleichslauf:
+
+\lstinputlisting[
+    language=python,
+    style=python,
+    caption={3D-Konfiguration (\texttt{config.py})},
+    label={lst:config_3d},
+    firstline=338,
+    lastline=362
+]{asset/code/3D-config.py}
+
+\begin{itemize}
+    \item \texttt{TomaKing3D\_HeuristicMode} -- aktiver Heuristik-Modus im Produktivbetrieb. Default \texttt{"bfs"} sorgt dafür, dass die Agenten die neue Heuristik nutzen.
+    \item \texttt{TomaKing3D\_ModeManhattan}, \texttt{\_ModeBFS} -- Symbolische Namen für die Modi (statt String-Literalen im Code).
+    \item \texttt{TomaKing3D\_Demo*} -- Parameter des Vergleichslaufs.
+    \item \texttt{TomaKing3D\_Log*} -- Log-Templates für den Heuristik-Vergleich, analog zum 3b-Format.
+\end{itemize}
+
+Die Validierungsliste in \texttt{validate\_config()} wird um alle neuen Konstanten erweitert (vgl. Abschnitt~\ref{sssec:config_validierung}).
+
+% ======= graph.py – BFS-Cache =======
+
+\subsubsection{Modul \texttt{graph.py} – \acs{BFS}-Distanz-Cache}
+
+Für die Breitensuche wird zusätzlich die doppelseitige Warteschlange \texttt{deque} aus der Python-Standardbibliothek importiert:
+
+\lstinputlisting[
+    language=python,
+    style=python,
+    caption={Neuer Import (\texttt{graph.py})},
+    label={lst:graph_import_deque_3d},
+    firstline=9,
+    lastline=9
+]{asset/code/3D-graph.py}
+
+Der Konstruktor der \texttt{Graph}-Klasse wird um den \acs{BFS}-Cache erweitert:
+
+\lstinputlisting[
+    language=python,
+    style=python,
+    caption={Erweiterter Konstruktor (\texttt{graph.py})},
+    label={lst:graph_ctor_3d},
+    firstline=43,
+    lastline=43
+]{asset/code/3D-graph.py}
+
+Der Cache ist ein leeres Dictionary und wird erst beim ersten Aufruf von \texttt{get\_bfs\_distance} lazy befüllt. Dadurch entsteht kein Initialisierungsaufwand für Ziele, die nie angefragt werden.
+
+Der Graph erhält zwei neue Methoden zur Lazy-Berechnung und zum Abruf der \acs{BFS}-Distanz:
+
+\lstinputlisting[
+    language=python,
+    style=python,
+    caption={\acs{BFS}-Distanz-Cache (\texttt{graph.py})},
+    label={lst:graph_bfs_3d},
+    firstline=124,
+    lastline=143
+]{asset/code/3D-graph.py}
+
+\begin{itemize}
+    \item \texttt{compute\_bfs\_from(goal)} -- führt eine Breitensuche vom Zielknoten aus und liefert ein Dictionary \texttt{\{node: dist\}} mit der minimalen Schrittzahl zu jedem erreichbaren Knoten.
+    \item \texttt{get\_bfs\_distance(node, goal)} -- ruft die Distanz aus dem Cache ab. Bei der ersten Anfrage für ein Ziel wird der Cache lazy befüllt. Bei unbekannten Zielen liefert die Methode \texttt{inf}.
+\end{itemize}
+
+Der Cache lebt als Attribut \texttt{self.\_bfs\_cache} im \texttt{Graph}-Objekt -- ontologisch gehört die Distanzmatrix zur Topologie des Graphen und nicht zu einem Suchalgorithmus.
+
+% ======= astar.py – Heuristik-Dispatcher =======
+
+\subsubsection{Modul \texttt{astar.py} – Heuristik-Dispatcher}
+
+Die bisherige Funktion \texttt{\_heuristic} wird in zwei spezialisierte Funktionen aufgeteilt, ergänzt um einen Dispatcher und einen Demo-Umschalter:
+
+\lstinputlisting[
+    language=python,
+    style=python,
+    caption={Heuristik-Dispatcher (\texttt{astar.py})},
+    label={lst:astar_heuristics_3d},
+    firstline=106,
+    lastline=138
+]{asset/code/3D-astar.py}
+
+\begin{itemize}
+    \item \texttt{\_heuristic\_manhattan(graph, node, goal, agent\_speed)} -- die bisherige Manhattan-Heuristik aus Aufgabe~3b. Die Signatur wurde um \texttt{graph} erweitert, um einen einheitlichen Aufruf beider Heuristiken zu ermöglichen.
+    \item \texttt{\_heuristic\_bfs(graph, node, goal, agent\_speed)} -- die neue \acs{BFS}-Heuristik. Nutzt \texttt{graph.get\_bfs\_distance()} und skaliert das Ergebnis mit den minimalen Kantenkosten.
+    \item \texttt{\_heuristic(graph, node, goal, agent\_speed)} -- Dispatcher. Wählt anhand des aktiven Modus. Der Modus wird über \texttt{\_current\_heuristic\_mode()} ermittelt, das den Config-Default oder einen temporären Override berücksichtigt.
+    \item \texttt{\_set\_heuristic\_mode(mode)} -- setzt einen temporären Modus-Override (nur für den Demo-Lauf verwendet).
+\end{itemize}
+
+Die Funktion \texttt{a\_star} ruft die Heuristik nun ausschließlich über den Dispatcher auf. An zwei Stellen wurde jeweils nur der Aufruf um den \texttt{graph}-Parameter erweitert, der umgebende Code bleibt unverändert:
+
+\lstinputlisting[
+    language=python,
+    style=python,
+    caption={Angepasste Heuristik-Aufrufe in \texttt{a\_star} (\texttt{astar.py})},
+    label={lst:astar_call_3d},
+    firstline=82,
+    lastline=82
+]{asset/code/3D-astar.py}
+
+\lstinputlisting[
+    language=python,
+    style=python,
+    caption={Angepasster Heuristik-Aufruf in der Expansions-Schleife (\texttt{astar.py})},
+    label={lst:astar_call_loop_3d},
+    firstline=102,
+    lastline=102
+]{asset/code/3D-astar.py}
+
+Beide Aufrufe delegieren die Heuristik-Auswahl vollständig an den Dispatcher. Der \texttt{graph}-Parameter ist nur für die \acs{BFS}-Heuristik relevant, wird aber aus Konsistenzgründen an beide Heuristiken durchgereicht.
+
+% ======= astar.py – Demo-Vergleichslauf =======
+
+\subsubsection{Modul \texttt{astar.py} – Vergleichslauf beider Heuristiken}
+
+Am Modulende steht ein Demo-Block, der beide Heuristiken auf demselben Start-/Ziel-Paar ausführt:
+
+\lstinputlisting[
+    language=python,
+    style=python,
+    caption={Vergleichslauf beider Heuristiken (\texttt{astar.py})},
+    label={lst:astar_demo_3d},
+    firstline=139,
+    lastline=150
+]{asset/code/3D-astar.py}
+
+Der Demo-Block instanziiert Karte und Graph, ruft \texttt{a\_star} einmal pro Modus auf und gibt beide Logs nacheinander aus. Über \texttt{\_set\_heuristic\_mode} wird der aktive Modus für den jeweiligen Lauf umgeschaltet. Der \acs{BFS}-Cache im Graph wird beim ersten \acs{BFS}-Lauf befüllt und steht für weitere Anfragen unmittelbar bereit.
+
+\paragraph{Ankündigung: Entfernung in Aufgabe~4a.}
+Analog zum Vorgehen in Aufgabe~3c, wo der 3b-Demo-Block entfernt wurde, wird der Demo-Block in Aufgabe~4a wieder entfernt. Aufgabe~4a bindet die \acs{PROLOG}-Wissensbasis als Vorfilter vor die \acs{Astern}-Planung ein und übernimmt damit die Rolle des neuen Verifikationslaufs. Die Modul-Methoden \texttt{\_set\_heuristic\_mode} und \texttt{\_current\_heuristic\_mode} bleiben in Aufgabe~4a erhalten, da der Config-Default \texttt{TomaKing3D\_HeuristicMode} die aktive Heuristik steuert und der Override in \acs{PROLOG}-Testläufen weiterhin benötigt werden kann.
+
+% ======= Ergebnisnachweis =======
+
+\subsection{Ergebnisnachweis}
+\label{sssec:heuristik_3d_nachweis}
+
+Der Demo-Lauf führt \acs{Astern} zweimal mit demselben Start-Ziel-Paar \((37, 13) \to (25, 0)\) bei Agentengeschwindigkeit~1 aus -- einmal mit der Manhattan-Heuristik aus Aufgabe~3b, einmal mit der neuen \acs{BFS}-Heuristik:
+
+\lstinputlisting[
+    style=console,
+    caption={Terminal-Ausgabe: \acs{Astern}-Lauf mit beiden Heuristiken im Vergleich},
+    label={lst:test_3d_output},
+    firstline=39,
+    lastline=79
+]{asset/code/3D-terminal.tex}
+
+Die Ergebnisse beider Läufe sind in Tabelle~\ref{tab:heuristik_3d} zusammengefasst.
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}{l r r}
+        \toprule
+        \textbf{Kennzahl} & \textbf{Manhattan} & \textbf{BFS} \\
+        \midrule
+        Pfadlänge (Knoten) & 26  & 26  \\
+        Gesamtkosten       & 25.0 & 25.0 \\
+        Expansionen        & 105 & 44 \\
+        \bottomrule
+    \end{tabular}
+    \caption{Vergleich der beiden Heuristiken}
+    \label{tab:heuristik_3d}
+\end{table}
+
+Die Ergebnisse sind in zweifacher Hinsicht aussagekräftig:
+
+\begin{enumerate}
+    \item \textbf{Identische Pfadqualität.} Beide Läufe liefern exakt denselben Pfad und dieselben Gesamtkosten (\(25.0\)). Dies belegt empirisch die Zulässigkeit der \acs{BFS}-Heuristik: Wäre sie inadmissible, hätte sie einen suboptimalen Pfad gefunden.
+    \item \textbf{Deutlich geringere Expansionszahl.} Die \acs{BFS}-Heuristik expandiert nur 44 Knoten gegenüber 105 bei Manhattan -- eine Reduktion um 58\,\%. Der Grund ist am Verlauf des zweiten Schritts unmittelbar erkennbar: Die Manhattan-Heuristik expandiert in Step~2 den horizontalen Nachbarn \((36, 13)\), während die \acs{BFS}-Heuristik direkt den vertikalen Nachbarn \((37, 12)\) wählt -- also die erste Zelle des tatsächlich optimalen Korridors.
+\end{enumerate}
+
+Der Effizienzgewinn erklärt sich durch die Wandkenntnis der \acs{BFS}-Heuristik: Manhattan behandelt alle Nachbarn mit gleicher \(f\)-Distanz symmetrisch und erzeugt dadurch ein breites Plateau gleichwertiger Knoten, die alle expandiert werden müssen. \acs{BFS} kennt die tatsächliche Wandtopologie und lenkt die Suche zielgerichtet auf den einzigen Korridor. Die empirische Reduktion auf 44 Expansionen entspricht einer Rückgewinnung von knapp zwei Dritteln der Rechenzeit.
+
+% ==============================================================================
+% ================================= Aufgabe 3 =================================
+% ==============================================================================

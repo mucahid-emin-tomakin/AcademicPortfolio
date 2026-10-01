@@ -1,0 +1,10 @@
+(B- KIEA01XX ) PS C:\Users\USERNAME> cd C:\Users\USERNAME\Downloads\B-KIEA01XX
+(B- KIEA01XX ) PS C:\Users\USERNAME\Downloads\B-KIEA01XX> & "C:\Program Files\swipl\bin\swipl.exe"
+1 ?- consult("rules.pl").
+true.
+2 ?- bottleneck(0, 0).
+true.
+3 ?- bottleneck(1, 1).
+false.
+4 ?- vertex((1, 0), (0, 0), C).
+C = 1.5.

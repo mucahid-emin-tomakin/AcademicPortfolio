@@ -1,0 +1,1181 @@
+% ==============================================================================
+% ================================= Aufgabe 2 =================================
+% ==============================================================================
+
+\chapter{Agenten-Kommunikation und Auftragsvergabe \textit{2}}
+\label{chap:aufgabe2}
+\thispagestyle{fancy}
+
+% ==============================================================================
+% ================ Aufgabe 2A - Nachrichtenversand und -empfang ===============
+% ==============================================================================
+
+\section{Agenten-Kommunikation und Auftragsvergabe \textit{2a}}
+\label{sec:aufgabe2a}
+
+\subsection{Aufgabenstellung}
+
+Implementieren Sie die Logik des Nachrichtenversands und -empfangs zwischen Depot und Agenten und unterhalb der Agenten. Nachrichtentypen sind: \texttt{ANNOUNCE(task\_id, destination, deadline)}, \texttt{BID(agent\_id, task\_id, cost)} und \texttt{AWARD(task\_id, agent)}.
+
+\subsection{Theoretische Grundlagen}
+
+Die drei Nachrichtentypen \texttt{ANNOUNCE}, \texttt{BID} und \texttt{AWARD} bilden die Kernphasen des \textit{Contract-Net-Protokolls}, das auf die Originalarbeit von Reid G. Smith (1980) zurückgeht und in \textcite[S. 30\,ff.]{5} als Verhandlungsprotokoll für Multiagentensysteme eingeführt wird. Gemäß der dortigen Beschreibung nehmen Agenten in diesem Protokoll zwei komplementäre Rollen ein: Ein \textit{Manager} schreibt eine Aufgabe aus (Task Announcement), potenzielle \textit{Contractors} bewerben sich mit einem Angebot (Bid), und der Manager vergibt den Zuschlag an den geeignetsten Bieter (Award). Für die vorliegende Aufgabe übernimmt das \textbf{Depot} die Manager-Rolle, während die \textbf{Agenten} als Contractors auftreten. Der Versand erfolgt in beiden Richtungen über einen gemeinsamen Nachrichtenbus, wie er bereits in Aufgabe~1c eingeführt wurde \cite[S. 30]{5}.
+
+Die drei Nachrichten-Typen decken damit die vom Contract Net Protocol vorgesehenen Phasen ab: 
+\begin{itemize}
+    \item \texttt{ANNOUNCE(task\_id, destination, deadline)} -- der Manager (Depot) informiert alle Agenten über eine neue Aufgabe.
+    \item \texttt{BID(agent\_id, task\_id, cost)} -- ein Contractor (Agent) bewirbt sich mit einem Kostenvorschlag.
+    \item \texttt{AWARD(task\_id, agent)} -- der Manager erteilt dem ausgewählten Bieter den Zuschlag.
+\end{itemize}
+
+Die \texttt{send\_message}- und \texttt{read\_messages}-Methoden der Agenten und Depots sind dabei nicht als physische Sensorik und Aktorik zu verstehen, sondern als deren softwaretechnische Entsprechung. \textcite[S. 8\,f.]{5} betont ausdrücklich, dass Sensoren und Aktuatoren keine konkreten Bauteile voraussetzen: \enquote{Die Sensoren des Chatbots sind einfach nur die Nachrichtenströme, seine Aktuatoren die Nachrichten, die er selbst absetzt.} Damit ist die in Aufgabe~2a eingeführte Nachrichten-Infrastruktur als korrekte Umsetzung des in \textcite[S. 8]{5} eingeführten allgemeinen Agentenschemas (Sensoren -- Agent -- Aktuatoren) nachgewiesen.
+
+Die Attribute der Nachrichten entsprechen dabei exakt der Aufgabenstellung; der Task-Zustand (PENDING, ASSIGNED, DELIVERED) sowie die Kosten- und Zuschlagslogik werden in den Teilaufgaben~2b--2d ergänzt \cite[S. 30\,ff.]{5}. Die konkreten Status-Werte und die Ausgestaltung der Kosten- und Zuschlagslogik sind eigene Design-Entscheidungen und nicht Bestandteil des ursprünglichen Protokolls.
+
+\subsection{Implementierung}
+
+Aufgabe~2a führt eine neue Domänenklasse \texttt{Depot} ein und erweitert die bestehende Nachrichten-Infrastruktur um die drei Contract-Net-Nachrichtentypen. Die Konfiguration folgt weiterhin dem \textit{Single-Source-of-Truth}-Prinzip: Alle neuen Konstanten -- Nachrichtentypen, Payload-Schlüssel, Depot-IDs, Log-Templates und Fehlermeldungen -- sind zentral im Block \texttt{AUFGABE 2A} in \texttt{config.py} definiert. Es existiert keine Hardcodierung.
+
+% ======= config.py - Block 2A =======
+
+\subsubsection{Konfiguration \texttt{config.py} - Kommunikationsparameter}
+
+Der neue Konfigurationsblock definiert alle kommunikationsspezifischen Werte:
+
+\lstinputlisting[
+    language=python,
+    style=python,
+    caption={Kommunikationsspezifische Konfiguration (\texttt{config.py})},
+    label={lst:config_2a},
+    firstline=234,
+    lastline=260
+]{asset/code/2A-config.py}
+
+Diese Konfiguration umfasst:
+\begin{itemize}
+    \item \texttt{TomaKing2A\_MsgAnnounce}, \texttt{\_MsgBid}, \texttt{\_MsgAward} -- Die drei Nachrichtentypen als Zeichenketten. Sie werden als \texttt{msg\_type}-Feld der \texttt{Message}-Klasse (Aufgabe~1c) verwendet.
+    \item \texttt{TomaKing2A\_KeyTaskId}, \texttt{\_KeyDestination}, \texttt{\_KeyDeadline}, \texttt{\_KeyAgentId}, \texttt{\_KeyCost}, \texttt{\_KeyAgent} -- Symbolische Schlüssel für die Payload-Dictionaries. Dadurch sind die Felder gegen Tippfehler abgesichert und an einer Stelle änderbar.
+    \item \texttt{TomaKing2A\_StartDepotId} (\(-1\)) und \texttt{TomaKing2A\_DepotIdStep} (\(-1\)) -- Die Depot-IDs liegen im negativen Wertebereich, um eindeutig von den Agenten-IDs (0, 1, 2, \ldots) unterscheidbar zu sein. Dies verhindert, dass Nachrichten an ein Depot versehentlich von einem Agenten mit derselben numerischen ID konsumiert werden.
+    \item \texttt{TomaKing2A\_ReprTemplate} -- Template für die \texttt{\_\_repr\_\_}- und \texttt{\_\_str\_\_}-Ausgabe der \texttt{Depot}-Klasse.
+    \item \texttt{TomaKing2A\_LogAnnounceTemplate}, \texttt{\_LogBidTemplate}, \texttt{\_LogAwardTemplate} -- Format-Strings für typspezifisches Logging der drei Nachrichten (in~2a vorbereitet, ab~2b/2c/2d aktiv genutzt).
+    \item \texttt{TomaKing2A\_ErrorUnknownMessageType}, \texttt{\_ErrorDepotNotFound} -- Fehlermeldungen für unbekannte Nachrichtentypen und nicht gefundene Depots.
+\end{itemize}
+
+Die Validierungsliste in \texttt{validate\_config()} wird um alle neuen Konstanten erweitert (vgl. Abschnitt~\ref{sssec:config_validierung}).
+
+% ======= depot.py - Imports =======
+
+\subsubsection{Modul \texttt{depot.py} - Imports}
+
+Das neue Modul importiert die Nachrichtenklasse aus Aufgabe~1c, die generischen Log-Templates sowie die neuen Konstanten aus dem 2A-Block:
+
+\lstinputlisting[
+    language=python,
+    style=python,
+    caption={Imports (\texttt{depot.py})},
+    label={lst:depot_imports},
+    firstline=5,
+    lastline=19
+]{asset/code/2A-depot.py}
+
+Die Importe umfassen:
+\begin{itemize}
+    \item \texttt{from message import Message} -- die in Aufgabe~1c eingeführte Nachrichtenklasse, die sowohl von \texttt{Agent} als auch von \texttt{Depot} verwendet wird.
+    \item \texttt{TomaKing1C\_LogSendTemplate}, \texttt{\_LogReadTemplate} -- die generischen Log-Templates aus~1c. Sie werden unverändert übernommen, da das Depot dieselbe Send-/Read-Konvention verwendet.
+    \item \texttt{TomaKing2A\_StartDepotId}, \texttt{\_DepotIdStep} -- Startwert und Schrittweite für die negative ID-Vergabe der Depots.
+    \item \texttt{TomaKing2A\_ReprTemplate} -- Template für \texttt{\_\_str\_\_} und \texttt{\_\_repr\_\_} der Depot-Klasse.
+\end{itemize}
+
+% ======= depot.py - Klasse =======
+
+\subsubsection{Modul \texttt{depot.py} - Depot-Klasse}
+
+Das neue Modul \texttt{depot.py} kapselt die Depot-Domäne analog zur \texttt{Agent}-Klasse aus Aufgabe~1b:
+
+\lstinputlisting[
+    language=python,
+    style=python,
+    caption={Depot-Klasse (\texttt{depot.py})},
+    label={lst:depot_class},
+    firstline=21,
+    lastline=53
+]{asset/code/2A-depot.py}
+
+Die Klasse \texttt{Depot} besitzt dieselben Kommunikationsmethoden wie \texttt{Agent} aus Aufgabe~1c: \texttt{send\_message} erzeugt eine \texttt{Message}, legt sie auf den Nachrichtenbus der Simulation und puffert eine Log-Ausgabe; \texttt{read\_messages} liest alle an dieses Depot adressierten Nachrichten aus dem Bus. Die Methoden sind bewusst kurz -- drei Zeilen pro Methode.
+
+\paragraph{Design-Entscheidung: Duplikation statt Basisklasse.} Die beiden Kommunikationsmethoden sind funktional identisch zu \texttt{Agent.send\_message} und \texttt{Agent.read\_messages}. Eine gemeinsame Basisklasse (\texttt{Communicator}) würde das \textit{DRY}-Prinzip strenger erfüllen, hätte aber in~2a einen Overhead bedeutet, der sich erst in späteren Aufgaben rechtfertigen müsste: Die Klasse müsste zusätzlich \texttt{get\_position} und \texttt{\_\_repr\_\_}-Spezifika abstrahieren, was die Lesbarkeit des Codes tendenziell verschlechtert. Wir wählen daher bewusst eine minimale Duplikation, die mit den drei Zeilen pro Methode vertretbar ist. Sobald eine dritte kommunizierende Entität hinzukäme, sollte die Refaktorierung zu einer Basisklasse erneut in erwägung gebracht werden.
+
+% ======= depot.py - Depot-Fabrik =======
+
+\subsubsection{Modul \texttt{depot.py} - Depot-Fabrik}
+
+Die Funktion \texttt{create\_depots} erzeugt die Depot-Objekte aus den von der Karte gelieferten Positionen:
+
+\lstinputlisting[
+    language=python,
+    style=python,
+    caption={Depot-Fabrik (\texttt{depot.py})},
+    label={lst:depot_factory},
+    firstline=55,
+    lastline=67
+]{asset/code/2A-depot.py}
+
+Die Fabrik iteriert über \texttt{map.get\_depots()} und vergibt fortlaufende IDs im negativen Bereich, beginnend bei \texttt{TomaKing2A\_StartDepotId}~=~\(-1\). Ein Seed wird hier nicht benötigt, da die Positionen bereits durch den Karten-Seed aus Aufgabe~1a reproduzierbar festgelegt sind.
+
+% ======= map.py - get_depots =======
+
+\subsubsection{Modul \texttt{map.py} - Erweiterung \texttt{get\_depots}}
+
+Die Karte wird um eine öffentliche Zugriffsmethode für die Depot-Positionen erweitert:
+
+\lstinputlisting[
+    language=python,
+    style=python,
+    caption={Erweiterung \texttt{get\_depots} (\texttt{map.py})},
+    label={lst:map_get_depots},
+    firstline=174,
+    lastline=176
+]{asset/code/2A-map.py}
+
+Die Methode liefert eine Kopie der internen Depot-Liste als Liste von Tupeln. Damit bleibt die Kapselung erhalten (die Karte gibt ihre interne Liste nicht direkt heraus) und das Interface entspricht den bereits vorhandenen Zugriffsmethoden \texttt{get\_free\_cells()} und \texttt{get\_statistics()}.
+
+% ======= main.py - Erweiterte Imports =======
+
+\subsubsection{Modul \texttt{main.py} - Erweiterte Imports}
+
+Der Orchestrator wird um den Import der neuen Depot-Fabrik sowie um die 2A-Konstanten für den Test-Block erweitert:
+
+\lstinputlisting[
+    language=python,
+    style=python,
+    caption={Erweiterte Imports (\texttt{main.py})},
+    label={lst:main_imports_2a},
+    firstline=14,
+    lastline=25
+]{asset/code/2A-main.py}
+
+Die Ergänzungen:
+\begin{itemize}
+    \item \texttt{from depot import create\_depots} -- die neue Depot-Fabrik aus Aufgabe~2a.
+    \item \texttt{TomaKing2A\_MsgAnnounce}, \texttt{\_MsgBid}, \texttt{\_MsgAward} -- die drei Nachrichtentypen für den Testblock.
+    \item \texttt{TomaKing2A\_KeyTaskId}, \texttt{\_KeyDestination}, \texttt{\_KeyDeadline}, \texttt{\_KeyAgentId}, \texttt{\_KeyCost}, \texttt{\_KeyAgent} -- die Payload-Schlüssel für die drei Test-Nachrichten.
+\end{itemize}
+
+Diese sechs Payload-Schlüssel und drei Nachrichtentypen werden im Testblock (Abschnitt~\ref{sssec:kommunikation_2a_nachweis}) verwendet. Nach dem Entfernen des Testblocks werden die neun Konstanten-Importe aus \texttt{main.py} wieder entfernt -- der spätere produktive Gebrauch der Nachrichtentypen erfolgt nicht über \texttt{main.py}, sondern über die Depot- und Agent-Klassen selbst.
+
+% ======= simulation.py - Erweiterungen =======
+
+\subsubsection{Modul \texttt{simulation.py} - Depots und Agenten-Lookup}
+
+Das Modul \texttt{simulation.py} benötigt für Aufgabe~2a \textbf{keine neuen Imports}: Der zusätzliche Konstruktor-Parameter \texttt{depots} und die Methode \texttt{get\_agent\_by\_id} verwenden ausschließlich bereits importierte oder native Python-Konstrukte.
+Die Klasse \texttt{Simulation} wird um die Depot-Liste und eine Agenten-Lookup-Methode erweitert:
+
+\lstinputlisting[
+    language=python,
+    style=python,
+    caption={Erweiterter Konstruktor und Agenten-Lookup (\texttt{simulation.py})},
+    label={lst:simulation_2a},
+    firstline=26,
+    lastline=48
+]{asset/code/2A-simulation.py}
+
+Die Konstruktor-Signatur erhält einen dritten Parameter \texttt{depots: list}, der die Depots analog zu den Agenten in der Simulations-Instanz hält. Die neue Methode \texttt{get\_agent\_by\_id} liefert den Agenten mit der angegebenen ID zurück oder \texttt{None}. Sie ist in~2a noch nicht aktiv genutzt, wird aber ab Aufgabe~2b (Paketgenerierung, Zuschlagsprüfung) und~2d (AWARD-Verarbeitung) benötigt. Der Nachrichtenbus bleibt unverändert -- er funktioniert für beliebige Sender-IDs und ist damit bereits für die negative Depot-ID geeignet.
+
+% ======= main.py - Erweiterung =======
+
+\subsubsection{Modul \texttt{main.py} - Orchestrator-Erweiterung}
+
+Der Einstiegspunkt \texttt{main.py} wird um die Depot-Erzeugung und die Übergabe an die Simulation erweitert:
+
+\lstinputlisting[
+    language=python,
+    style=python,
+    caption={Erweiterter Orchestrator (\texttt{main.py})},
+    label={lst:main_2a},
+    firstline=36,
+    lastline=37
+]{asset/code/2A-main.py}
+
+Damit werden Karte, Agenten und Depots zentral in \texttt{main.py} erzeugt und der Simulations-Instanz übergeben. Die GUI empfängt die Simulation wie in~1c. Die Reihenfolge und die Zuweisungsstruktur bleiben unverändert -- \texttt{main.py} bleibt ein reiner Orchestrator.
+
+% ======= Ergebnisnachweis =======
+
+\subsection{Ergebnisnachweis}
+\label{sssec:kommunikation_2a_nachweis}
+
+Zur Verifikation der Nachrichten-Infrastruktur wird \texttt{main.py} temporär um einen Testblock erweitert, der die drei Nachrichtentypen in einer vollständigen Runde durchläuft:
+
+\lstinputlisting[
+    language=python,
+    style=python,
+    caption={Temporärer Testblock in \texttt{main.py} (nur zur Verifikation)},
+    label={lst:test_2a_code},
+    firstline=38,
+    lastline=74
+]{asset/code/2A-main.py}
+
+Der Testblock erzeugt:
+\begin{enumerate}
+    \item eine \texttt{ANNOUNCE}-Nachricht vom ersten Depot an den ersten Agenten mit einer Beispiel-Aufgabe (\texttt{task\_id}=0, Ziel \texttt{(10,10)}, Deadline~15),
+    \item eine \texttt{BID}-Nachricht des Agenten an das Depot mit Kosten~5,
+    \item eine \texttt{AWARD}-Nachricht des Depots an den Agenten.
+\end{enumerate}
+
+Die zugehörige Konsolenausgabe lautet:
+
+\lstinputlisting[
+    style=console,
+    caption={Terminal-Ausgabe: Verifikation des Nachrichtenversands},
+    label={lst:test_2a_output},
+    firstline=32,
+    lastline=37
+]{asset/code/2A-terminal.tex}
+
+Die Ausgabe zeigt:
+\begin{itemize}
+    \item Das Depot sendet eine \texttt{ANNOUNCE}-Nachricht an Agent~0 (Zeile 1).
+    \item Agent~0 liest die Nachricht aus dem Bus (Zeile 2).
+    \item Agent~0 sendet eine \texttt{BID}-Nachricht an das Depot (Zeile 3).
+    \item Das Depot liest die Nachricht aus dem Bus (Zeile 4).
+    \item Das Depot sendet eine \texttt{AWARD}-Nachricht an Agent~0 (Zeile 5).
+    \item Agent~0 liest die Nachricht aus dem Bus (Zeile 6).
+\end{itemize}
+
+Damit ist belegt, dass die Nachrichten-Infrastruktur bidirektional funktioniert (Depot~\(\to\)~Agent und Agent~\(\to\)~Depot) und alle drei Nachrichtentypen korrekt durch den Bus transportiert werden.
+
+\paragraph{Hinweis zu den Log-Bezeichnungen.}
+Der Log-Text in Zeile~1 lautet \texttt{[SEND] Agent -1 -> Agent 0 (ANNOUNCE)}. Obwohl Agent~\(-1\) semantisch ein Depot ist, wird hier noch die generische Vorlage \texttt{TomaKing1C\_LogSendTemplate} verwendet, die kein Bewusstsein für Entitätstypen besitzt. Die drei typspezifischen Vorlagen \texttt{TomaKing2A\_LogAnnounceTemplate}, \texttt{\_LogBidTemplate} und \texttt{\_LogAwardTemplate} sind bereits in der Konfiguration vorbereitet, werden jedoch erst ab~2b (ANNOUNCE mit vollständigen Payload-Feldern), 2c (BID mit berechneten Kosten) und 2d (AWARD mit Zuschlagsbestätigung) aktiv eingesetzt. Die negative Depot-ID ist dabei der technische Anker, der die Zuordnung Depot~\(\leftrightarrow\)~Agent ohne zusätzliches Typ-Feld in der \texttt{Message}-Klasse eindeutig macht.
+
+\paragraph{Hinweis zum Testblock.}
+Der oben dargestellte Testblock in \texttt{main.py} dient ausschließlich der Verifikation der 2a-Infrastruktur. Nach Erstellung des obigen Nachweises wird er aus \texttt{main.py} entfernt. Ab Aufgabe~2b wird der Nachrichtenversand aktiv durch die Paketgenerierung im Simulationsablauf ausgelöst, sodass kein Testcode mehr erforderlich ist.
+
+% ==============================================================================
+% ================== Aufgabe 2B - Paketgenerierung ============================
+% ==============================================================================
+
+\section{Paketgenerierung \textit{2b}}
+\label{sec:aufgabe2b}
+
+\subsection{Aufgabenstellung}
+
+Alle fünf Schritte entsteht ein neues Paket an einem zufällig gewählten Depot.
+
+\subsection{Theoretische Grundlagen}
+
+Mit der in Aufgabe~2b eingeführten Paketgenerierung wird die erste Phase des \textit{Contract-Net-Protokolls} umgesetzt. Wie in Abschnitt~\ref{sec:aufgabe2a} eingeführt, beschreibt das Contract-Net-Protokoll die dreiphasige Struktur (Ankündigung, Gebot, Zuschlag) und verweist dabei auf die Originalarbeit von Reid G. Smith (1980). In der ersten Phase schreibt ein \textit{Manager} -- in unserem Fall das Depot -- eine Aufgabe aus, die von interessierten \textit{Contractors} -- den Agenten -- bearbeitet werden kann.
+
+Das periodische Erscheinen neuer Pakete alle fünf Schritte ist dabei Ausdruck einer \textit{dynamischen} Umgebung, in der sich der Zustand der Welt unabhängig von den Agentenhandlungen verändert \cite[S. 12]{5}. Zusätzlich ist die Aufgabenstellung \textit{episodisch} strukturiert: Jedes Paket stellt eine atomare Episode dar. Im Modell des \textit{diskreten Zeitsystems} (bereits in Aufgabe~1c eingeführt) entspricht dies einem periodischen Trigger, der zu festen Zeitpunkten neue Zustandsänderungen in die Simulation einbringt.
+
+\subsection{Implementierung}
+
+Aufgabe~2b aktiviert die erste Contract-Net-Phase und entfernt gleichzeitig die in Aufgabe~1c eingeführte TEST-Nachrichteninfrastruktur, die ausschließlich zur Demonstration der Nachrichtenpipeline diente. Die Konfiguration folgt weiterhin dem \textit{Single-Source-of-Truth}-Prinzip: Alle neuen Konstanten (Intervall, Deadline, Status-Werte, ID-Vergabe, Log-Template, Fehlermeldungen) sind zentral im Block \texttt{AUFGABE 2B} in \texttt{config.py} definiert.
+
+\paragraph{Entfall des TEST-Mechanismus aus Aufgabe 1c.}
+Die in Aufgabe~1c eingeführten TEST-Nachrichten (Versand alle \\ \texttt{TomaKing1C\_MessageInterval}~=~5 Schritte an einen zufälligen Agenten) dienten ausschließlich der Demonstration der Nachrichten-Infrastruktur -- zu einem Zeitpunkt, an dem noch keine echten Nachrichtentypen definiert waren. Mit der Einführung der drei Contract-Net-Nachrichtentypen in Aufgabe~2a und der aktiven Task Announcement in~2b ist der TEST-Mechanismus redundant. Er wird daher aus \texttt{simulation.py} entfernt: Die Methode \texttt{\_dispatch\_message} entfällt, ebenso ihr Aufruf in \texttt{\_agent\_step}. Die zugehörigen Konstanten \\ \texttt{TomaKing1C\_MessageInterval} und \texttt{TomaKing1C\_MessageTypeTest} werden aus \texttt{config.py} entfernt. Die Log-Templates \texttt{TomaKing1C\_LogSendTemplate} und \texttt{TomaKing1C\_LogReadTemplate} bleiben erhalten, da sie weiterhin von \texttt{Agent.send\_message}, \texttt{Agent.read\_messages}, \texttt{Depot.send\_message} und \texttt{Depot.read\_messages} genutzt werden.
+
+% ======= config.py – Block 2B =======
+
+\subsubsection{Konfiguration \texttt{config.py} – Paketparameter}
+
+Der neue Konfigurationsblock definiert alle paketspezifischen Werte:
+
+\lstinputlisting[
+    language=python,
+    style=python,
+    caption={Paketspezifische Konfiguration (\texttt{config.py})},
+    label={lst:config_2b},
+    firstline=259,
+    lastline=280
+]{asset/code/2B-config.py}
+
+Diese Konfiguration umfasst:
+\begin{itemize}
+    \item \texttt{TomaKing2B\_PackageInterval} (5) -- Intervall in Simulationsschritten, nach dem ein neues Paket erzeugt wird.
+    \item \texttt{TomaKing2B\_DeadlineDefault} (15) -- Standard-Zeithorizont (in Schritten), innerhalb dessen ein Paket zugestellt werden soll. Der Wert wurde empirisch gewählt: Auf der 71~\(\times\)~15-Karte liegt die maximale Manhattan-Distanz zwischen zwei Positionen bei etwa 85 Feldern; mit einem Zeitpuffer von 15 Schritten nach Erscheinen des Pakets ergibt sich eine realistische aber nicht triviale Frist.
+    \item \texttt{TomaKing2B\_StartPackageId} (0) und \texttt{TomaKing2B\_PackageIdStep} (1) -- Fortlaufende, deterministische ID-Vergabe analog zur Agenten- und Depot-ID.
+    \item \texttt{TomaKing2B\_StatusPending}, \texttt{\_StatusAssigned}, \texttt{\_StatusDelivered}, \texttt{\_StatusExpired} -- Die vier Status-Werte des Paketlebenszyklus. In~2b wird nur \texttt{PENDING} gesetzt; die übrigen Werte kommen in~2c und~2d aktiv zum Einsatz.
+    \item \texttt{TomaKing2B\_ReprTemplate} -- Template für die \texttt{\_\_repr\_\_}-Ausgabe der \texttt{Package}-Klasse.
+    \item \texttt{TomaKing2B\_LogGenerationTemplate} -- Format-String für das Erzeugungsprotokoll.
+    \item \texttt{TomaKing2B\_ErrorNoDepots}, \texttt{\_ErrorNoTargets} -- Fehlermeldungen für den Fall, dass die Karte keine Depots oder keine Ziele enthält.
+\end{itemize}
+
+Die Validierungsliste in \texttt{validate\_config()} wird um alle neuen Konstanten erweitert (vgl. Abschnitt~\ref{sssec:config_validierung}).
+
+% ======= package.py – Imports und Klassenerweiterung =======
+
+\subsubsection{Modul \texttt{package.py} – Imports und Klassenerweiterung}
+
+Für die neue Fabrik und das typspezifische \texttt{Repr}-Template werden zwei Konstanten aus dem 2B-Block importiert:
+
+\lstinputlisting[
+    language=python,
+    style=python,
+    caption={Imports (\texttt{package.py})},
+    label={lst:package_imports_2b},
+    firstline=5,
+    lastline=14
+]{asset/code/2B-package.py}
+
+Die \texttt{Package}-Klasse selbst wird ebenfalls angepasst: Die \texttt{\_\_repr\_\_}-Methode verwendet nun das konfigurierte Template \texttt{TomaKing2B\_ReprTemplate} statt eines hartkodierten Strings. Damit gilt auch hier das \textit{Single-Source-of-Truth}-Prinzip -- das Format ist an genau einer Stelle definiert.
+
+\lstinputlisting[
+    language=python,
+    style=python,
+    caption={Erweiterte \texttt{\_\_repr\_\_}-Methode (\texttt{package.py})},
+    label={lst:package_repr_2b},
+    firstline=31,
+    lastline=36
+]{asset/code/2B-package.py}
+
+% ======= package.py – Package-Fabrik =======
+
+\subsubsection{Modul \texttt{package.py} – Package-Fabrik}
+
+Die in Aufgabe~1c eingeführte \texttt{Package}-Klasse wird um eine Fabrikfunktion erweitert, die ein neues Paket im Status \texttt{PENDING} erzeugt: 
+
+\lstinputlisting[
+    language=python,
+    style=python,
+    caption={Package-Fabrik (\texttt{package.py})},
+    label={lst:package_factory},
+    firstline=38,
+    lastline=48
+]{asset/code/2B-package.py}
+
+Die Fabrik kapselt die Status-Initialisierung: Jedes neu erzeugte Paket ist zunächst unbearbeitet (\texttt{PENDING}). Dieses Muster ist konsistent mit den Fabriken \texttt{create\_agents} (Aufgabe~1b) und \texttt{create\_depots} (Aufgabe~2a) -- die Erzeugung eines Domänenobjekts ist stets in einer Fabrikfunktion zentralisiert, nicht über direkte Konstruktoraufrufe im Simulationscode verstreut.
+
+% ======= depot.py – Imports =======
+
+\subsubsection{Modul \texttt{depot.py} – Erweiterte Imports}
+
+Für die neue \texttt{announce\_task}-Methode werden vier Konstanten aus dem 2A-Block importiert: der Nachrichtentyp \texttt{ANNOUNCE} und die drei zugehörigen Payload-Schlüssel:
+
+\lstinputlisting[
+    language=python,
+    style=python,
+    caption={Erweiterte Imports (\texttt{depot.py})},
+    label={lst:depot_imports_2b},
+    firstline=14,
+    lastline=19
+]{asset/code/2B-depot.py}
+
+Die bereits vorhandenen Imports (\texttt{TomaKing1C\_Log*}, \texttt{TomaKing2A\_StartDepotId}, \texttt{TomaKing2A\_DepotIdStep}, \texttt{TomaKing2A\_ReprTemplate}) bleiben unverändert. Alle neuen und alten Konstanten stammen weiterhin aus der zentralen \texttt{config.py}.
+
+% ======= depot.py – announce_task =======
+
+\subsubsection{Modul \texttt{depot.py} – Task Announcement}
+
+Die \texttt{Depot}-Klasse erhält eine neue Methode, die den ersten Schritt des Contract-Net-Protokolls umsetzt:
+
+\lstinputlisting[
+    language=python,
+    style=python,
+    caption={Task Announcement (\texttt{depot.py})},
+    label={lst:depot_announce},
+    firstline=54,
+    lastline=62
+]{asset/code/2B-depot.py}
+
+Die Methode \texttt{announce\_task} baut das Payload-Dictionary mit den drei Feldern \texttt{task\_id}, \texttt{destination} und \texttt{deadline} zusammen und versendet es per Broadcast an alle registrierten Agenten. Die Iteration über \texttt{simulation.agents} entspricht dem in Aufgabe~2a eingeführten Adressierungsschema (eine Nachricht pro Agent), das exakt zum vorhandenen \texttt{MessageBus}-Routing passt. Damit ist die erste Contract-Net-Phase -- die Ankündigung einer neuen Aufgabe -- vollständig auf Seiten des Depots (Managers) umgesetzt.
+
+% ======= map.py – get_targets =======
+
+\subsubsection{Modul \texttt{map.py} – Erweiterung \texttt{get\_targets}}
+
+Die Karte wird um eine öffentliche Zugriffsmethode für die Ziel-Positionen erweitert:
+
+\lstinputlisting[
+    language=python,
+    style=python,
+    caption={Erweiterung \texttt{get\_targets} (\texttt{map.py})},
+    label={lst:map_get_targets},
+    firstline=177,
+    lastline=179
+]{asset/code/2B-map.py}
+
+Die Methode liefert eine Kopie der internen Ziel-Liste als Liste von Tupeln -- analog zu \texttt{get\_depots()} (Aufgabe~2a) und \texttt{get\_free\_cells()} (Aufgabe~1b).
+
+% ======= simulation.py – Imports und Konstruktor =======
+
+\subsubsection{Modul \texttt{simulation.py} – Erweiterte Imports und Konstruktor}
+
+Für die Paketgenerierung wird die neue Fabrik \texttt{create\_package} aus \texttt{package.py} importiert. Aus der Konfiguration kommen sieben Konstanten aus dem 2B-Block hinzu; die beiden 1C-Konstanten für den TEST-Mechanismus (\texttt{TomaKing1C\_MessageInterval}, \texttt{TomaKing1C\_MessageTypeTest}) entfallen.
+
+\lstinputlisting[
+    language=python,
+    style=python,
+    caption={Erweiterte Imports (\texttt{simulation.py})},
+    label={lst:simulation_imports_2b},
+    firstline=10,
+    lastline=33
+]{asset/code/2B-simulation.py}
+
+Der Konstruktor wird um drei Zeilen erweitert: eine neue Liste für Pakete und einen Zähler für die fortlaufende Paket-ID-Vergabe:
+
+\lstinputlisting[
+    language=python,
+    style=python,
+    caption={Erweiterter Konstruktor (\texttt{simulation.py})},
+    label={lst:simulation_ctor_2b},
+    firstline=40,
+    lastline=50
+]{asset/code/2B-simulation.py}
+
+Die Struktur des Konstruktors bleibt damit konsistent mit den vorherigen Erweiterungen: Jede neue Domänensammlung (\texttt{agents}, \texttt{depots}, \texttt{packages}) hat ihr eigenes Attribut, und die ID-Vergabe beginnt jeweils bei einem konfigurierten Startwert.
+
+% ======= simulation.py – Paketgenerierung =======
+
+\subsubsection{Modul \texttt{simulation.py} – Paketgenerierung}
+
+Die Klasse \texttt{Simulation} wird um die Instanzvariablen für Pakete und um die Methode \texttt{\_generate\_package} erweitert:
+
+\lstinputlisting[
+    language=python,
+    style=python,
+    caption={Paketgenerierung (\texttt{simulation.py})},
+    label={lst:simulation_2b_package},
+    firstline=103,
+    lastline=128
+]{asset/code/2B-simulation.py}
+
+Der Ablauf der Methode:
+\begin{enumerate}
+    \item Prüfen, ob Depots und Ziele auf der Karte vorhanden sind. Andernfalls wird die konfigurierte Fehlermeldung ausgelöst.
+    \item Zufällige Auswahl eines Depots (\texttt{random.choice}) und eines Ziels (\texttt{random.choice}).
+    \item Erzeugung eines neuen \texttt{Package} über die Fabrik \texttt{create\_package} mit fortlaufender ID, aktueller Schritt-Nummer als \texttt{created\_step} und \texttt{current\_step + TomaKing2B\_DeadlineDefault} als Deadline.
+    \item Anhängen des Pakets an die interne Liste \texttt{self.packages}.
+    \item Erhöhen des Paket-ID-Zählers.
+    \item Puffern der Log-Zeile über \texttt{log\_event}.
+    \item Aufruf \texttt{depot.announce\_task} -- die Task Announcement wird versendet.
+\end{enumerate}
+
+% ======= simulation.py – Erweiterung von step() =======
+
+\subsubsection{Modul \texttt{simulation.py} – Erweiterung der Hauptschleife}
+
+Die Methode \texttt{step} wird um den periodischen Trigger und die Bereinigung des TEST-Mechanismus angepasst:
+
+\lstinputlisting[
+    language=python,
+    style=python,
+    caption={Erweiterte Hauptschleife (\texttt{simulation.py})},
+    label={lst:simulation_2b_step},
+    firstline=78,
+    lastline=88
+]{asset/code/2B-simulation.py}
+
+\lstinputlisting[
+    language=python,
+    style=python,
+    caption={Bereinigte Agentenschleife ohne TEST-Versand (\texttt{simulation.py})},
+    label={lst:simulation_2b_agent_step},
+    firstline=89,
+    lastline=101
+]{asset/code/2B-simulation.py}
+
+Die zentralen Änderungen:
+\begin{enumerate}
+    \item Der Step-Zähler wird zu Beginn der Methode inkrementiert -- die Trigger-Prüfung sieht damit den aktuellen Step (nicht den vorherigen).
+    \item Die Paketgenerierung wird \textbf{vor} der Agentenschleife ausgelöst. Dadurch können die Agenten die ANNOUNCE-Nachricht noch im selben Simulationsschritt lesen -- dies ist die Voraussetzung für die BID-Runde in Aufgabe~2c, die im gleichen Takt auf die Ankündigung folgen soll.
+    \item Der in Aufgabe~1c eingeführte TEST-Versand (\texttt{\_dispatch\_message}) entfällt vollständig. Damit ist der Nachrichtenversand ab~2b ausschließlich ereignisgesteuert: Nachrichten werden nur noch dann versendet, wenn eine echte Änderung im System dies erfordert (Paketgenerierung, später BID und AWARD).
+\end{enumerate}
+
+\paragraph{Design-Entscheidung: Trigger vor Agentenschleife.}
+\label{par:design_trigger_2b}
+Die Platzierung der Paketgenerierung am Anfang der \texttt{step}-Methode ist bewusst gewählt: Die Agenten führen im selben Schritt die \texttt{read\_messages}-Operation aus, wodurch die ANNOUNCE-Nachricht unmittelbar nach dem Versand gelesen werden kann. Würde der Trigger ans Ende der Methode gesetzt, ergäbe sich ein Step Lag von einem Simulationsschritt zwischen Ankündigung und Lesen -- die Contract-Net-Phasen wären zeitlich versetzt, was den Verhandlungsfluss verlangsamen würde.
+
+\paragraph{Anmerkung zur Skalierung des Broadcasts.}
+Die in dieser Aufgabe verwendete Broadcast-Adressierung (eine ANNOUNCE-Nachricht pro Agent) ist für die vier Agenten der aktuellen Simulation unkritisch. \textcite[S. 31\,f.]{5} diskutiert jedoch die generelle Schwäche des klassischen Contract-Net-Protokolls bei einer wachsenden Zahl von Agenten: Der reine Broadcast verursacht eine quadratisch wachsende Netzwerklast, die in größeren Multiagentensystemen zu Engpässen führt. Als Auswege werden in der Literatur Multicast-Verfahren, hierarchische Mediatoren-Architekturen \cite[S. 32]{5} oder bereichsbasierte Adressierung diskutiert. In Aufgabe~5 wird die Agentenzahl auf bis zu zehn erhöht; dort wäre zu prüfen, ob eine solche Optimierung erforderlich wird.
+
+% ======= Ergebnisnachweis =======
+
+\subsection{Ergebnisnachweis}
+\label{sssec:paketgenerierung_2b_nachweis}
+
+Zur Verifikation der periodischen Paketgenerierung und des ANNOUNCE-Versands wird die Simulation über mindestens 15 Schritte ausgeführt. Die Konsolenausgabe zeigt die drei Paketgenerierungen in den Schritten 5, 10 und 15 -- jeweils mit unmittelbar folgendem Lesen der ANNOUNCE-Nachrichten durch die Agenten im **selben** Simulationsschritt:
+
+\lstinputlisting[
+    style=console,
+    caption={Terminal-Ausgabe: Paketgenerierung und Nachrichtenempfang in den Schritten 5, 10 und 15},
+    label={lst:test_2b_output},
+    firstline=59,
+    lastline=110
+]{asset/code/2B-terminal.tex}
+
+Die Ausgabe zeigt im Detail:
+\begin{itemize}
+    \item In Schritt~5 wird das erste Paket (\texttt{Paket 0}) an einem zufällig gewählten Depot erzeugt. Die Auswahl fiel auf Depot~\((37, 13)\) mit Ziel~\((36, 5)\); die Deadline ergibt sich konsistent zu \(\text{Step} + \texttt{TomaKing2B\_DeadlineDefault} = 5 + 15 = 20\). Das zugehörige Depot hat die ID~\(-1\).
+    \item Unmittelbar danach versendet das Depot vier ANNOUNCE-Nachrichten (eine pro Agent), und die Agenten lesen sie noch im **selben** Schritt -- dies bestätigt die im Abschnitt~\ref{par:design_trigger_2b} formulierte Design-Entscheidung zur Trigger-Platzierung.
+    \item In Schritt~10 folgt die zweite Generierung (\texttt{Paket 1}, Depot~\((37, 13)\), Ziel~\((70, 3)\), Deadline~25); erneut mit sofortigem Empfang im selben Schritt.
+    \item In Schritt~15 entsteht \texttt{Paket 2} (Depot~\((37, 13)\), Ziel~\((55, 4)\), Deadline~30), ebenfalls mit sofortigem Empfang.
+\end{itemize}
+
+Damit ist die geforderte Periodizität von fünf Schritten (5, 10, 15) sowie die zufällige Depot-Auswahl bestätigt. Die Paket-IDs werden fortlaufend vergeben (\(0, 1, 2\)), die Deadline ist in jedem Fall \(\texttt{created\_step} + 15\), und die Send-/Read-Sequenz findet konsistent im gleichen Schritt statt.
+
+Der aus dem Ergebnisnachweis ableitbare Zustand der drei erzeugten Pakete ist in Tabelle~\ref{tab:pakete_2b} zusammengefasst.
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}{c r r r r l}
+        \toprule
+        \textbf{Paket-ID} & \textbf{Erzeugt in Step} & \textbf{Depot} & \textbf{Ziel} & \textbf{Deadline} & \textbf{Status} \\
+        \midrule
+        0 & 5  & (37, 13)   & (36, 5)  & 20 & PENDING \\
+        1 & 10 & (37, 13)   & (70, 3)  & 25 & PENDING \\
+        2 & 15 & (37, 13)   & (55, 4)  & 30 & PENDING \\
+        \bottomrule
+    \end{tabular}
+    \caption{Übersicht der erzeugten Pakete}
+    \label{tab:pakete_2b}
+\end{table}
+
+Alle drei Pakete sind nach ihrer Erzeugung im Status \texttt{PENDING} -- sie warten auf die Zuweisung durch das Contract-Net-Protokoll, das in Aufgabe~2c mit der Bietlogik fortgesetzt wird.
+
+\paragraph{Anmerkung zur zufälligen Auswahl.}
+In diesem Simulationslauf wurde in allen drei Generierungen dasselbe Depot~\((37, 13)\) gewählt, während die Ziele variierten (\((36, 5)\), \((70, 3)\), \((55, 4)\)). Die dreifache Depot-Wahl bei zwei verfügbaren Depots entspricht einer Wahrscheinlichkeit von \(12{,}5\,\%\) und ist damit ein zulässiges Ergebnis des Zufallszahlengenerators. Die Ziel-Wahl variiert wie erwartet, wodurch die Zufallsauswahl insgesamt bestätigt wird.
+
+\paragraph{Hinweis zu den Log-Bezeichnungen.}
+Wie bereits in Aufgabe~2a (vgl. Abschnitt~\ref{sssec:kommunikation_2a_nachweis}) erläutert, verwendet \texttt{Depot.announce\_task} die generische Sendevorlage \texttt{TomaKing1C\_LogSendTemplate}. Dadurch erscheinen die Depots im Log als \texttt{Agent -1} bzw. \texttt{Agent -2}, obwohl es sich semantisch um Depots handelt. Die drei typspezifischen Vorlagen \texttt{TomaKing2A\_LogAnnounceTemplate}, \texttt{\_LogBidTemplate} und \texttt{\_LogAwardTemplate} sind in der Konfiguration bereits vorbereitet, werden aber erst in~2c (BID) und~2d (AWARD) aktiv eingesetzt.
+
+% ==============================================================================
+% ============ Aufgabe 2C - Bietlogik und Manhattan-Kostenfunktion ============
+% ==============================================================================
+
+\section{Bietlogik und Kostenfunktion \textit{2c}}
+\label{sec:aufgabe2c}
+
+\subsection{Aufgabenstellung}
+
+Implementieren Sie die Bietlogik in den Agenten: Die Agenten haben eine interne Kostenfunktion, aufgrund derer sie die Kostenschätzung beim Gebot abgeben. Implementieren Sie zunächst die Kostenschätzung über die Manhattan-Distanz.
+
+\subsection{Theoretische Grundlagen}
+
+Mit der Bietlogik wird die zweite Phase des \textit{Contract-Net-Protokolls} umgesetzt: die \textit{Bid-Phase}. Nach der in Aufgabe~2b erfolgten \textit{Task Announcement} haben interessierte Agenten die Möglichkeit, sich mit einem Angebot (Bid) um die Bearbeitung der ausgeschriebenen Aufgabe zu bewerben. Der Manager wählt anschließend aus allen eingegangenen Bids das günstigste aus -- dies ist Gegenstand von Aufgabe~2d.
+
+Als Kostenfunktion verwendet diese Aufgabe die \textit{Manhattan-Distanz}, auch \textit{Taxicab-Distanz} oder \textit{L1-Norm} genannt. Formal ist sie definiert als die Summe der absoluten Differenzen der Koordinaten zweier Punkte im diskreten \acs{2D}-Gitter:
+
+\[
+d_{\text{Manhattan}}\bigl((x_1, y_1), (x_2, y_2)\bigr) = |x_1 - x_2| + |y_1 - y_2|
+\]
+
+Die Manhattan-Distanz ist in einem diskreten Gitterraum mit ausschließlich vier-direktionalen Nachbarschaftsbeziehungen (wie in Aufgabe~1a festgelegt) die natürliche Distanzmetrik: Sie entspricht exakt der minimalen Anzahl an Gitterschritten zwischen zwei Positionen, sofern keine Wände im Weg stehen. Als \textit{zulässige Heuristik} überschätzt sie die tatsächliche Pfadkosten niemals und ist damit -- wie in Aufgabe~3 für den \acs{Astern}-Algorithmus gefordert -- eine korrekte Unterschätzung \cite[S. 21\,ff.]{5}. Diese Formel entspricht exakt der im Studienheft \acs{KII12} für zweidimensionale Rasterwelten angegebenen Distanzfunktion \cite[Anhang~A, S.~74, Gl.~A.2]{5}.
+
+Die in dieser Aufgabe implementierte Kostenfunktion setzt sich aus zwei Teilstrecken zusammen: Zuerst muss der Agent vom aktuellen Standort zum Depot gelangen (\text{Paket aufnehmen}), dann vom Depot zum Lieferziel (\text{Paket abliefern}). Die geschätzten Kosten sind damit:
+
+\[
+\text{cost}(\text{Agent}, \text{Auftrag}) = d_{\text{Manhattan}}\bigl(\text{Agent}, \text{Depot}\bigr) + d_{\text{Manhattan}}\bigl(\text{Depot}, \text{Ziel}\bigr)
+\]
+
+Diese Formel folgt dem in \textcite[S. 30\,f.]{5} beschriebenen Muster: Die Bietenden geben eine \textit{Kostenschätzung} ab, deren Grundlage sie selbst wählen. In~2c wird noch keine Differenzierung zwischen Agententypen (Standard, Express) vorgenommen -- die reine Distanzkostenfunktion entspricht der Aufgabenstellung „zunächst die Kostenschätzung über die Manhattan-Distanz".
+
+Eine wichtige Annahme, die diesem Bietverfahren zugrunde liegt, ist die Ehrlichkeit der Agenten: Jeder Agent berechnet seine Kosten anhand derselben Manhattan-Formel und gibt sie wahrheitsgemäß an das Depot weiter. Diese Annahme ist nicht selbstverständlich -- dem klassischen Contract-Net-Protokoll fehlen Mechanismen, um unaufrichtige Bieter zu bestrafen. Schlechtmeinende Agenten könnten regelmäßig Aufträge gewinnen, indem sie sich besser darstellen, als sie tatsächlich sind. Eine spieltheoretische Behandlung der Anreizkompatibilität (Reputation, Penalty-Systeme) ist nicht Bestandteil dieser Aufgabe.
+
+\subsection{Implementierung}
+
+Aufgabe~2c führt zwei neue Aspekte ein: die \textit{Bietlogik} in den Agenten (Kostenberechnung und Versand eines \texttt{BID}) sowie eine neue Utility-Datei \texttt{geometry.py} für die reine Distanzfunktion. Zusätzlich wird in dieser Aufgabe das in~2a/2b vorbereitete typspezifische Logging für die Contract-Net-Phasen aktiviert und die generische \texttt{TomaKing1C\_LogSendTemplate} aus den Send-Methoden entfernt (vgl. Abschnitt~\ref{sssec:logging_refactoring_2c}).
+
+% ======= config.py – Block 2C =======
+
+\subsubsection{Konfiguration \texttt{config.py} – Bietlogik-Parameter}
+
+Der neue Konfigurationsblock definiert die Log-Konstante für den Fall, dass eine \texttt{ANNOUNCE}-Nachricht von einem unbekannten Depot eintrifft:
+
+\lstinputlisting[
+    language=python,
+    style=python,
+    caption={Bietlogik-Konfiguration (\texttt{config.py})},
+    label={lst:config_2c},
+    firstline=283,
+    lastline=288
+]{asset/code/2C-config.py}
+
+Zusätzlich wird das in Aufgabe~2a definierte Announce-Log-Template um das Feld \texttt{agent} erweitert, damit das Depot den konkreten Empfänger jeder ausgesandten \texttt{ANNOUNCE}-Nachricht mitprotokollieren kann:
+
+\lstinputlisting[
+    language=python,
+    style=python,
+    caption={Erweitertes Announce-Template (\texttt{config.py})},
+    label={lst:config_2c_announce},
+    firstline=252,
+    lastline=252
+]{asset/code/2C-config.py}
+
+Und eine neue Konstante für das typspezifische Depot-Read-Log:
+
+\lstinputlisting[
+    language=python,
+    style=python,
+    caption={Neues Depot-Read-Template (\texttt{config.py})},
+    label={lst:config_2c_depotread},
+    firstline=255,
+    lastline=255
+]{asset/code/2C-config.py}
+
+Die Validierungsliste in \texttt{validate\_config()} wird um \texttt{TomaKing2A\_LogDepotReadTemplate} erweitert (vgl. Abschnitt~\ref{sssec:config_validierung}).
+
+% ======= geometry.py =======
+
+\subsubsection{Modul \texttt{geometry.py} – Distanzfunktion}
+
+Für die reine, kontextfreie Distanzberechnung zwischen zwei Gitterpositionen wird ein eigenes Utility-Modul eingeführt:
+
+\lstinputlisting[
+    language=python,
+    style=python,
+    caption={Manhattan-Distanz (\texttt{geometry.py})},
+    label={lst:geometry_2c},
+    firstline=5,
+    lastline=11
+]{asset/code/2C-geometry.py}
+
+Das Modul enthält eine einzige Funktion \texttt{manhattan}, die für zwei Positions-Tupel die Manhattan-Distanz als ganzzahligen Wert zurückgibt. Das Modul ist bewusst schlank gehalten: Die Distanzberechnung ist keine Aufgabe der Karte (sie gehört zur Domänenlogik der Agenten), keine der Agenten-Klasse selbst (sie ist auch für zukünftige Module wie \texttt{simulation.py} bei der Kollisionsanalyse nützlich) und keine Konfiguration (sie ist reine Mathematik, keine parametrisierbare Größe). Die Auslagerung in ein eigenes Modul folgt dem \textit{Separation-of-Concerns}-Prinzip (vgl. Abschnitt~\ref{chap:einleitung}).
+
+% ======= agent.py – Imports =======
+
+\subsubsection{Modul \texttt{agent.py} – Erweiterte Imports}
+
+Für die Bietlogik werden die neue Geometrie-Funktion, die drei Nachrichten- und Payload-Konstanten der Bid-Phase sowie die beiden Log-Templates importiert; zusätzlich entfällt der Import der generischen Sendevorlage:
+
+\begin{minipage}{\linewidth}
+    \lstinputlisting[
+        language={python}, style={python},
+        firstline=5, lastline=7,
+        frame=tlr,
+        numbers=left, title=\empty,
+        aboveskip=0pt, belowskip=0pt,
+    ]{asset/code/2C-agent.py}%
+    \par\nointerlineskip
+    \vspace*{-\parskip}%
+    \vspace*{-\baselineskip}%
+    \vspace*{-30pt}%
+    \noindent
+    \begin{minipage}[t]{0.49\textwidth}
+        \lstinputlisting[
+            language={python}, style={python},
+            firstline=9, lastline=38,
+            firstnumber=4,
+            frame=lb, numbers=left, title=\empty,
+        ]{asset/code/2C-agent.py}
+    \end{minipage}\hfill
+    \begin{minipage}[t]{0.49\textwidth}
+        \lstinputlisting[
+            language={python}, style={python},
+            numbersep=1pt,
+            firstline=39, lastline=69,
+            firstnumber=34,
+            frame=rb, numbers=left, title=\empty,
+        ]{asset/code/2C-agent.py}
+    \end{minipage}%
+    \vspace{-1\baselineskip}%
+    \captionsetup{hypcap=false}%
+    \captionof{lstlisting}{Erweiterte Imports (\texttt{agent.py})}%
+    \label{lst:agent_imports_2c}%
+\end{minipage}
+
+Die Ergänzungen:
+\begin{itemize}
+    \item \texttt{from geometry import manhattan} -- die neue Distanzfunktion aus \texttt{geometry.py}.
+    \item \texttt{TomaKing2A\_MsgAnnounce}, \texttt{TomaKing2A\_MsgBid} -- Filterung eingehender Announcements und Versand des BID.
+    \item \texttt{TomaKing2A\_KeyTaskId}, \texttt{\_KeyDestination}, \texttt{\_KeyAgentId}, \texttt{\_KeyCost} -- Payload-Schlüssel für das eingehende \texttt{ANNOUNCE} (Task-Id, Destination) und das ausgehende \texttt{BID} (Agent-Id, Task-Id, Cost).
+    \item \texttt{TomaKing2A\_LogBidTemplate}, \texttt{TomaKing2C\_LogUnknownDepot} -- typspezifisches Bid-Log und Warn-Template für unbekannte Depots.
+\end{itemize}
+
+Der Import \texttt{TomaKing1C\_LogSendTemplate} entfällt (siehe Refactoring in Abschnitt~\ref{sssec:logging_refactoring_2c}).
+
+% ======= agent.py – Klassenerweiterung =======
+
+\subsubsection{Modul \texttt{agent.py} – Erweiterung der Agent-Klasse}
+
+Der Agent erhält im Konstruktor eine neue Instanz-Liste, die eingehende Announcements puffert bis sie verarbeitet werden:
+
+\lstinputlisting[
+    language=python,
+    style=python,
+    caption={Erweiterter Konstruktor (\texttt{agent.py})},
+    label={lst:agent_ctor_2c},
+    firstline=94,
+    lastline=94
+]{asset/code/2C-agent.py}
+
+Zusätzlich wird die bestehende \texttt{read\_messages}-Methode erweitert, um \texttt{ANNOUNCE}-Nachrichten in den Puffer zu übernehmen:
+
+\lstinputlisting[
+    language=python,
+    style=python,
+    caption={Erweiterte \texttt{read\_messages} (\texttt{agent.py})},
+    label={lst:agent_read_2c},
+    firstline=127,
+    lastline=129
+]{asset/code/2C-agent.py}
+
+Die Erweiterung nimmt jede eingelesene \texttt{ANNOUNCE}-Nachricht in den Puffer \\ \texttt{pending\_announcements} auf. Dadurch bleibt die eigentliche Verarbeitung (Kostenberechnung, BID-Versand) vom Lesen getrennt -- dies entspricht dem in Aufgabe~1c eingeführten Prinzip der Trennung von Wahrnehmung und Handlung (vgl. Abschnitt~\ref{sec:aufgabe1c}). Das Entkoppeln von Nachrichtenempfang und Gebotsberechnung folgt dabei dem Paradigma des \textit{modellbasierten Agenten}: Der Agent aktualisiert zuerst seinen internen Zustand (Wahrnehmung), bevor er in einer zweiten Phase seine Aktionen ableitet \cite[S. 18\,f.]{5}. Damit wird der bereits in Aufgabe~1c eingeführte Übergang vom reflexbasierten zum zustandsbasierten Agenten konsequent fortgesetzt.
+
+Die bestehende \texttt{send\_message}-Methode wird vom Logging entkoppelt -- sie erzeugt nur noch die \texttt{Message} und legt sie auf den Bus:
+
+\lstinputlisting[
+    language=python,
+    style=python,
+    caption={Refactoring \texttt{send\_message} -- Log entfernt (\texttt{agent.py})},
+    label={lst:agent_send_2c},
+    firstline=134,
+    lastline=134
+]{asset/code/2C-agent.py}
+
+% ======= agent.py – Bietlogik =======
+
+\subsubsection{Modul \texttt{agent.py} – Bietlogik und Kostenfunktion}
+\label{sssec:agent_bid_2c}
+
+Die eigentliche Bietlogik besteht aus drei Methoden: der Verarbeitung des Puffers, dem Versand eines einzelnen BID und der Kostenberechnung:
+
+\lstinputlisting[
+    language=python,
+    style=python,
+    caption={Bietlogik (\texttt{agent.py})},
+    label={lst:agent_bid_2c},
+    firstline=157,
+    lastline=185
+]{asset/code/2C-agent.py}
+
+Der Ablauf ist:
+\begin{enumerate}
+    \item \texttt{process\_announcements} iteriert über alle gepufferten Announcements und ruft für jede \texttt{\_bid\_for\_task} auf. Anschließend wird der Puffer geleert.
+    \item \texttt{\_bid\_for\_task} schlägt das Depot über die Sender-ID im Simulationsobjekt nach. Bei einem unbekannten Sender wird eine Warnung geloggt und die Nachricht verworfen -- dies entspricht der Anforderung defensiver Programmierung (keine Exception bei unerwarteten Nachrichten).
+    \item Die Kosten werden über \texttt{\_estimate\_cost} berechnet. Diese Methode setzt sich aus zwei Manhattan-Distanzen zusammen: aktueller Agentenstandort \(\to\) Depot und Depot \(\to\) Lieferziel.
+    \item Das BID wird über \texttt{send\_message} versendet und mit dem typspezifischen Template \texttt{TomaKing2A\_LogBidTemplate} protokolliert.
+\end{enumerate}
+
+% ======= simulation.py – Imports und Methode =======
+
+\subsubsection{Modul \texttt{simulation.py} – Depot-Lookup und Hauptschleifen-Anpassung}
+
+Für die Bietlogik wird die Simulations-Klasse um einen Depot-Lookup erweitert, damit ein Agent das Depot über die Sender-ID einer eingegangenen Nachricht auflösen kann:
+
+\lstinputlisting[
+    language=python,
+    style=python,
+    caption={Depot-Lookup (\texttt{simulation.py})},
+    label={lst:simulation_depot_2c},
+    firstline=60,
+    lastline=65
+]{asset/code/2C-simulation.py}
+
+Die Methode ist das direkte Pendant zum bereits vorhandenen \texttt{get\_agent\_by\_id} aus Aufgabe~2a. Durch die einheitliche Lookup-Schnittstelle bleibt der Zugriff auf Simulationsobjekte konsistent.
+
+% ======= simulation.py – Erweiterung von step() =======
+
+\subsubsection{Modul \texttt{simulation.py} – Agenten- und Depot-Verarbeitung}
+
+\textbf{Methode \texttt{\_agent\_step}:} Unmittelbar nach dem bereits aus~1c bekannten \texttt{read\_messages}-Aufruf wird nun zusätzlich \texttt{process\_announcements} aufgerufen:
+
+\lstinputlisting[
+    language=python,
+    style=python,
+    caption={Neue Zeile in \texttt{\_agent\_step} (\texttt{simulation.py})},
+    label={lst:simulation_agent_step_2c},
+    firstline=99,
+    lastline=100
+]{asset/code/2C-simulation.py}
+
+\textbf{Methode \texttt{step}:} Nach der Kollisionsauflösung wird über alle Depots iteriert, damit diese ihre eingegangenen BIDs lesen:
+
+\lstinputlisting[
+    language=python,
+    style=python,
+    caption={Neue Zeilen in \texttt{step} (\texttt{simulation.py})},
+    label={lst:simulation_step_2c},
+    firstline=94,
+    lastline=95
+]{asset/code/2C-simulation.py}
+
+Die erste Erweiterung trennt Wahrnehmung (Nachrichten lesen) von Verarbeitung (Kosten berechnen und BID senden), wie in Abschnitt~\ref{sssec:agent_bid_2c} beschrieben. Die zweite Erweiterung sorgt dafür, dass die Depots die im aktuellen Step eingegangenen BIDs noch im \textbf{selben} Simulationsschritt lesen -- analog zum bereits etablierten Prinzip der Agenten-Schleife. Der Depot-Read erfolgt dabei \textbf{immer}, auch in Schritten ohne Paketgenerierung. Wenn das Postfach leer ist, gibt \texttt{read\_messages} eine leere Liste zurück -- kein Fehler, keine Nebenwirkung. Dadurch entspricht der Ablauf dem Prinzip eines diskreten Zeitsystems, in dem alle Einheiten in jedem Takt ihr Postfach prüfen \cite[S. 13]{5}.
+
+% ======= depot.py – Imports und Refactoring =======
+
+\subsubsection{Modul \texttt{depot.py} – Erweiterte Imports}
+
+Für das typspezifische Logging werden zwei Konstanten aus dem 2A-Block neu importiert; der Import der generischen Read-Vorlage entfällt:
+
+\lstinputlisting[
+    language=python,
+    style=python,
+    caption={Erweiterte Imports (\texttt{depot.py})},
+    label={lst:depot_imports_2c},
+    firstline=22,
+    lastline=24
+]{asset/code/2C-depot.py}
+
+Die Ergänzungen:
+\begin{itemize}
+    \item \texttt{TomaKing2A\_LogAnnounceTemplate} -- typspezifisches Log-Template für ausgesandte \texttt{ANNOUNCE}-Nachrichten (in 2a vorbereitet, ab 2c aktiv genutzt).
+    \item \texttt{TomaKing2A\_LogDepotReadTemplate} -- neues, typspezifisches Read-Template für Depots (ersetzt die generische \texttt{TomaKing1C\_LogReadTemplate}).
+\end{itemize}
+
+% ======= depot.py – read_messages =======
+
+\subsubsection{Modul \texttt{depot.py} – Refactoring \texttt{read\_messages}}
+
+Die \texttt{read\_messages}-Methode verwendet nun das typspezifische Depot-Read-Template:
+
+\lstinputlisting[
+    language=python,
+    style=python,
+    caption={Refactoring \texttt{read\_messages} (\texttt{depot.py})},
+    label={lst:depot_read_2c},
+    firstline=45,
+    lastline=45
+]{asset/code/2C-depot.py}
+
+Vorher lautete die Ausgabe \texttt{[READ] Agent -2 <- 4 Message}, jetzt \texttt{[READ] Depot -2 <- 4 Message}.
+
+% ======= depot.py – send_message =======
+
+\subsubsection{Modul \texttt{depot.py} – Refactoring \texttt{send\_message}}
+
+Analog zu \texttt{Agent.send\_message} wird die generische Log-Ausgabe aus der Sendemethode entfernt:
+
+\lstinputlisting[
+    language=python,
+    style=python,
+    caption={Refactoring \texttt{send\_message} -- Log entfernt (\texttt{depot.py})},
+    label={lst:depot_send_2c},
+    firstline=47,
+    lastline=51
+]{asset/code/2C-depot.py}
+
+% ======= depot.py – announce_task =======
+
+\subsubsection{Modul \texttt{depot.py} – Refactoring \texttt{announce\_task}}
+
+Der typspezifische \texttt{ANNOUNCE}-Log wird nun im Aufrufer erzeugt, mit vollständigem Payload inklusive Empfänger:
+
+\lstinputlisting[
+    language=python,
+    style=python,
+    caption={Refactoring \texttt{announce\_task} (\texttt{depot.py})},
+    label={lst:depot_announce_2c},
+    firstline=59,
+    lastline=62
+]{asset/code/2C-depot.py}
+
+% ======= Refactoring der Log-Bezeichnungen =======
+
+\subsubsection{Refactoring: Behebung der Log-Bezeichnungs-Inkonsistenz}
+\label{sssec:logging_refactoring_2c}
+
+In den Aufgaben~2a und~2b wurde an mehreren Stellen darauf hingewiesen, dass die Depots im Log fälschlich als \texttt{Agent -1}, \texttt{Agent -2} erscheinen. Ursache war die Verwendung der generischen Sendevorlage \texttt{TomaKing1C\_LogSendTemplate}, die keine Information über den Typ der sendenden Entität enthält. Die drei typspezifischen Templates \texttt{TomaKing2A\_LogAnnounceTemplate}, \texttt{\_LogBidTemplate}, \texttt{\_LogAwardTemplate} waren deshalb bereits in~2a vorbereitet worden -- mit der Ankündigung, sie ab~2c/2d aktiv einzusetzen. Mit dieser Aufgabe wird diese Ankündigung umgesetzt.
+
+Das Refactoring umfasst drei Änderungen:
+
+\begin{enumerate}
+    \item \textbf{Entfernung der generischen Log-Ausgabe aus \texttt{send\_message}.} Sowohl \texttt{Agent.send\_message} als auch \texttt{Depot.send\_message} protokollieren den Versand nicht mehr selbst. Die Methoden sind jetzt reine Infrastruktur -- sie erzeugen eine \texttt{Message} und legen sie auf den Bus.
+    \item \textbf{Typspezifisches Log in den Aufrufern.} \texttt{Depot.announce\_task} loggt jede ausgesandte \texttt{ANNOUNCE}-Nachricht über \texttt{TomaKing2A\_LogAnnounceTemplate} mit dem konkreten Empfänger; \texttt{Agent.\_bid\_for\_task} loggt jede ausgesandte \texttt{BID}-Nachricht über \texttt{TomaKing2A\_LogBidTemplate}.
+    \item \textbf{Eigenes Read-Template für Depots.} Das bisherige generische \\ \texttt{TomaKing1C\_LogReadTemplate} wird für Depots durch \\ \texttt{TomaKing2A\_LogDepotReadTemplate} ersetzt. Damit erscheint auch beim Lesen der korrekte Entitätstyp im Log.
+\end{enumerate}
+
+\paragraph{Historischer Kontext der Dokumentation.}
+Die Abschnitte~1c, 2a und~2b beschreiben jeweils den \textit{Stand ihrer Umsetzung}. Zu diesen Zeitpunkten war die generische Sendevorlage bewusst noch aktiv, weil die typspezifischen Templates erst mit dem Aufkommen der \texttt{BID}- und \texttt{AWARD}-Nachrichten (2c/2d) in Erscheinung treten sollten. Die dort abgedruckten Log-Beispiele mit \texttt{Agent -1}/\texttt{Agent -2} spiegeln daher den damaligen Stand korrekt wider und bleiben als Teil der Entwicklungsgeschichte unverändert. Ab Aufgabe~2c gilt die neue Log-Konvention.
+
+% ======= Ergebnisnachweis =======
+
+\subsection{Ergebnisnachweis}
+\label{sssec:bietlogik_2c_nachweis}
+
+Zur Verifikation der Bietlogik wird die Simulation über mindestens 15 Schritte ausgeführt. Die Konsolenausgabe zeigt die drei vollständigen Contract-Net-Runden (Paketgenerierung \(\to\) ANNOUNCE \(\to\) BID \(\to\) Depot-Read) in den Schritten~5, 10 und~15:
+
+\lstinputlisting[
+    style=console,
+    caption={Terminal-Ausgabe: Bietrunden in den Schritten 5, 10 und 15},
+    label={lst:test_2c_output},
+    firstline=59,
+    lastline=125
+]{asset/code/2C-terminal.tex}
+
+Die Ausgabe zeigt im Detail:
+\begin{itemize}
+    \item In Schritt~5 wird das erste Paket (\texttt{Paket 0}) an Depot~\((43, 1)\) mit Ziel~\((36, 5)\) erzeugt. Das Depot versendet vier \texttt{ANNOUNCE}-Nachrichten, jede mit dem vollständigen Payload \texttt{(task\_id, destination, deadline)}.
+    \item Die Agenten lesen ihre Nachrichten und senden unmittelbar ein \texttt{BID} mit ihren berechneten Kosten zurück.
+    \item Das Depot liest alle vier BIDs in derselben Runde.
+    \item Die Kosten variieren entsprechend den Agentenpositionen -- eine vollständige Liste findet sich in Tabelle~\ref{tab:kosten_2c}.
+\end{itemize}
+
+Die berechneten Kosten in Schritt~5 sind in Tabelle~\ref{tab:kosten_2c} zusammengefasst. Als Position ist jeweils der Agentenstandort \textit{vor} der Bewegung angegeben -- das ist der Zeitpunkt, zu dem das BID berechnet und versendet wird.
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}{c c r r r r}
+        \toprule
+        \textbf{Task} & \textbf{Agent} & \textbf{Position} & \(d(\text{Agent},\text{Depot})\) & \(d(\text{Depot},\text{Ziel})\) & \textbf{Cost} \\
+        \midrule
+        0 & 0 & (42, 13) & 13 & 11 & 24 \\
+        0 & 1 & (46,  2) &  4 & 11 & 15 \\
+        0 & 2 & (26,  1) & 17 & 11 & 28 \\
+        0 & 3 & (49,  4) &  9 & 11 & 20 \\
+        \bottomrule
+    \end{tabular}
+    \caption{Manhattan-Kostenschätzung in Task~0 (Depot \((43,1)\), Ziel \((36,5)\))}
+    \label{tab:kosten_2c}
+\end{table}
+
+Die Tabelle bestätigt, dass die in der Konsole ausgegebenen Kosten exakt der Manhattan-Formel entsprechen. Die Positionen unterscheiden sich von den im Log nach dem Step angezeigten Werten, weil die Agenten ihre BID-Berechnung \textit{vor} der Bewegung durchführen -- der in Abschnitt~\ref{sssec:agent_bid_2c} beschriebene Ablauf (Erst Announcements verarbeiten, dann bewegen) wird damit im Log korrekt sichtbar.
+
+Damit ist die Bietlogik vollständig verifiziert: Für jede der drei Aufgaben (Task~0, 1, 2) wurden vier BIDs mit nachvollziehbaren Manhattan-Kosten erzeugt und vom Depot gelesen.
+
+% ==============================================================================
+% ============ Aufgabe 2D - Zuschlagslogik und AWARD-Verarbeitung =============
+% ==============================================================================
+
+\section{Zuschlagslogik und AWARD-Verarbeitung \textit{2d}}
+\label{sec:aufgabe2d}
+
+\subsection{Aufgabenstellung}
+
+Implementieren Sie die Zuschlagslogik: Der Manager wählt, wenn er nach der Simulationslogik das nächste Mal an der Reihe ist, alle Angebote für den jeweiligen Versand aus und gibt einem der Agenten den Zuschlag.
+
+\subsection{Theoretische Grundlagen}
+
+Mit der Zuschlagslogik wird die dritte und abschließende Phase des \textit{Contract-Net-Protokolls} umgesetzt: die \textit{Award-Phase}. Nach Eingang aller BIDs wählt der Manager -- in unserem Fall das Depot -- den geeignetsten Bieter aus und erteilt ihm den Zuschlag \cite[S. 30\,f.]{5}. Damit schließt sich die Contract-Net-Schleife: Ankündigung (Aufgabe~2b), Gebot (Aufgabe~2c) und Zuschlag (Aufgabe~2d) sind vollständig umgesetzt.
+
+Die Wahl des Gewinners folgt einem einfachen \textit{ökonomischen Prinzip}: Da die Kosten als Distanzmetrik kodiert sind, entspricht die Minimierung der Kosten der Maximierung der Wegstrecken-Effizienz. Der Manager wählt daher das BID mit den niedrigsten Kosten. Bei gleichen Kosten entscheidet ein im Rahmen dieser Aufgabe festgelegter deterministischer Tie-Breaker -- die niedrigere Agent-ID -- damit das Ergebnis unabhängig vom Eingangszeitpunkt der Nachrichten reproduzierbar bleibt. Die Sortierung nach dem Tupel \texttt{(cost, agent\_id)} definiert dabei eine strikte totale Ordnung über die Menge der eingegangenen Bids: Da beide Komponenten eindeutig sind (Kosten als ganze Zahl, Agent-ID als eindeutige Kennung), ist der Gewinner in jedem Fall eindeutig bestimmbar. Der Tie-Breaker wirkt damit als technischer Determinismus-Garant und macht die Simulationsläufe vollständig reproduzierbar -- eine Voraussetzung für die Auswertung der Experimente in Aufgabe~5.
+
+Die Auswertung erfolgt nach dem Prinzip der \textit{asynchronen Verhandlung}: Der Manager prüft seine eingegangenen Gebote zu dem Zeitpunkt, an dem er gemäß der Simulationslogik das nächste Mal an der Reihe ist. Dadurch werden unnötige Step-Lags vermieden und das Ergebnis steht noch im selben Simulationsschritt fest.
+
+\subsection{Implementierung}
+
+Aufgabe~2d führt die Zuschlagsauswertung im Depot ein, ergänzt den Package-Status um den Übergang \texttt{PENDING}~\(\to\)~\texttt{ASSIGNED} und erweitert den Agenten um eine interne Liste zugewiesener Aufgaben. Zusätzlich wird ein neues \texttt{[AUCTION]}-Log eingeführt, das die vom Aufgabensteller geforderten vier Nachweiselemente -- Manager, Bieterzahl, Gewinner und gebotene Kosten -- in einer Zeile bündelt.
+
+% ======= config.py – Block 2D =======
+
+\subsubsection{Konfiguration \texttt{config.py} – Zuschlags-Parameter}
+
+Der neue Konfigurationsblock definiert die Log-Templates für die Auswertung:
+
+\lstinputlisting[
+    language=python,
+    style=python,
+    caption={Zuschlags-Konfiguration (\texttt{config.py})},
+    label={lst:config_2d},
+    firstline=290,
+    lastline=296
+]{asset/code/2D-config.py}
+
+Das \texttt{[AUCTION]}-Template bündelt die vier vom Aufgabensteller geforderten Nachweiselemente in einer einzigen Log-Zeile. Die \texttt{[AWARD]}-Nachricht bleibt schlank (Sender, Empfänger, Task) und dokumentiert den Protokollschritt der Contract-Net-Phase~3.
+
+Die Validierungsliste in \texttt{validate\_config()} wird um die beiden neuen Konstanten erweitert (vgl. Abschnitt~\ref{sssec:config_validierung}).
+
+% ======= package.py – Neue Methode =======
+
+\subsubsection{Modul \texttt{package.py} – Status-Übergang zu ASSIGNED}
+
+Der Import wird um \texttt{TomaKing2B\_StatusAssigned} erweitert:
+
+\lstinputlisting[
+    language=python,
+    style=python,
+    caption={Erweiterter Import (\texttt{package.py})},
+    label={lst:package_imports_2d},
+    firstline=12,
+    lastline=12
+]{asset/code/2D-package.py}
+
+Die \texttt{Package}-Klasse erhält eine Methode zum Setzen des Zuschlags:
+
+\lstinputlisting[
+    language=python,
+    style=python,
+    caption={Neue Methode \texttt{mark\_assigned} (\texttt{package.py})},
+    label={lst:package_assigned_2d},
+    firstline=38,
+    lastline=41
+]{asset/code/2D-package.py}
+
+Der Status-Übergang markiert das Paket dauerhaft als zugewiesen. In späteren Aufgaben (insbesondere Aufgabe~3 und~5) erlaubt dieser Zustand die Unterscheidung zwischen noch offenen und bereits vergebenen Paketen — in~2d selbst wird er noch nicht als Filter verwendet.
+
+% ======= depot.py – Erweiterungen =======
+
+\subsubsection{Modul \texttt{depot.py} – Erweiterte Imports und BID-Puffer}
+
+Für die Zuschlagslogik werden zwei weitere Nachrichten- und Payload-Konstanten sowie die beiden 2D-Log-Templates importiert:
+
+\lstinputlisting[
+    language=python,
+    style=python,
+    caption={Erweiterte Imports (\texttt{depot.py})},
+    label={lst:depot_imports_2d},
+    firstline=10,
+    lastline=33
+]{asset/code/2D-depot.py}
+
+Der Konstruktor (\texttt{class Depot}) erhält eine neue Dict zur Gruppierung eingehender BIDs pro Task:
+
+\lstinputlisting[
+    language=python,
+    style=python,
+    caption={Neuer BID-Puffer im Konstruktor (\texttt{depot.py})},
+    label={lst:depot_ctor_2d},
+    firstline=45,
+    lastline=45
+]{asset/code/2D-depot.py}
+
+% ======= depot.py – read_messages Erweiterung =======
+
+\subsubsection{Modul \texttt{depot.py} – Erweiterung \texttt{read\_messages}}
+
+\textbf{Methode \texttt{read\_messages}:} Nach dem Einlesen aller eingehenden Nachrichten werden \texttt{BID}-Nachrichten nach Task-ID gruppiert im Puffer abgelegt:
+
+\lstinputlisting[
+    language=python,
+    style=python,
+    caption={Erweiterte \texttt{read\_messages} (\texttt{depot.py})},
+    label={lst:depot_read_2d},
+    firstline=55,
+    lastline=58
+]{asset/code/2D-depot.py}
+
+Die Gruppierung nach \texttt{task\_id} erlaubt es dem Depot, in einem einzigen Simulationsschritt mehrere parallel eingegangene Auktionen unabhängig voneinander auszuwerten -- wichtig für spätere Aufgaben mit überlappenden Ausschreibungen.
+
+% ======= depot.py – Zuschlagslogik =======
+
+\subsubsection{Modul \texttt{depot.py} – Zuschlagslogik}
+\label{sssec:depot_award_2d}
+
+Die Auswertung der BIDs und der Versand des AWARD erfolgen über drei Methoden:
+
+\lstinputlisting[
+    language=python,
+    style=python,
+    caption={Zuschlagslogik (\texttt{depot.py})},
+    label={lst:depot_award_2d},
+    firstline=76,
+    lastline=108
+]{asset/code/2D-depot.py}
+
+Der Ablauf ist:
+\begin{enumerate}
+    \item \texttt{process\_bids} iteriert über alle im Puffer befindlichen Tasks. Für Tasks ohne Bieter wird eine informative Zeile geloggt und die Auswertung übersprungen -- so bleibt das System bei ausbleibenden Geboten stabil (defensive Programmierung).
+    \item \texttt{\_select\_winner} wählt das BID mit den geringsten Kosten; bei Gleichstand greift der in Abschnitt~\ref{sec:aufgabe2d} beschriebene Tie-Breaker.
+    \item \texttt{\_award\_task} versendet die \texttt{AWARD}-Nachricht an den Gewinner, protokolliert sie und setzt schließlich den Paket-Status auf \texttt{ASSIGNED}.
+\end{enumerate}
+
+Der Paket-Status-Übergang erfolgt über die neue Methode \texttt{Package.mark\_assigned}, die sowohl den Status als auch die Gewinner-Agent-ID persistent speichert.
+
+% ======= agent.py – Erweiterungen =======
+
+\subsubsection{Modul \texttt{agent.py} – Empfang der AWARD-Nachrichten}
+
+Der Import wird um \texttt{TomaKing2A\_MsgAward} erweitert:
+
+\lstinputlisting[
+    language=python,
+    style=python,
+    caption={Erweiterter Import (\texttt{agent.py})},
+    label={lst:agent_imports_2d},
+    firstline=60,
+    lastline=60
+]{asset/code/2D-agent.py}
+
+Der Agent (\texttt{class Agent}) erhält eine neue Liste zur Speicherung zugewiesener Aufgaben:
+
+\lstinputlisting[
+    language=python,
+    style=python,
+    caption={Neue Liste \texttt{assigned\_tasks} (\texttt{agent.py})},
+    label={lst:agent_ctor_2d},
+    firstline=96,
+    lastline=96
+]{asset/code/2D-agent.py}
+
+Die \texttt{read\_messages}-Methode wird um einen zweiten Filterzweig erweitert, der eingehende \texttt{AWARD}-Nachrichten erkennt und die Task-ID in \texttt{assigned\_tasks} übernimmt:
+
+\lstinputlisting[
+    language=python,
+    style=python,
+    caption={Erweiterte \texttt{read\_messages} (\texttt{agent.py})},
+    label={lst:agent_read_2d},
+    firstline=132,
+    lastline=133
+]{asset/code/2D-agent.py}
+
+Der Agent speichert damit die ihm zugewiesenen Aufgaben dauerhaft. Er führt in Aufgabe~2d noch \textbf{keine} Bewegung aus -- die physische Auftragsausführung (Anfahrt zum Depot, Paketaufnahme, Fahrt zum Ziel, Ablieferung) ist Gegenstand von Aufgabe~3. Der Agent verhält sich in 2d weiterhin wie in 1c -- er bewegt sich zufällig und verbraucht Batterie.
+
+% ======= simulation.py – Erweiterungen =======
+
+\subsubsection{Modul \texttt{simulation.py} – Paket-Lookup und Hauptschleifen-Anpassung}
+
+Die Simulations-Klasse erhält einen Paket-Lookup, damit das Depot nach der Auswertung den Paket-Status aktualisieren kann:
+
+\lstinputlisting[
+    language=python,
+    style=python,
+    caption={Paket-Lookup (\texttt{simulation.py})},
+    label={lst:simulation_package_2d},
+    firstline=66,
+    lastline=71
+]{asset/code/2D-simulation.py}
+
+Die Methode ist das Pendant zu \texttt{get\_agent\_by\_id} und \texttt{get\_depot\_by\_id} -- die drei Simulationsobjekte sind damit einheitlich über Lookup-Methoden auflösbar.
+
+\textbf{Methode \texttt{step}:} Nach der in 2c eingeführten Depot-Read-Schleife wird unmittelbar die Auswertung ausgelöst:
+
+\lstinputlisting[
+    language=python,
+    style=python,
+    caption={Erweiterte Hauptschleife (\texttt{simulation.py})},
+    label={lst:simulation_step_2d},
+    firstline=102,
+    lastline=103
+]{asset/code/2D-simulation.py}
+
+Die Auswertung erfolgt \textbf{im selben Simulationsschritt} wie der Depot-Read -- damit liest das Depot seine BIDs und vergibt noch im gleichen Schritt den Zuschlag. Dies entspricht dem in Abschnitt~\ref{sssec:depot_award_2d} beschriebenen Prinzip der asynchronen Verhandlung ohne Step-Lag.
+
+% ======= Ergebnisnachweis =======
+
+\subsection{Ergebnisnachweis}
+\label{sssec:zuschlag_2d_nachweis}
+
+Zur Verifikation der Zuschlagslogik werden fünf vollständige Auktionsrunden in den Schritten~5, 10, 15, 20 und~25 durchgeführt. Die Konsolenausgabe zeigt die vollständigen Auktionsrunden (Paketgenerierung \(\to\) ANNOUNCE \(\to\) BID \(\to\) Depot-Read \(\to\) AUCTION \(\to\) AWARD):
+
+\lstinputlisting[
+    style=console,
+    caption={Terminal-Ausgabe: Fünf Auktionsrunden in den Schritten 5, 10, 15, 20 und 25},
+    label={lst:test_2d_output},
+    firstline=59,
+    lastline=179
+]{asset/code/2D-terminal.tex}
+
+Die Ausgabe zeigt, dass jede Auktion vollständig protokolliert wird:
+\begin{itemize}
+    \item Das Depot generiert ein neues Paket und versendet vier \texttt{ANNOUNCE}-Nachrichten.
+    \item Die Agenten lesen die Nachricht und senden jeweils ein \texttt{BID} mit ihren berechneten Kosten zurück.
+    \item Das Depot liest alle vier BIDs im selben Schritt.
+    \item Die neue \texttt{[AUCTION]}-Zeile fasst die vier vom Aufgabensteller geforderten Nachweiselemente zusammen: Manager (Depot-ID), Anzahl der Bieter, Gewinner und gebotene Kosten.
+    \item Die \texttt{[AWARD]}-Nachricht wird an den Gewinner gesendet.
+\end{itemize}
+
+Die fünf Auktionen sind in Tabelle~\ref{tab:auktionen_2d} zusammengefasst.
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}{c r c r c r r}
+        \toprule
+        \textbf{Task} & \textbf{Step} & \textbf{Manager} & \textbf{Bieter} & \textbf{Gewinner} & \textbf{Kosten} & \textbf{Deadline} \\
+        \midrule
+        0 & 5  & Depot -2 & 4 & Agent 1 & 15 & 20 \\
+        1 & 10 & Depot -2 & 4 & Agent 1 & 18 & 25 \\
+        2 & 15 & Depot -2 & 4 & Agent 3 & 12 & 30 \\
+        3 & 20 & Depot -1 & 4 & Agent 0 & 35 & 35 \\
+        4 & 25 & Depot -2 & 4 & Agent 1 & 21 & 40 \\
+        \bottomrule
+    \end{tabular}
+    \caption{Übersicht der fünf durchgeführten Auktionen}
+    \label{tab:auktionen_2d}
+\end{table}
+
+Alle fünf Auktionen verlaufen nach demselben Muster: Vier Agenten geben ein BID ab, der Manager wählt jeweils den günstigsten Bieter. Die Auktion zu Task~3 wird dabei an das zweite Depot~\((-1)\) vergeben, was die Wirksamkeit der in Aufgabe~2b eingeführten zufälligen Depot-Auswahl belegt.
+
+\paragraph{Hinweis zur AWARD-Verarbeitung.}
+Die jeweils ausgestellte \texttt{AWARD}-Nachricht wird vom Gewinner-Agenten im darauffolgenden Simulationsschritt gelesen (Steps 6, 11, 16, 21 und 26) und in der internen Liste \texttt{assigned\_tasks} gespeichert. Der zugehörige Lesevorgang wird durch die generische \texttt{[READ]}-Vorlage protokolliert. Die eigentliche Auftragsausführung -- also Anfahrt zum Depot, Paketaufnahme und Fahrt zum Ziel -- ist Gegenstand von Aufgabe~3, in der die Wegplanung mittels \acs{Astern} implementiert wird. Aufgabe~2d schließt damit das \textit{Contract-Net-Protokoll} ab: Jedes ausgeschriebene Paket hat einen Gewinner, ist auf Status \texttt{ASSIGNED} gesetzt und der Gewinner-Agent kennt seine Aufgabe.
+
+% ==============================================================================
+% ================================= Aufgabe 2 =================================
+% ==============================================================================

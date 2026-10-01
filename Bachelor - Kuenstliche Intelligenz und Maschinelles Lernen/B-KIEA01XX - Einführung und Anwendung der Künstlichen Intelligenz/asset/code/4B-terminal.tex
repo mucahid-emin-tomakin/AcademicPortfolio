@@ -1,0 +1,14 @@
+5 ?- [rules, agents_demo].
+true.
+6 ?- reachable((37, 13), (25, 0)).
+true.
+7 ?- reachable((43, 13), (25, 0)).
+true.
+8 ?- reachable((2, 1), (2, 1)).
+true.
+9 ?- reachable((0, 0), (999, 999)).
+false.
+10 ?- candidate_agent(task((37, 13), (25, 0)), Agent).
+Agent = 0.
+11 ?- candidate_agent(task((43, 1), (36, 5)), Agent).
+Agent = 1.

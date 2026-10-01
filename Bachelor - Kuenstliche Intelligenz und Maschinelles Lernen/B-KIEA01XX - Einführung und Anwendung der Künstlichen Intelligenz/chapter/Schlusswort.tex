@@ -1,0 +1,62 @@
+% ==============================================================================
+% ================================ SCHLUSSWORT ================================
+% ==============================================================================
+
+\chapter{Schlusswort}
+\label{chap:schlusswort}
+
+Die vorliegende B-Aufgabe hat ein vollständiges Multiagenten-Logistiksystem implementiert, das von der Kartendarstellung über die Agenten-zu-Agenten-Kommunikation bis zur \acs{PROLOG}-gestützten Wegplanung alle wesentlichen Bausteine eines verteilten \acs{KI}-Systems abdeckt. Die Umsetzung folgte durchgängig dem Architekturprinzip der \textit{Separation of Concerns}: Karte, Agenten, Depots, Pakete, Graph, \acs{Astern}-Suche, \acs{PROLOG}-Brücke, Simulation, \acs{GUI} und Experiment-Runner sind in klar getrennte Module aufgeteilt, die über definierte Schnittstellen miteinander kommunizieren. Die zentrale Konfigurationsdatei \texttt{config.py} fungiert als \textit{Single Source of Truth} und erlaubt Anpassungen aller fachlichen Parameter ohne Eingriff in die Programmlogik.
+
+\section{Rückblick auf die Aufgabenblöcke}
+
+Die Bearbeitung gliederte sich in fünf thematische Blöcke, die aufeinander aufbauen:
+
+\begin{itemize}
+    \item \textbf{Block 1 (Karte und Agenten)} legte das Fundament: eine \acs{ASCII}-basierte 70$\times$14-Karte mit 55 Engpass-Zellen, zwei Depots, vier Zielen und zwei Agententypen (Standard, Express), die sich über eine Hauptschleife und einen Nachrichtenbus koordinieren.
+    \item \textbf{Block 2 (Kommunikation und Auftragsvergabe)} implementierte das Contract-Net-Protokoll mit den drei Nachrichtentypen ANNOUNCE, BID und AWARD. Ein Depot vergibt Aufträge nach dem Bieterverfahren an den Agenten mit der niedrigsten geschätzten Kostenfunktion.
+    \item \textbf{Block 3 (Wegsuche)} erzeugte aus der Karte einen gewichteten Graphen mit Engpass-Aufschlag und implementierte den \acs{Astern}-Algorithmus mit Manhattan-Heuristik und Prioritätswarteschlange. Die Agenten nutzen \acs{Astern} zur Routenplanung und replanen bei Blockaden oder Kollisionen.
+    \item \textbf{Block 4 (\acs{PROLOG}-Wissensbasis)} exportierte die Karten-Fakten als \texttt{facts.pl} und band \acs{SWI}-\acs{PROLOG} über eine \texttt{subprocess}-Brücke in die Simulation ein. Ein \acs{PROLOG}-Vorfilter (\texttt{candidate\_agents}) prüft vor jedem Bieterverfahren die Erreichbarkeit und Kapazität aller Agenten.
+    \item \textbf{Block 5 (Experimente und Auswertung)} führte 15 Simulationsläufe über drei Agentenkonfigurationen (3 / 5 / 10 Agenten) mit je fünf Seeds durch und erfasste vier Metrik-Kategorien: Leistungskennzahlen (5a), \acs{Astern}-Eigenschaften (5b), Kommunikationsmetriken (5c) und Konflikte (5d).
+\end{itemize}
+
+\section{Zentrale Erkenntnisse der Auswertung}
+
+Die Experimente haben vier wesentliche Eigenschaften des Systems sichtbar gemacht:
+
+\paragraph{(1) Der Skalierungseffekt ist nicht linear.}
+Die Erfolgsquote der Auftragszustellung liegt zwischen 18\,\% und 25\,\% -- unabhängig von der Agentenzahl. Die durchschnittliche Lieferzeit erreicht ihr Minimum bei 5 Agenten (39{,}4 Steps) und steigt bei 10 Agenten wieder an (42{,}0 Steps). Ursache ist die steigende Konfliktdichte in den 55 Engpass-Zellen: Mehr Agenten erzeugen mehr Blockaden, mehr Neuplanungen und damit längere Wege.
+
+\paragraph{(2) Die präventive Kollisionsvermeidung funktioniert.}
+Kein Agent landet auf einer Zelle, die bereits von einem anderen Agenten besetzt ist. Die in Aufgabe~5a eingeführte Prüfung in \texttt{try\_move} fängt jede potenzielle Doppelbelegung ab. Der Preis dieser Prävention ist eine exakte 1:1-Kopplung zwischen Kollisionsversuchen und Neuplanungen (Aufgabe~5d): Jeder Blockadeversuch löst eine Replanung aus, die in Engpass-Situationen häufig dieselbe Route findet.
+
+\paragraph{(3) Der \acs{PROLOG}-Vorfilter arbeitet korrekt, aber greift selten.}
+Die Kommunikationsmetriken (Aufgabe~5c) sind über alle Runs deterministisch: 7 / 11 / 21 Nachrichten pro Auftrag für 3 / 5 / 10 Agenten. Der Vorfilter schließt in unserem Szenario keinen Agenten aus, weil alle Batterien ausreichend geladen, alle Kapazitäten frei und alle Positionen erreichbar sind. Die Linearität der Nachrichtenlast bestätigt das theoretische Skalierungsverhalten des Contract-Net-Protokolls.
+
+\paragraph{(4) Die Planungszeit ist hardwareabhängig, die Expansionszahl nicht.}
+Die Expansionszahl aus Aufgabe~5b liefert einen stabilen, hardwareunabhängigen Effizienzindikator: Der Mittelwert liegt zwischen 20 und 30 expandierten Knoten pro Planung. Die Planungszeit hingegen zeigt eine hohe Streuung (0{,}15--5{,}5\,ms) -- beeinflusst von CPU-Scheduling, Garbage Collection und Hintergrundlast. Dieser Befund rechtfertigt die in der Aufgabenstellung explizit geforderte Messung der \textit{echten Systemzeit}.
+
+\section{Reflexion der Methode}
+
+Die Auswertung folgte einer \textit{vergleichenden Simulationsmethodik}: Alle 15 Läufe nutzen dieselbe Karte, dieselben Ziele, denselben Paketgenerierungsrhythmus (alle 10 Steps) und dieselbe Deadline (100 Steps). Die Unterschiede zwischen den Konfigurationen sind damit ausschließlich auf die Agentenzahl zurückzuführen. Die Aggregation über fünf unabhängige Seeds reduziert den Einfluss der zufälligen Startpositionierung und liefert belastbare Mittelwerte.
+
+Grenzen der Methodik: Die 5 Läufe pro Konfiguration erlauben robuste Trendaussagen, aber keine statistische Signifikanzprüfung. Die hohen Standardabweichungen (besonders bei der Erfolgsquote mit 5--14 Prozentpunkten) zeigen, dass einzelne Läufe durch zufällige Konstellationen -- etwa eine ungünstige Startverteilung der Agenten -- stark beeinflusst werden können. Für eine tiefergehende statistische Analyse wären 30 oder mehr Läufe pro Konfiguration erforderlich.
+
+\section{Ausblick}
+
+Das implementierte System bildet die Grundlage für weiterführende Untersuchungen. Drei Erweiterungen wären besonders lohnend:
+
+\begin{enumerate}
+    \item \textbf{Ausweich- und Delay-Strategien.} Die 1:1-Kopplung zwischen Kollisionen und Neuplanungen ließe sich auflösen, indem ein Agent bei erkannter Blockade zunächst einen Warteschritt einlegt, statt sofort zu replanen. Dies würde die Planungszeit-Metriken aus Aufgabe~5b entlasten.
+    \item \textbf{Hierarchische Kommunikationsprotokolle.} Der lineare Nachrichtenanstieg (Aufgabe~5c) motiviert den Einsatz von MetaMorph-II-artigen Mediatoren, die die Broadcast-Phase eingrenzen und damit den Nachrichtenaufwand bei vielen Agenten reduzieren.
+    \item \textbf{Alternative Heuristiken.} Der in Aufgabe~3d begonnene Vergleich zwischen Manhattan- und \acs{BFS}-Heuristik ließe sich auf gewichtete Engpass-Karten erweitern, um zu prüfen, wie stark die optimistische Heuristik bei stark heterogenen Kantenkosten an Effizienz verliert.
+\end{enumerate}
+
+\section{Schlussbemerkung}
+
+Die B-Aufgabe hat gezeigt, dass ein verteiltes Multiagentensystem mit überschaubarem Codeumfang realisierbar ist, wenn die einzelnen Komponenten sauber getrennt und über definierte Schnittstellen verbunden sind. Die Ergebnisse sind nicht spektakulär -- die Erfolgsquote bleibt unter 25\,\% --, aber sie sind \textit{nachvollziehbar}, \textit{reproduzierbar} und \textit{interpretierbar}. Die niedrige Erfolgsquote ist kein Implementierungsfehler, sondern eine direkte Folge der bewusst schlanken Agentenstrategie: Ohne Ausweichlogik verharren Agenten in Engpass-Deadlocks, bis die Deadline abläuft.
+
+Der Mehrwert der Aufgabe liegt weniger in einem performanten Liefersystem als in der \textit{systematischen Verbindung} der einzelnen \acs{KI}-Bausteine: Kartenmodellierung, Kommunikationsprotokoll, Graphensuche, \acs{PROLOG}-Wissensrepräsentation, Experiment-Design und Metriken-Auswertung. Diese Integration entspricht dem in der Aufgabenstellung formulierten Ziel -- einem \textit{Logistik-Simulationsspiel mit Agenten}, das als Übungsfeld für die Anwendung von \acs{KI}-Methoden in einem realistischen Kontext dient.
+
+% ==============================================================================
+% ================================ SCHLUSSWORT ================================
+% ==============================================================================

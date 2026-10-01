@@ -1,0 +1,174 @@
+% ==============================================================================
+% =================================== EINLEITUNG ================================
+% ==============================================================================
+
+\chapter{Einleitung}
+\label{chap:einleitung}
+\thispagestyle{fancy}
+
+Die vorliegende Dokumentation beschreibt die Umsetzung der B-Aufgabe \texttt{B-KIEA01XX-XX2-N01} im Rahmen des Moduls \textit{Einführung und Anwendung der Künstlichen Intelligenz}. Ziel der Aufgabe ist die Implementierung eines Logistik-Simulationsspiels mit mehreren Lieferrobotern (Agenten), die auf einer diskreten Karte agieren, Lieferaufträge untereinander verteilen und ihre Wege mit dem \acs{Astern}-Algorithmus planen.
+
+Die Dokumentation gliedert sich in fünf Hauptteile, die den Anforderungen der Aufgabenstellung entsprechen. Neben der Implementierung der Simulation werden die Ergebnisse der durchgeführten Simulationsexperimente ausgewertet und visualisiert.
+
+\section{Technologische Grundlagen und Entwicklungsumgebung}
+
+\subsection{Entwicklungsplattform}
+
+Die Entwicklung erfolgte auf einem \textit{Windows 11}-System. Zur Sicherstellung der Reproduzierbarkeit wird die Python-Distribution \textit{Miniforge3} mit dem Paketmanager \textit{Conda} verwendet. Conda ermöglicht die isolierte Verwaltung von Abhängigkeiten und die Reproduktion der Entwicklungsumgebung auf anderen Systemen.
+
+\subsection{Conda-Installation}
+
+Die Conda-Installation erfolgte über \texttt{winget} mit dem Paket \texttt{Miniforge3}:
+
+\lstinputlisting[
+    style=console,
+    caption={Conda (Miniforge3) Installation mit winget},
+    label={lst:conda_install}
+]{asset/code/Einleitung.tex}
+
+\subsection{Dauerhafte Einrichtung der Conda-Umgebungsvariablen}
+
+Für die Verfügbarkeit von Conda in jeder Terminalsitzung wurden folgende Pfade zur System-Umgebungsvariablen \texttt{PATH} hinzugefügt:
+
+\begin{itemize}
+    \item \texttt{C:\textbackslash Users\textbackslash USERNAME\textbackslash miniforge3\textbackslash Scripts}
+    \item \texttt{C:\textbackslash Users\textbackslash USERNAME\textbackslash miniforge3\textbackslash condabin}
+\end{itemize}
+
+Die dauerhafte Setzung der Umgebungsvariablen erfolgte mit folgendem PowerShell-Befehl:
+
+\lstinputlisting[
+    style=console,
+    caption={Dauerhafte Setzung der Conda-Pfade in der System-Umgebungsvariablen \texttt{PATH}},
+    label={lst:conda_path_setup}
+]{asset/code/EinleitungII.tex}
+
+Anschließend wird \texttt{conda init} ausgeführt, um Conda in der PowerShell zu aktivieren:
+
+\lstinputlisting[
+    style=console,
+    caption={Conda initialisieren},
+    label={lst:conda_init}
+]{asset/code/EinleitungIII.tex}
+
+\subsection{Überprüfung der Installation}
+
+Nach einem Neustart der PowerShell erfolgte die Überprüfung der Installation mit folgenden Befehlen:
+
+\lstinputlisting[
+    style=console,
+    caption={Überprüfung der Conda-Installation},
+    label={lst:conda_verify}
+]{asset/code/EinleitungIV.tex}
+
+Die erwartete Ausgabe ist wie folgt:
+
+\begin{lstlisting}[style=console]
+conda 26.3.2
+(B-KIEA01XX) PS C:\Users\USERNAME>
+Python 3.10.x
+\end{lstlisting}
+
+\subsection{Conda-Umgebung}
+
+Zur Verwaltung der Python-Abhängigkeiten wurde eine Conda-Umgebung mit dem Namen \texttt{B-KIEA01XX} erstellt. Die Umgebung wurde über die folgende \texttt{environment.yml} Datei definiert (Format: \acs{YAML}):
+
+\lstinputlisting[
+    language=python,
+    caption={environment.yml – Conda-Umgebungsdefinition},
+    label={lst:environment_yml}
+]{asset/code/EinleitungV.tex}
+
+Die Erstellung und Aktivierung der Umgebung erfolgte mit den folgenden Befehlen:
+
+\lstinputlisting[
+    style=console,
+    caption={Conda-Umgebung erstellen und aktivieren},
+    label={lst:conda_setup}
+]{asset/code/EinleitungVI.tex}
+
+Die Umgebung enthält folgende Pakete:
+
+\begin{itemize}
+    \item \texttt{python 3.10} – Hauptprogrammiersprache
+    \item \texttt{matplotlib} und \texttt{seaborn} – Erstellung der geforderten Plots
+    \item \texttt{numpy} und \texttt{pandas} – Datenverarbeitung und -analyse
+    \item \texttt{jupyter} und \texttt{ipython} – interaktives Testen und Entwicklung
+\end{itemize}
+
+\subsection{\acs{PROLOG}-Integration}
+
+Gemäß Teil 4 der Aufgabenstellung wird eine \acs{PROLOG}-Wissensbasis in die Simulation integriert. Hierfür wurde der \acs{PROLOG}-Interpreter \textit{\acs{SWI}-\acs{PROLOG}} über den Windows-Paketmanager \texttt{winget} installiert:
+
+\lstinputlisting[
+    style=console,
+    caption={\acs{SWI}-\acs{PROLOG} Installation mit winget},
+    label={lst:swipl_install}
+]{asset/code/EinleitungVII.tex}
+
+Damit der \texttt{subprocess}-Aufruf aus Python den Interpreter über den bloßen
+Namen \texttt{swipl} auflösen kann, muss das \acs{SWI}-\acs{PROLOG}-Binärverzeichnis dauerhaft
+in der Umgebungsvariablen \texttt{PATH} hinterlegt sein. Die Erweiterung erfolgt
+analog zur oben beschriebenen Conda-Konfiguration mit folgendem PowerShell-Befehl:
+
+\lstinputlisting[
+    style=console,
+    caption={Dauerhafte Setzung des \acs{SWI}-\acs{PROLOG}-Pfads in der Umgebungsvariablen \texttt{PATH}},
+    label={lst:swipl_path_setup}
+]{asset/code/EinleitungVIII.tex}
+
+Die Kommunikation zwischen Python und \acs{PROLOG} erfolgt über das \texttt{subprocess}-Modul, das \acs{SWI}-\acs{PROLOG} als externen Prozess aufruft und die Ergebnisse ausliest. Dieser Ansatz gewährleistet Betriebssystemunabhängigkeit und vermeidet Abhängigkeiten zu \acs{PROLOG}-Bibliotheken. Die konkrete Nutzung des Interpreters zur Verifikation der Wissensbasis erfolgt in Abschnitt~\ref{sec:aufgabe4a}.
+
+\subsection{LaTeX-Dokumentation}
+
+Die vorliegende Dokumentation wurde mit \LaTeX\ erstellt. Für die Einbindung von Quellcode wird das \texttt{listings}-Paket verwendet, dessen Formatierung an das empfohlene Tool \textit{pygmentize} angelehnt ist. Folgende Code-Stile stehen zur Verfügung:
+
+\begin{itemize}
+    \item \texttt{style=python} – Python-Quellcode mit Syntaxhervorhebung
+    \item \texttt{style=console} – Konsolenausgaben und Logs ohne Zeilennummern
+\end{itemize}
+
+Die Code-Dateien werden über \texttt{\textbackslash lstinputlisting} aus dem Verzeichnis \texttt{asset/code/} eingebunden, was eine klare Trennung zwischen Quellcode und Dokumentation gewährleistet.
+
+\subsection{Projektarchitektur und Ablauf}
+
+Die Simulation folgt dem Architekturprinzip der \textit{Separation of Concerns}: Konfiguration, Fachlogik, Benutzeroberfläche und Orchestrierung sind in vier voneinander unabhängigen Modulen gekapselt. Diese Trennung minimiert Seiteneffekte, erleichtert das Testen einzelner Komponenten und ermöglicht eine unabhängige Weiterentwicklung der Schichten.
+
+Ergänzend folgt die Konfiguration dem \textit{Single-Source-of-Truth}-Prinzip: Sämtliche Parameter sind zentral in \texttt{config.py} ausgelagert (\textit{Configuration Externalization}). Die Datei ist in zwei Schichten organisiert: einen \acs{GUI}-Block mit aufgabenunabhängiger Präsentations-Infrastruktur (Fenster, Schriften, Layout, Canvas-Chrome, Infrastruktur-Farben, Log-Format) und – je nach Aufgabenstellung – einen eigenen Block mit den fachlichen Werten dieser Aufgabe (Symbole, Karten-Legende, Beschriftungen, Log-Texte, Statistik-Schlüssel, Fehlermeldungen, \acs{ASCII}-Art-Wandmuster). Die Zuordnung ist bereits am Präfix der Konstante (\texttt{TomaKingGUI\_}, \texttt{TomaKing1A\_}) ablesbar. Dadurch wird Hardcoding in der Fachlogik vollständig vermieden und jede Wertänderung erfolgt an genau einer Stelle.
+
+Der Einstiegspunkt der Anwendung ist die Datei \texttt{main.py}, die als reiner Orchestrator fungiert. Sie erzeugt das Tkinter-Root-Fenster, instanziiert die in \texttt{gui.py} definierte \texttt{MapGUI}-Klasse und startet die Ereignisschleife der Simulation.
+
+\subsubsection{Konfigurationsdatei \texttt{config.py}}
+
+Alle konfigurierbaren Parameter der Simulation sind zentral in der Datei \texttt{config.py} definiert. Dies umfasst zum einen aufgabenunabhängige \acs{GUI}-Infrastruktur (Fenster, Schriften, Layout, Canvas-Chrome, Infrastruktur-Farben, Log-Format) und zum anderen pro Aufgabe einen eigenen Block mit den fachlichen Werten – für Aufgabe~1A: Karten-Symbole, Karten-Farben, Depot- und Ziel-Anzahl, Seed, Beschriftungen der Info-Zeile, Log-Texte, Statistik-Schlüssel und Fehlermeldungen. Die Konfiguration fungiert damit als einzige Quelle der Wahrheit (\textit{Single Source of Truth}) und erlaubt Anpassungen aller Parameter ohne Eingriff in die Programmlogik. Eine Validierungsfunktion \texttt{validate\_config()} prüft beim Import, dass alle erforderlichen Schlüssel vorhanden sind.
+
+\subsubsection{Modulare Komponenten}
+
+Die Kernlogik der Simulation ist in separate Module aufgeteilt:
+
+\begin{itemize}
+    \item \texttt{map.py} – Kartenmodell mit \acs{ASCII}-Art-Wandmuster, Depots (\acs{D}) und Zielen (\acs{Z})
+    \item \texttt{gui.py} – \acs{GUI} (Präsentationsschicht)
+    \item \texttt{main.py} – Orchestrator und Einstiegspunkt
+    \item \texttt{config.py} – Zentrale Konfiguration
+\end{itemize}
+
+Jedes Modul importiert nur die benötigten Werte aus der Konfigurationsdatei, wodurch eine lose Kopplung und hohe Wiederverwendbarkeit erreicht wird.
+
+\subsubsection{\acs{GUI} und Benutzerinteraktion}
+
+Die grafische Benutzeroberfläche wurde mit \texttt{Tkinter} realisiert. Sie zeigt die Karte mit farblichen Markierungen für Wände (weiß), Depots (rot) und Ziele (blau) an. Die Zellgröße wird dynamisch an die Fenstergröße angepasst, sodass die Karte stets vollständig sichtbar ist.
+
+\subsubsection{Code-Einbindung in die Dokumentation}
+
+Die Quelltexte werden über \texttt{\textbackslash lstinputlisting} aus dem Verzeichnis \texttt{asset/code/} in die Dokumentation eingebunden. Dies gewährleistet eine saubere Trennung zwischen Code und Dokumentation und erlaubt dem Korrektor, den Code direkt aus der PDF zu übernehmen und auszuführen.
+
+\lstinputlisting[
+    style=console,
+    caption={Aufruf der Simulation},
+    label={lst:run_script}
+]{asset/code/EinleitungIX.tex}
+
+% ==============================================================================
+% =================================== EINLEITUNG ================================
+% ==============================================================================

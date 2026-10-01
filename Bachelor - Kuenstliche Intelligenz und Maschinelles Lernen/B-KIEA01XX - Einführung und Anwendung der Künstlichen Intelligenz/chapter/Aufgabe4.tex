@@ -1,0 +1,826 @@
+% ==============================================================================
+% ================================= Aufgabe 4 =================================
+% ==============================================================================
+
+\chapter{\acs{PROLOG}-Wissensbasis für das Spiel \textit{4}}
+\label{chap:aufgabe4}
+\thispagestyle{fancy}
+
+% ==============================================================================
+% ===================== Aufgabe 4A - PROLOG-Wissensbasis ======================
+% ==============================================================================
+
+\section{\acs{PROLOG}-Wissensbasis \textit{4a}}
+\label{sec:aufgabe4a}
+
+\subsection{Aufgabenstellung}
+
+Sie setzen \acs{PROLOG} zur Repräsentation von statischem Wissen und einfachen Ableitungen ein. Implementieren Sie eine \acs{PROLOG}-Wissensbasis mit Fakten über befahrbare Felder, Hindernisse, Depots und Ziele (z.\,B.\ \texttt{road(X,Y).}, \texttt{wall(X,Y).} und \texttt{depot(Id,X,Y).}) und Regeln zur Nachbarschaftsermittlung (\texttt{vertex((X1,Y1),(X2,Y2),Cost).}) auf Basis der Karte.
+
+\subsection{Theoretische Grundlagen}
+
+\textcite[S. 61]{4} definiert eine \textit{Wissensbasis} als die Menge der Fakten und Regeln eines logischen Programms. Fakten sind Prädikate, die ausschließlich Individuenkonstanten enthalten -- sie behaupten einen konkreten Sachverhalt wie \texttt{road(0, 0).} oder \texttt{depot(-1, 37, 13).}. Regeln haben die Form einer \textit{Horn-Klausel}, d.\,h.\ einer Subjunktion mit höchstens einem nicht-negierten Literal im Kopf \cite[S. 27]{4}:
+
+\[
+(\text{Bedingung}_1 \wedge \text{Bedingung}_2 \wedge \dots) \rightarrow \text{Konsequenz}
+\]
+
+In \acs{PROLOG}-Syntax wird dies als \texttt{konsequenz :- bedingung1, bedingung2.} notiert. Die Auswertung erfolgt über das in \textcite[S. 43\,ff.]{4} beschriebene \textit{Backtracking}: Der Interpreter sucht systematisch nach Variablenbelegungen, welche die Anfrage erfüllen.
+
+Für die Modellierung der Kanten wird das Format \texttt{kante(Start, Ziel, Bewertung).} bzw. \texttt{vertex((X1,Y1), (X2,Y2), Cost).} verwendet, das \textcite[S. 69\,f.]{4} zur Repräsentation von Zustandsgraphen in \acs{PROLOG} einführt. Die Aufgabenstellung übernimmt dieses Format 1:1 und benennt es lediglich um.
+
+Ein wesentlicher Unterschied zu den vorigen Aufgaben besteht in der \textit{statischen Natur} der Wissensbasis: Fakten und Regeln ändern sich zur Laufzeit nicht. Dies entspricht der Klassifikation als \textit{statische Umgebung}, im Gegensatz zur in Abschnitt~\ref{sec:aufgabe2b} eingeführten dynamischen Umgebung der Agenten aus Aufgabe~3d.
+
+\subsection{Implementierung}
+
+Aufgabe~4a führt das neue Modul \texttt{prolog.py} ein, das die Fakten aus der Karte generiert, sowie eine hand-gepflegte Regel-Datei \texttt{rules.pl}. Beide Dateien liegen im Projekt-Root. Die Aufteilung folgt dem bereits etablierten Prinzip der Trennung von generierten Daten und statischer Logik: Die Fakten sind ein \textit{Build-Artefakt} der Karte, die Regeln sind \textit{Quelltext}.
+
+\paragraph{Design-Entscheidung: Trennung von \texttt{rules.pl} und \texttt{facts.pl}.}
+Die Wissensbasis besteht aus zwei Dateien:
+\begin{itemize}
+    \item \texttt{rules.pl} -- hand-gepflegte Regeln, versioniert im \acs{VCS}.
+    \item \texttt{facts.pl} -- generierte Fakten, bei jedem Start von \texttt{main.py} neu geschrieben.
+\end{itemize}
+
+\texttt{rules.pl} bindet die Fakten über eine \texttt{include}-Direktive ein:
+\[
+\texttt{:- include("facts.pl").}
+\]
+
+Der Aufruf \texttt{consult("rules.pl").} lädt damit automatisch beide Dateien. Diese Konstruktion hat drei Vorteile: (1) Der Generierungs-Lauf überschreibt die Regeln nicht. (2) Die Regeln bleiben bei einem Kartenwechsel unverändert. (3) \texttt{include} löst den Pfad relativ zur einbindenden Datei auf -- dadurch ist der Aufruf unabhängig vom Arbeitsverzeichnis.
+
+% ======= config.py – Block 4A =======
+
+\subsubsection{Konfiguration \texttt{config.py} – Wissensbasis-Parameter}
+
+Der neue Konfigurationsblock definiert Dateipfade, Header-Konstanten, Abschnitts-Header, Fakten-Templates und Log-Templates:
+
+\lstinputlisting[
+    language=python,
+    style=python,
+    caption={4A-Konfiguration (\texttt{config.py})},
+    label={lst:config_4a},
+    firstline=347,
+    lastline=386
+]{asset/code/4A-config.py}
+
+Die Konfiguration umfasst fünf Kategorien:
+\begin{itemize}
+    \item \textbf{Wissensbasis-Dateien} -- \texttt{TomaKing4A\_RulesPath} und \texttt{\_FactsPath}.
+    \item \textbf{Ziel-IDs} -- \texttt{TomaKing4A\_StartTargetId} und \texttt{\_TargetIdStep} für die ID-Vergabe (analog zu den Depot-IDs aus Aufgabe~2a).
+    \item \textbf{Datei-Header} -- Shebang, Mode-Line, Titel, Dateiname und Template-Zeilen für den Kopf der generierten Datei.
+    \item \textbf{Abschnitts-Header} -- die sechs Kommentarzeilen für die Fakten-Gruppen (Richtungen, Kosten, Road, Wall, Depot, Target).
+    \item \textbf{Fakten-Templates} -- Format-Strings für alle acht Prädikate.
+    \item \textbf{Logging} -- Templates für die Zählungen beim Export.
+\end{itemize}
+
+Die Validierungsliste in \texttt{validate\_config()} wird um alle neuen Konstanten erweitert (vgl. Abschnitt~\ref{sssec:config_validierung}).
+
+% ======= prolog.py – Imports =======
+
+\subsubsection{Modul \texttt{prolog.py} – Imports}
+
+Das neue Modul importiert die Karten-Symbole, die Depot-Konfiguration aus Aufgabe~2a sowie die Kosten-Parameter aus Aufgabe~3a, die für die Generierung der Fakten benötigt werden. Zusätzlich werden die neuen 4A-Konstanten aus der Config geladen:
+
+\lstinputlisting[
+    language=python,
+    style=python,
+    caption={Imports (\texttt{prolog.py})},
+    label={lst:prolog_imports_4a},
+    firstline=5,
+    lastline=59
+]{asset/code/4A-prolog.py}
+
+Der Import \texttt{from pathlib import Path} aus der Python-Standardbibliothek dient dazu, den projekt-relativen Ausgabepfad unabhängig vom aktuellen Arbeitsverzeichnis zu berechnen. Die Config-Importe sind in vier Gruppen gegliedert: GUI-Logging (Trennzeichen), Karten-Symbole (1A), Depot-IDs (2A), Kosten-Modell (3A) sowie die neuen 4A-Konstanten für Dateipfade, Datei-Header, Abschnitts-Header, Fakten-Templates und Logging.
+
+% ======= prolog.py – Fakten-Generator =======
+
+\subsubsection{Modul \texttt{prolog.py} – Fakten-Generator}
+
+Das neue Modul erzeugt den gesamten Faktenbestand aus der Karte:
+
+\lstinputlisting[
+    language=python,
+    style=python,
+    caption={Fakten-Generator (\texttt{prolog.py})},
+    label={lst:prolog_build_4a},
+    firstline=61,
+    lastline=118
+]{asset/code/4A-prolog.py}
+
+Der Generator arbeitet in fünf Abschnitten, die jeweils von einem Abschnitts-Header eingeleitet werden:
+
+\begin{enumerate}
+    \item \textbf{Datei-Header} -- Shebang, Mode-Line, Dateiname und Titelblock aus den Config-Konstanten. Die Titelzeile wird über \texttt{center()} auf die Länge der Trennlinie ausgerichtet.
+    \item \textbf{Richtungen} -- die vier 4-Nachbarschaftsvektoren aus \texttt{TomaKing1A\_Directions}.
+    \item \textbf{Kosten-Parameter} -- \texttt{base\_cost/1}, \texttt{bottleneck\_penalty/1} und \\ \texttt{bottleneck\_max\_neighbors/1}, direkt aus den 3A-Konstanten. Diese Werte werden also \textbf{nicht} dupliziert, sondern im \acs{PROLOG}-Programm als Fakten exportiert und von den Regeln referenziert.
+    \item \textbf{Zellklassifikation} -- für jede Karte-Zelle wird entweder \texttt{road(X,Y).} oder \texttt{wall(X,Y).} ausgegeben. Depots und Ziele werden als \texttt{road} klassifiziert, weil sie befahrbar sind. Die \texttt{road}- und \texttt{wall}-Fakten werden in \textbf{zwei getrennten Schleifen} geschrieben, damit alle Klauseln desselben Prädikats zusammenhängend in der Datei stehen (siehe Abschnitt~\ref{sssec:prolog_discontiguous}).
+    \item \textbf{Depots und Ziele} -- die Positionslisten aus \texttt{map.get\_depots()} bzw.\ \texttt{map.get\_targets()} werden mit laufenden IDs versehen.
+\end{enumerate}
+
+\paragraph{Hinweis zur Z\"ahlweise.}
+In Aufgabe~3a wurden 753 Knoten identifiziert -- dies sind die \emph{leeren} Zellen (\texttt{TomaKing1A\_Empty}). Der Fakten-Export in 4a z\"ahlt demgegen\"uber 759 \texttt{road/2}-Fakten, weil er zus\"atzlich die 2 Depots und 4 Ziele als befahrbar klassifiziert (siehe \texttt{get\_cell(x,y) != TomaKing1A\_Wall}). Die Differenz von 6 Zellen ist also keine Inkonsistenz, sondern eine unterschiedliche Definition von \enquote{befahrbarer Zelle}: topologisch in Aufgabe~3a (\texttt{get\_free\_cells()}, nur leere Zellen) gegen\"uber faktisch in Aufgabe~4a (alle Nicht-Wand-Zellen). Beide Z\"ahlweisen sind f\"ur ihre jeweilige Aufgabe korrekt.
+
+Alle Format-Strings stammen aus \texttt{config.py} -- im Modul selbst existiert kein hartkodierter \acs{PROLOG}-Code.
+
+% ======= prolog.py – Export-Funktion =======
+
+\subsubsection{Modul \texttt{prolog.py} – Export mit projekt-relativem Pfad}
+
+Die Export-Funktion schreibt die Fakten in eine Datei und protokolliert die Zählungen:
+
+\lstinputlisting[
+    language=python,
+    style=python,
+    caption={Export-Funktion (\texttt{prolog.py})},
+    label={lst:prolog_export_4a},
+    firstline=119,
+    lastline=131
+]{asset/code/4A-prolog.py}
+
+Der Pfad wird über \texttt{Path(\_\_file\_\_).resolve().parent} aufgelöst, damit die Datei stets im Projektordner landet -- unabhängig davon, aus welchem Arbeitsverzeichnis \texttt{main.py} gestartet wird. Dies ist besonders für den Start über die Python-IDE oder per Doppelklick relevant.
+
+% ======= rules.pl – Regel-Datei =======
+
+\subsubsection{Datei \texttt{rules.pl} – Hand-gepflegte Regeln}
+
+Die Regel-Datei liegt im Projekt-Root und definiert die vier Ableitungsregeln:
+
+\lstinputlisting[
+    style=prolog,
+    caption={Regeln der Wissensbasis (\texttt{rules.pl})},
+    label={lst:rules_pl_4a},
+    firstline=5,
+    lastline=31
+]{asset/code/4A-rules.pl}
+
+Die Regeln im Einzelnen:
+
+\begin{itemize}
+    \item \texttt{neighbor\_count(X, Y, N)} -- zählt die befahrbaren Nachbarn eines Knotens. Verwendet \texttt{findall/3}, um alle vier Richtungen zu prüfen, und \texttt{length/2} zur Zählung.
+    \item \texttt{bottleneck(X, Y)} -- leitet einen Engpass aus der Nachbarzahl ab: Ein Knoten mit höchstens \texttt{bottleneck\_max\_neighbors} Nachbarn ist ein Engpass. Dies entspricht der Definition aus Aufgabe~3a.
+    \item \texttt{cost(X, Y, Cost)} -- berechnet die Kantenkosten als Basis-Kosten plus Engpass-Aufschlag der Zielzelle. Die Verwendung des If-Then-Else-Operators \texttt{->} entspricht der Regel-Anwendung in \acs{PROLOG}. Der \texttt{->}-Operator wirkt dabei wie ein lokaler Cut: Nach erfolgreicher Auswertung von \texttt{bottleneck(X, Y)} wird nicht mehr in diese Bedingung zurückgesprungen, sodass \texttt{cost/3} pro Zelle genau einen eindeutigen Kostenwert liefert.
+    \item \texttt{vertex((X1,Y1), (X2,Y2), Cost)} -- erzeugt eine Kante zwischen zwei benachbarten, befahrbaren Knoten. Die Kosten werden aus \texttt{cost/3} abgeleitet und schließen den Engpass-Aufschlag ein.
+\end{itemize}
+
+\paragraph{Design-Entscheidung: Ableitung statt Redundanz.}
+Die Engpass-Eigenschaft einer Zelle wird \textbf{nicht} als Fakt exportiert, sondern als \acs{PROLOG}-Regel abgeleitet. Dies entspricht dem in \textcite[S. 61]{4} beschriebenen Prinzip der Wissensbasis: Nur die Basisfakten (befahrbare Zellen, Wände, Depots, Ziele) werden gespeichert; alle abgeleiteten Eigenschaften (Nachbarschaften, Engpässe, Kantenkosten) entstehen durch logische Resolution. Der Vorteil: Ein Kartenwechsel erfordert nur die Aktualisierung der Basisfakten -- die Regeln bleiben unverändert.
+
+% ======= Discontiguous-Hinweis =======
+
+\subsubsection{Hinweis: Zusammenhängende Klauseln in \acs{PROLOG}}
+\label{sssec:prolog_discontiguous}
+
+\acs{SWI}-\acs{PROLOG} erwartet, dass alle Klauseln desselben Prädikats \textit{zusammenhängend} in der Quelltextdatei stehen. Der Generator erfüllt dies durch die Aufteilung in zwei getrennte Schleifen: erst alle \texttt{road/2}-Fakten, dann alle \texttt{wall/2}-Fakten. Würden beide Prädikate zellenweise im Wechsel ausgegeben, entstünden \texttt{discontiguous}-Warnungen beim Laden.
+
+% ======= main.py – Neuer Import =======
+
+\subsubsection{Modul \texttt{main.py} – Neuer Import}
+
+Der Orchestrator importiert die Export-Funktion aus dem neuen Modul \texttt{prolog.py}:
+
+\lstinputlisting[
+    language=python,
+    style=python,
+    caption={Neuer Import (\texttt{main.py})},
+    label={lst:main_import_4a},
+    firstline=13,
+    lastline=13
+]{asset/code/4A-main.py}
+
+Die neue Zeile \texttt{from prolog import export\_facts} fügt sich in die bestehende Import-Reihenfolge ein: Nach den Kern-Modulen aus Aufgabe~1a--1c (Karte, Agenten) und Aufgabe~2a (Depots) sowie vor dem Graph aus Aufgabe~3a. Die Reihenfolge folgt der logischen Abhängigkeit der Module untereinander.
+
+% ======= main.py – Erweiterung =======
+
+\subsubsection{Modul \texttt{main.py} – Aufruf des Fakten-Exports}
+
+Der Orchestrator ruft den Fakten-Export direkt nach der Karten-Erzeugung auf:
+
+\lstinputlisting[
+    language=python,
+    style=python,
+    caption={Erweiterter Orchestrator (\texttt{main.py})},
+    label={lst:main_4a},
+    firstline=26,
+    lastline=26
+]{asset/code/4A-main.py}
+
+Die Reihenfolge ist bewusst gewählt: Da die Fakten ausschließlich von der Karte abhängen, werden sie unmittelbar nach der Instanziierung von \texttt{Map} erzeugt -- vor Agenten, Depots, Graph und \acs{GUI}. Der Export erscheint damit im Log direkt nach der Kartenausgabe und vor dem Agenten-Log.
+
+% ======= Refactoring: 3d-Demo entfernt =======
+
+\subsection{Refactoring: Reduktion der vorherigen Demo-Blöcke}
+
+In Aufgabe~3c wurde der Demo-Block aus \texttt{astar.py} entfernt (dokumentiert in Abschnitt~\ref{sec:aufgabe3c}). In Aufgabe~3d wurde ein neuer Demo-Block für den Heuristik-Vergleich hinzugefügt. Dieser Demo-Block ist jetzt in Aufgabe~4a entfernt worden -- die 3d-Dokumentation bleibt als historische Schicht erhalten, und der 3d-Ergebnisnachweis referenziert weiterhin den ursprünglichen Zustand.
+
+Die entfernten Bestandteile umfassen die Hilfsfunktionen \texttt{\_select\_steps} und \texttt{\_log\_run} in \texttt{astar.py} sowie der \texttt{if \_\_name\_\_ == "\_\_main\_\_"}-Block. Die Methoden \texttt{\_set\_heuristic\_mode} und \texttt{\_current\_heuristic\_mode} bleiben erhalten, da sie in Aufgabe~4c für gezielte Testläufe weiterhin benötigt werden.
+
+Der Konfigurationsblock \texttt{AUFGABE 3D} in \texttt{config.py} wurde auf die drei produktiven Heuristik-Konstanten reduziert (\texttt{\_HeuristicMode}, \texttt{\_ModeManhattan}, \texttt{\_ModeBFS}). Alle Demo-Parameter und Log-Templates sind entfallen.
+
+% ======= Ergebnisnachweis =======
+
+\subsection{Ergebnisnachweis}
+\label{sssec:prolog_4a_nachweis}
+
+Der Nachweis besteht aus drei Teilen: der Export-Ausgabe beim Programmstart, einem Auszug aus der generierten Faktendatei und der Verifikation der Regeln über \acs{SWI}-\acs{PROLOG}-Abfragen.
+
+\paragraph{Teil 1: Export-Ausgabe.}
+Beim Start von \texttt{main.py} wird die Fakten-Datei erzeugt und protokolliert:
+
+\lstinputlisting[
+    style=console,
+    caption={Terminal-Ausgabe: Fakten-Export beim Programmstart},
+    label={lst:test_4a_export},
+    firstline=24,
+    lastline=30
+]{asset/code/4A-terminal.tex}
+
+Die Zählungen stimmen mit der Karte aus Aufgabe~1a überein: 759 befahrbare Zellen (753 leere Zellen plus 2 Depots plus 4 Ziele), 306 Wände, 2 Depots und 4 Ziele.
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}{l r l}
+        \toprule
+        \textbf{Prädikat} & \textbf{Anzahl} & \textbf{Quelle} \\
+        \midrule
+        \texttt{road/2}   & 759 & Freie Zellen + Depots + Ziele \\
+        \texttt{wall/2}   & 306 & Wand-Zellen aus dem \acs{ASCII}-Art \\
+        \texttt{depot/3}  & 2   & Aus \texttt{map.get\_depots()} \\
+        \texttt{target/3} & 4   & Aus \texttt{map.get\_targets()} \\
+        \bottomrule
+    \end{tabular}
+    \caption{Übersicht der generierten Fakten}
+    \label{tab:prolog_4a_facts}
+\end{table}
+
+\paragraph{Teil 2: Auszug aus der generierten Faktendatei.}
+Die Datei \texttt{facts.pl} beginnt mit dem Datei-Header und den statischen Parametern:
+
+\lstinputlisting[
+    style=prolog,
+    caption={Auszug aus der generierten Faktendatei (\texttt{facts.pl})},
+    label={lst:test_4a_facts},
+    firstline=5,
+    lastline=36
+]{asset/code/4A-facts.pl}
+
+Der Datei-Header folgt demselben Muster wie die Python-Module: Shebang, Mode-Line, Dateiname und ein umrahmter Titelblock. Die Abschnitts-Header gliedern den Inhalt in die fünf Gruppen Richtungen, Kosten-Parameter, Befahrbare Felder, Wände, Depots und Ziele.
+
+\paragraph{Teil 3: Verifikation der Wissensbasis in \acs{SWI}-\acs{PROLOG}.}
+Die Wissensbasis wird über \texttt{consult("rules.pl").} geladen -- die Regeln ziehen die Fakten über \texttt{include} automatisch nach. Die drei Abfragen prüfen die Kernregeln:
+
+\lstinputlisting[
+    style=console,
+    caption={Terminal-Ausgabe: Verifikation in \acs{SWI}-\acs{PROLOG}},
+    label={lst:test_4a_queries},
+    firstline=1,
+    lastline=10
+]{asset/code/4A-terminal-prolog.tex}
+
+Die Antworten belegen die Korrektheit der Wissensbasis:
+
+\begin{itemize}
+    \item \texttt{bottleneck(0, 0).} liefert \texttt{true} -- die Zelle $(0,0)$ besitzt zwei begehbare Nachbarn und ist damit ein Engpass. Die Regel \texttt{bottleneck/2} leitet diese Eigenschaft aus \texttt{neighbor\_count/3} ab.
+    \item \texttt{bottleneck(1, 1).} liefert \texttt{false} -- die Zelle $(1,1)$ besitzt vier begehbare Nachbarn und ist kein Engpass.
+    \item \texttt{vertex((1, 0), (0, 0), C).} liefert \texttt{C = 1.5} -- die Kante erhält den Engpass-Aufschlag von $0{,}5$, weil die Zielzelle $(0,0)$ als Engpass abgeleitet wurde.
+\end{itemize}
+
+Damit ist die Wissensbasis vollständig verifiziert: Die Fakten sind korrekt generiert, die Regeln leiten Engpässe und Kantenkosten korrekt ab. Der Übergang zu Aufgabe~4b ist vorbereitet -- die Prädikate \texttt{reachable/2} und \texttt{candidate\_agent/2} werden in derselben Wissensbasis definiert.
+
+% ==============================================================================
+% ============== Aufgabe 4B - PROLOG-Suche und Kandidatenauswahl ==============
+% ==============================================================================
+
+\section{\acs{PROLOG}-Suche und Kandidatenauswahl \textit{4b}}
+\label{sec:aufgabe4b}
+
+\subsection{Aufgabenstellung}
+
+Implementieren Sie in \acs{PROLOG} ein Prädikat \texttt{reachable(From, To)} (z.\,B.\ mit Tiefen- oder Breitensuche), das prüft, ob ein Weg existiert, sowie ein Prädikat \texttt{candidate\_agent(Task, Agent)}, das unter allen bekannten Agenten einen Kandidaten auswählt (z.\,B.\ minimale Distanz, ausreichend Kapazität und Batterieladung).
+
+\subsection{Theoretische Grundlagen}
+
+Die Erreichbarkeitsprüfung \texttt{reachable/2} ist die \textit{transitive Hülle} der in Aufgabe~4a eingeführten Kantenrelation \texttt{vertex/3} \cite[S. 70]{4}. Basisfall: Ein Knoten ist von sich selbst aus erreichbar. Rekursionsfall: Wenn eine Kante von \texttt{From} zu einem Zwischenknoten \texttt{Mid} existiert und \texttt{Mid} zum Ziel \texttt{To} führt, dann ist \texttt{From} zu \texttt{To} erreichbar.
+
+\textcite[S. 70\,f.]{4} stellt zwei Varianten gegenüber: Die Prozedur \texttt{erreichbar1} realisiert eine \textit{Tiefensuche} (der rekursive Aufruf steht vor der Kantenauswahl), die Prozedur \texttt{erreichbar2} eine \textit{Breitensuche}. Beide Ausprägungen sind im Studienheft jedoch nicht zyklenfest -- sie terminieren nur in azyklischen Graphen zuverlässig. Da die Karte aus Aufgabe~1a zahlreiche Zyklen enthält (Korridore und offene Flächen sind bidirektional befahrbar), würde eine unveränderte Übernahme der Heft-Prozeduren in einer Endlosschleife resultieren.
+
+Zur Vermeidung dieses Problems wird in der Implementierung eine \textit{Breitensuche mit globaler Seen-Liste} verwendet. Diese besucht jeden Knoten höchstens einmal und terminiert auf dem 753-Knoten-Gitter in \(\mathcal{O}(V + E)\) -- also praktisch in Millisekunden. Der wesentliche Unterschied zur Heft-Prozedur besteht darin, dass die Seen-Liste \textbf{nicht} mit dem Backtracking zurückgesetzt wird, sondern über die gesamte Suche hinweg akkumuliert.
+
+Das Prädikat \texttt{candidate\_agent/2} ist keine reine Graphensuche mehr, sondern eine regelbasierte Kandidatenauswahl mit Nebenbedingungen. Es folgt dem Konzept des \textit{zielbasierten Agenten} aus Abschnitt~\ref{sec:aufgabe3c}: Aus Sicht des Depots ist die Auswahl eines Agenten ein Optimierungsproblem -- minimiere die Gesamtdistanz über alle Agenten, die die Aufgabe grundsätzlich übernehmen können. Die Nebenbedingungen (Kapazität, Batterie, Erreichbarkeit) wirken dabei als \textit{Vorfilter}, bevor die eigentliche Optimierung beginnt.
+
+\subsection{Implementierung}
+
+Aufgabe~4b erweitert die Wissensbasis aus Aufgabe~4a um drei neue Prädikate. Da \texttt{reachable/2} und \texttt{candidate\_agent/2} auf den bestehenden Fakten der Karte operieren, ist keine Änderung an \texttt{config.py}, \texttt{prolog.py} oder \texttt{main.py} erforderlich. Die neuen Prädikate leben ausschließlich in der hand-gepflegten Datei \texttt{rules.pl}.
+
+% ======= rules.pl – Neue Regeln =======
+
+\subsubsection{Datei \texttt{rules.pl} – Suche und Kandidatenauswahl}
+
+Die drei neuen Prädikate werden am Ende von \texttt{rules.pl} ergänzt -- nach dem bestehenden \texttt{vertex/3}-Block:
+
+\lstinputlisting[
+    style=prolog,
+    caption={Neue Regeln (\texttt{rules.pl})},
+    label={lst:rules_4b},
+    firstline=33,
+    lastline=50
+]{asset/code/4B-rules.pl}
+
+\paragraph{\texttt{reachable/2} – Breitensuche mit globaler Seen-Liste.}
+Das Prädikat implementiert eine Breitensuche über den Wissensbasis-Graphen:
+
+\begin{itemize}
+    \item \texttt{reachable(From, To)} -- Einstiegspunkt. Ruft \texttt{reachable\_bfs/3} mit einer Queue und einer Seen-Liste auf, die beide den Startknoten enthalten.
+    \item \texttt{reachable\_bfs([To|\_], \_, To)} -- Basisfall. Wenn das Ziel an der Spitze der Queue steht, ist es erreichbar.
+    \item \texttt{reachable\_bfs([Node|Rest], Seen, To)} -- Rekursion. Der Kopf der Queue wird expandiert: Alle Nachbarn, die noch nicht in \texttt{Seen} stehen, wandern ans Ende der Queue und in die Seen-Liste.
+\end{itemize}
+
+Im Gegensatz zu den Heft-Prozeduren \texttt{erreichbar1} und \texttt{erreichbar2} \cite[S. 70\,f.]{4}, die jeweils nur eine lokale Rekursions-Liste führen und bei zyklischen Graphen nicht terminieren, wird in der eigenen Implementierung eine \textbf{globale Seen-Liste} verwendet: Sie wird über \texttt{append(Seen, Nexts, SeenNew)} monoton erweitert und bei keinem Backtracking-Schritt zurückgesetzt. Dadurch wird jeder Knoten des Graphen höchstens einmal expandiert und die Suche terminiert garantiert. Dadurch wird jeder Knoten des Graphen höchstens einmal expandiert -- die Suche terminiert garantiert nach endlich vielen Schritten.
+
+\paragraph{\texttt{manhattan/3} – Hilfsprädikat.}
+Berechnet die Manhattan-Distanz zwischen zwei Punkten als \texttt{D is abs(X1-X2) + abs(Y1-Y2)}. Dieses Prädikat wird für die Distanzberechnung in \texttt{candidate\_agent/2} benötigt.
+
+\paragraph{\texttt{candidate\_agent/2} – Kandidatenauswahl.}
+Das Prädikat wählt aus allen Agenten denjenigen mit der minimalen Gesamtdistanz, der die Aufgabe übernehmen kann:
+
+\lstinputlisting[
+    style=prolog,
+    caption={Kandidatenauswahl (\texttt{rules.pl})},
+    label={lst:candidate_agent_4b},
+    firstline=51,
+    lastline=65
+]{asset/code/4B-rules.pl}
+
+Der Ablauf ist:
+\begin{enumerate}
+    \item \texttt{findall/3} sammelt alle Tupel \texttt{D-A} (Distanz, Agent-ID) für Agenten, die die Nebenbedingungen erfüllen: ausreichende Kapazität (\texttt{Cargo + 1 =< Capacity}), positive Batterie (\texttt{Battery > 0}), und Erreichbarkeit der Route (\texttt{reachable((X,Y), Depot)} sowie \texttt{reachable(Depot, Target)}).
+    \item \texttt{Candidates \textbackslash= []} stellt sicher, dass mindestens ein Kandidat existiert.
+    \item \texttt{min\_member(D-A, Candidates)} liefert das Tupel mit der kleinsten Distanz. Bei Gleichstand entscheidet die \textbf{niedrigere Agent-ID} -- der Tupel-Vergleich ist lexikographisch.
+\end{enumerate}
+
+Die Reihenfolge der Prüfungen ist performanzorientiert: Die billigen Bedingungen (Kapazität, Batterie) werden zuerst geprüft, die teure \texttt{reachable/2}-Suche erst danach. Da \acs{PROLOG} Konjunktionen von links nach rechts auswertet, wirkt dies als natürlicher Vorfilter.
+
+\paragraph{Design-Entscheidung: Paketgröße hartkodiert.}
+Die Kapazitätsprüfung verwendet \texttt{Cargo + 1 =< Capacity} mit der Paketgröße $1$. Da die Simulation aus Aufgabe~1c alle Pakete mit Größe~$1$ erzeugt (siehe \texttt{Package}-Konstruktor), ist dies eine zulässige Vereinfachung. Eine Parametrisierung über einen Fakt \texttt{package\_size(1).} wäre möglich, für die vorliegende Aufgabe aber Overengineering.
+
+% ======= agents_demo.pl – Testdaten =======
+
+\subsubsection{Datei \texttt{agents\_demo.pl} – Testdaten für die Verifikation}
+
+Da \texttt{candidate\_agent/2} Zugriff auf Agenten-Fakten benötigt, wird eine hand-gepflegte Test-Datei \texttt{agents\_demo.pl} im Projekt-Root angelegt:
+
+\lstinputlisting[
+    style=prolog,
+    caption={Demo-Agenten für den 4b-Nachweis (\texttt{agents\_demo.pl})},
+    label={lst:agents_demo_4b},
+    firstline=5,
+    lastline=12
+]{asset/code/4B-agents-demo.pl}
+
+Die vier Agenten entsprechen den Startpositionen aus dem Programmstart (vgl\ Listing~\ref{lst:test_4a_export}). Dadurch ist der 4b-Testlauf unmittelbar mit dem 2c-Bietergebnis vergleichbar. Die Struktur des \texttt{agent/7}-Fakts ist bewusst für 4c vorbereitet: Dort wird Python diese Datei dynamisch generieren.
+
+\paragraph{Ankündigung: Entfernung in Aufgabe~4c.}
+Analog zu den Demo-Blöcken aus Aufgabe~3b und 3d wird \texttt{agents\_demo.pl} in Aufgabe~4c entfernt. Dort übernimmt Python die Aufgabe, die Agentendaten dynamisch aus der aktuellen Simulation zu exportieren -- analog zur bereits bestehenden \texttt{facts.pl}-Generierung. Die statische Demo-Datei dient ausschließlich dem in sich abgeschlossenen 4b-Nachweis.
+
+% ======= Ergebnisnachweis =======
+
+\subsection{Ergebnisnachweis}
+\label{sssec:prolog_4b_nachweis}
+
+Der Nachweis besteht aus zwei Teilen: der Erreichbarkeitsprüfung über \texttt{reachable/2} und der Kandidatenauswahl über \texttt{candidate\_agent/2}.
+
+\paragraph{Teil 1: Erreichbarkeitsprüfung.}
+Nach dem Laden der Wissensbasis (\texttt{consult("rules.pl")}) und der Agenten-Daten (\texttt{consult("agents\_demo.pl")}) prüfen vier Abfragen die \texttt{reachable/2}-Regel:
+
+\lstinputlisting[
+    style=console,
+    caption={Terminal-Ausgabe: Erreichbarkeitsprüfung in \acs{SWI}-\acs{PROLOG}},
+    label={lst:test_4b_reachable},
+    firstline=1,
+    lastline=10
+]{asset/code/4B-terminal.tex}
+
+\begin{itemize}
+    \item \texttt{reachable((37, 13), (25, 0))} -- Depot 1 zum Ziel des ersten Pakets aus 2c. Antwort \texttt{true} -- die Route existiert.
+    \item \texttt{reachable((43, 13), (25, 0))} -- Startposition von Agent 0 zum selben Ziel. Antwort \texttt{true}.
+    \item \texttt{reachable((2, 1), (2, 1))} -- Trivialfall Start~$=$~Ziel. Antwort \texttt{true} über den Basisfall.
+    \item \texttt{reachable((0, 0), (999, 999))} -- Anfrage nach einem nicht existierenden Knoten. Antwort \texttt{false} -- die Suche erschöpft die Queue, ohne das Ziel zu finden.
+\end{itemize}
+
+Die vier Abfragen decken alle Fälle ab: einen echten Pfad, einen Nachbar-Pfad, den Trivialfall und einen Negativtest. Die Negativ-Antwort in unter einer Sekunde belegt, dass die Seen-Liste die Zyklen des 753-Knoten-Gitters erfolgreich auflöst -- eine unveränderte DFS aus dem Studienheft hätte hier nicht terminiert.
+
+\paragraph{Teil 2: Kandidatenauswahl.}
+Zwei Abfragen prüfen die \texttt{candidate\_agent/2}-Regel gegen die in Aufgabe~2c bekannten Bietergebnisse:
+
+\lstinputlisting[
+    style=console,
+    caption={Terminal-Ausgabe: Kandidatenauswahl in \acs{SWI}-\acs{PROLOG}},
+    label={lst:test_4b_candidate},
+    firstline=11,
+    lastline=14
+]{asset/code/4B-terminal.tex}
+
+\begin{itemize}
+    \item \texttt{candidate\_agent(task((37, 13), (25, 0)), Agent)} -- Task~$0$ aus Aufgabe~2c: Depot~1 zu Ziel~$(25,0)$. Antwort \texttt{Agent = 0}. In 2c hatte Agent~0 ebenfalls den Zuschlag erhalten (Bietkosten~$31$).
+    \item \texttt{candidate\_agent(task((43, 1), (36, 5)), Agent)} -- Task~$1$ aus Aufgabe~2c: Depot~$2$ zu Ziel~$(36,5)$. Antwort \texttt{Agent = 1}. In 2c hatte Agent~1 den Zuschlag erhalten (Bietkosten~$13$).
+\end{itemize}
+
+Die Ergebnisse sind in Tabelle~\ref{tab:candidate_agent_4b} zusammengefasst.
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}{l c c c}
+        \toprule
+        \textbf{Task} & \textbf{\acs{PROLOG}-Kandidat} & \textbf{2c-Gewinner} & \textbf{Übereinstimmung} \\
+        \midrule
+        $(37,13) \to (25,0)$ & Agent 0 & Agent 0 & \checkmark \\
+        $(43,1) \to (36,5)$  & Agent 1 & Agent 1 & \checkmark \\
+        \bottomrule
+    \end{tabular}
+    \caption{Konsistenz zwischen \acs{PROLOG}-Kandidatenauswahl und Contract-Net-Zuschlag aus 2c}
+    \label{tab:candidate_agent_4b}
+\end{table}
+
+\paragraph{Konsistenz-Nachweis.}
+Die beiden \texttt{candidate\_agent/2}-Abfragen liefern exakt dieselben Agenten wie die Python-Bietlogik aus Aufgabe~2c. Damit ist nachgewiesen, dass die \acs{PROLOG}-Regel die Auswahl der Bietlogik korrekt widerspiegelt -- die Wissensbasis aus 4a ist eine \textit{äquivalente Repräsentation} des in Python modellierten Systems. Dies ist die Voraussetzung für Aufgabe~4c, in der \texttt{reachable/2} und \texttt{candidate\_agent/2} als Vorfilter vor der \acs{Astern}-Planung und dem Contract-Net-Bieten eingesetzt werden.
+
+% ==============================================================================
+% ============= Aufgabe 4C - PROLOG-Integration in die Simulation =============
+% ==============================================================================
+
+\section{\acs{PROLOG}-Integration in die Simulation \textit{4c}}
+\label{sec:aufgabe4c}
+
+\subsection{Aufgabenstellung}
+
+Binden Sie \acs{PROLOG} in Ihre Simulation ein (möglich z.\,B.\ über Datei-I/O oder Bibliothek). Der Aufruf von \texttt{reachable/2} erfolgt vor einer \acs{Astern}-Planung (Task nur vergeben, wenn erreichbar); \texttt{candidate\_agent/2} dient als Vorfilter, bevor das Contract-Net-Bieten startet.
+
+\subsection{Theoretische Grundlagen}
+
+Aufgabe~4c realisiert die in \textcite[S. 61]{4} beschriebene Funktion einer Wissensbasis als \textit{Entscheidungsunterstützung}: Statt jede Anfrage von der Simulationslogik aus zu lösen, werden zwei Prädikate der Wissensbasis als Vorfilter zwischengeschaltet, bevor die eigentliche Problemlösung beginnt. Dies folgt dem in Abschnitt~\ref{sec:aufgabe3c} eingeführten Konzept des \textit{zielbasierten Agenten}: Der Agent erhält Ziele und einen Filter, der die Auswahlmöglichkeiten einschränkt, bevor er in die eigentliche Planung eintritt.
+
+Die \textit{Interprozess-Kommunikation} zwischen Python und \acs{PROLOG} erfolgt über \texttt{subprocess}: Python startet für jede Abfrage eine isolierte \acs{SWI}-\acs{PROLOG}-Instanz, übergibt das Goal als Kommandozeilenargument und liest die Antwort aus dem Standardausgabestrom. Diese Technik ist als \textit{Datei-I/O-Ansatz} in der Aufgabenstellung explizit zugelassen und vermeidet externe Bibliotheksabhängigkeiten wie PySWIP.
+
+Da jede \acs{SWI}-\acs{PROLOG}-Instanz ohne Speicherzustand startet, muss die Wissensbasis bei jedem Aufruf neu geladen werden. Der Goal wird deshalb um zwei \texttt{consult}-Subgoals erweitert:
+\[
+\texttt{consult('rules.pl'),\ consult('agents.pl'),\ <Abfrage>}
+\]
+Das Komma fungiert in \acs{PROLOG} als Konjunktion; die Subgoals werden von links nach rechts ausgewertet. \texttt{rules.pl} lädt über seine \texttt{include}-Direktive automatisch die Fakten aus 4a nach.
+
+Die \textit{Agentendaten} sind keine statischen Fakten wie die Karte -- ihre Positionen, Batteriestände und Beladungen ändern sich mit jedem Simulationsschritt. Sie werden deshalb dynamisch aus Python exportiert: Vor jeder Ausschreibung schreibt \texttt{prolog.py} die aktuellen Werte als \texttt{agent/7}-Fakten nach \texttt{agents.pl}, konsistent zum bereits etablierten Muster der \texttt{facts.pl}-Generierung aus Aufgabe~4a.
+
+\subsection{Implementierung}
+
+Aufgabe~4c führt das neue Modul \texttt{query.py} ein, das als Wrapper die \texttt{subprocess}-Aufrufe kapselt. Die Vorfilter-Logik wird in \texttt{simulation.py} (für \texttt{reachable/2}) und \texttt{depot.py} (für \texttt{candidate\_agents/2}) integriert. Die Wissensbasis \texttt{rules.pl} wird um ein Plural-Prädikat \texttt{candidate\_agents/2} erweitert.
+
+\paragraph{Design-Entscheidung: Eigenes Wrapper-Modul \texttt{query.py}.}
+Die \texttt{subprocess}-Anbindung wird nicht direkt in \texttt{prolog.py} implementiert, sondern in ein eigenes Modul \texttt{query.py} ausgelagert. Drei Gründe sprechen dafür: (1) \texttt{prolog.py} bleibt reines \acs{PROLOG}-Wissen (Datei-Generierung und Abfrage-API), während \texttt{query.py} die technische Interprozess-Kommunikation kapselt. (2) Die Fehlerbehandlung (Timeout, Prozess nicht gefunden, Parsing) konzentriert sich an einer Stelle. (3) Ein späterer Wechsel auf eine Bibliothek wie PySWIP wäre ohne Eingriff in \texttt{prolog.py} möglich.
+
+\paragraph{Design-Entscheidung: Zwei Vorfilter an zwei Stellen.}
+Die beiden Vorfilter sind an den fachlich richtigen Stellen platziert:
+\begin{itemize}
+    \item \texttt{reachable/2} in \texttt{Simulation.\_generate\_package} -- unmittelbar nach der zufälligen Wahl von Depot und Ziel. Ist das Ziel nicht erreichbar, wird das Paket verworfen, bevor es überhaupt entsteht. Ist das Ziel nicht erreichbar, wird das Paket verworfen, bevor es überhaupt entsteht -- dadurch werden weder Speicher noch Paket-IDs für Aufgaben verbraucht, die später ohnehin nicht vergeben werden könnten.
+    \item \texttt{candidate\_agents/2} in \texttt{Depot.announce\_task} -- unmittelbar vor dem Broadcast der \texttt{ANNOUNCE}-Nachricht. Nur die so gefilterten Agenten erhalten die Ausschreibung und geben anschließend ein \texttt{BID} ab.
+\end{itemize}
+
+% ======= config.py – Block 4C =======
+
+\subsubsection{Konfiguration \texttt{config.py} – \acs{PROLOG}-Brücke}
+
+Der neue Konfigurationsblock definiert den \acs{SWI}-\acs{PROLOG}-Aufruf, die Wissensbasis-Vorbereitung, Goal-Templates, das Antwort-Parsing sowie Log- und Error-Templates:
+
+\lstinputlisting[
+    language=python,
+    style=python,
+    caption={4C-Konfiguration (\texttt{config.py})},
+    label={lst:config_4c},
+    firstline=388,
+    lastline=420
+]{asset/code/4C-config.py}
+
+Die Konfiguration umfasst sechs Kategorien:
+\begin{itemize}
+    \item \textbf{\acs{SWI}-\acs{PROLOG}-Aufruf} -- Programmpfad, Timeout, Argumentreihenfolge.
+    \item \textbf{Wissensbasis-Vorbereitung} -- die beiden \texttt{consult}-Goals und der Subgoal-Separator. Diese Konstanten realisieren den in Abschnitt~\ref{sec:aufgabe4c} beschriebenen Wrapper.
+    \item \textbf{Dateien} -- Pfad zur dynamisch generierten \texttt{agents.pl}.
+    \item \textbf{Goal-Templates} -- Format-Strings für die drei Abfrage-Goals (\texttt{reachable}, \texttt{candidate\_agents}, \texttt{agent}-Fakt).
+    \item \textbf{Antwort-Parsing} -- Marker zum Erkennen von \texttt{true}, \texttt{false} und Listen.
+    \item \textbf{Logging und Error Handling} -- Templates für Vorfilter-Ergebnisse, Fallback und ungültige Antworten.
+\end{itemize}
+
+Die Validierungsliste in \texttt{validate\_config()} wird um alle neuen Konstanten erweitert (vgl. Abschnitt~\ref{sssec:config_validierung}).
+
+% ======= query.py – Modul =======
+
+\subsubsection{Modul \texttt{query.py} – Imports}
+
+Der neue Wrapper importiert \texttt{subprocess} aus der Python-Standardbibliothek sowie alle Konfigurationskonstanten für den \acs{SWI}-\acs{PROLOG}-Aufruf, die Wissensbasis-Vorbereitung, das Antwort-Parsing und die Fehlerbehandlung:
+
+\lstinputlisting[
+    language=python,
+    style=python,
+    caption={Imports (\texttt{query.py})},
+    label={lst:query_imports_4c},
+    firstline=5,
+    lastline=29
+]{asset/code/4C-query.py}
+
+Die Imports sind in vier Gruppen gegliedert: \acs{SWI}-\acs{PROLOG}-Aufruf (Programmpfad, Timeout, Argumentreihenfolge), Wissensbasis-Vorbereitung (\texttt{consult}-Goals und Subgoal-Separator), Antwort-Parsing (Marker für \texttt{true}, \texttt{false} und Listen) sowie Logging und Error Handling.
+
+\subsubsection{Modul \texttt{query.py} – Interprozess-Wrapper}
+
+Das neue Modul \texttt{query.py} kapselt die \texttt{subprocess}-Aufrufe und das Antwort-Parsing:
+
+\lstinputlisting[
+    language=python,
+    style=python,
+    caption={Wrapper-Modul (\texttt{query.py})},
+    label={lst:query_4c},
+    firstline=31,
+    lastline=78
+]{asset/code/4C-query.py}
+
+\begin{itemize}
+    \item \texttt{run\_goal\_with\_consult(goal)} -- kombiniert das \texttt{consult} von \texttt{rules.pl} und \texttt{agents.pl} mit dem übergebenen Goal. Ruft \texttt{run\_goal} auf.
+    \item \texttt{run\_goal(goal)} -- startet eine \acs{SWI}-\acs{PROLOG}-Instanz mit den konfigurierten Argumenten und liest den Standardausgabestrom. Bei Fehler (Programm nicht gefunden oder Timeout) wird die Fallback-Meldung ausgegeben und \texttt{None} zurückgegeben.
+    \item \texttt{is\_true(answer)}, \texttt{is\_false(answer)} -- Auswertung boolescher Antworten.
+    \item \texttt{parse\_int\_list(answer)} -- parst Listen der Form \texttt{L = [1,2,3]} in eine Python-Liste.
+\end{itemize}
+
+Die Auslagerung des \texttt{consult}-Wrappers in eine eigene Funktion ist notwendig, weil jede \acs{SWI}-\acs{PROLOG}-Instanz ohne Speicherzustand startet. Ohne den Wrapper würde die Wissensbasis fehlen und jeder Aufruf mit \texttt{Unknown procedure} scheitern.
+
+% ======= rules.pl – candidate_agents/2 =======
+
+\subsubsection{Datei \texttt{rules.pl} – Plural-Prädikat \texttt{candidate\_agents/2}}
+
+Die Vorfilter-Rolle verlangt, dass mehrere Agenten gleichzeitig zulässig bleiben -- sonst würde das Contract-Net auf einen einzigen Bieter reduziert. Deshalb wird das Singular-Prädikat \texttt{candidate\_agent/2} aus 4b um ein Plural-Prädikat \texttt{candidate\_agents/2} ergänzt:
+
+\lstinputlisting[
+    style=prolog,
+    caption={Neues Plural-Prädikat (\texttt{rules.pl})},
+    label={lst:candidate_agents_4c},
+    firstline=67,
+    lastline=79
+]{asset/code/4C-rules.pl}
+
+Der Unterschied zu \texttt{candidate\_agent/2}: \texttt{findall/3} sammelt nur die Agent-IDs (ohne Distanz), und es wird kein \texttt{min\_member/2} angewendet. Das Prädikat liefert damit die vollständige Liste aller zulässigen Agenten. Das Singular-Prädikat bleibt erhalten, weil es in Aufgabe~4b als eigenständiger Nachweis dient und einen semantisch anderen Zweck erfüllt (Auswahl des optimalen Agenten statt Vorfilter).
+
+% ======= prolog.py – Neue Funktionen =======
+
+\subsubsection{Modul \texttt{prolog.py} – Erweiterte Imports}
+
+Der bestehende Import-Block wird um die Wrapper-Funktionen aus \texttt{query.py} sowie um die 4C-Konfigurationskonstanten erweitert:
+
+\lstinputlisting[
+    language=python,
+    style=python,
+    caption={Erweiterte Imports (\texttt{prolog.py})},
+    label={lst:prolog_imports_4c},
+    firstline=10,
+    lastline=10
+]{asset/code/4C-prolog.py}
+
+\lstinputlisting[
+    language=python,
+    style=python,
+    caption={Erweiterte \texttt{config}-Imports (\texttt{prolog.py})},
+    label={lst:prolog_config_imports_4c},
+    firstline=60,
+    lastline=66
+]{asset/code/4C-prolog.py}
+
+Die Zeile \texttt{from query import run\_goal\_with\_consult, is\_true, is\_false, \\ parse\_int\_list} bindet die vier Wrapper-Funktionen ein. Der \texttt{config}-Block wird um die 4C-Konstanten für den Agenten-Pfad, die Goal-Templates und die Log-Templates ergänzt.
+
+\subsubsection{Modul \texttt{prolog.py} – Agenten-Export und Abfrage-API}
+
+Drei neue Funktionen werden an \texttt{prolog.py} angehängt:
+
+\lstinputlisting[
+    language=python,
+    style=python,
+    caption={Agenten-Export (\texttt{prolog.py})},
+    label={lst:prolog_export_agents_4c},
+    firstline=142,
+    lastline=158
+]{asset/code/4C-prolog.py}
+
+\texttt{export\_agents(agents)} schreibt die aktuellen Agentendaten als \texttt{agent/7}-Fakten nach \texttt{agents.pl}. Die sieben Argumente sind: Agent-ID, X, Y, Speed, Kapazität, Batterie, Cargo. Der projekt-relative Pfad wird -- analog zu \texttt{export\_facts} aus 4a -- über \texttt{\_PROJECT\_ROOT} aufgelöst.
+
+Die beiden Abfrage-Funktionen sind:
+
+\lstinputlisting[
+    language=python,
+    style=python,
+    caption={\acs{PROLOG}-Abfragen (\texttt{prolog.py})},
+    label={lst:prolog_queries_4c},
+    firstline=160,
+    lastline=186
+]{asset/code/4C-prolog.py}
+
+\begin{itemize}
+    \item \texttt{query\_reachable(from\_pos, to\_pos)} -- formatiert das Goal \\ \texttt{reachable((X1,Y1),(X2,Y2))} und wertet die Antwort aus. Bei \texttt{None} (Fallback) wird \texttt{True} zurückgegeben -- die Simulation verhält sich dann wie vor 4c.
+    \item \texttt{query\_candidate\_agents(depot\_pos, target\_pos, all\_agent\_ids)} -- formatiert das Goal \texttt{candidate\_agents(task((X1,Y1),(X2,Y2)),L)} und parst die zurückgegebene ID-Liste. Bei \texttt{None} oder Parse-Fehler wird die Liste \texttt{all\_agent\_ids} zurückgegeben -- der Fallback schließt alle Agenten ein, damit die Auktion weiterläuft.
+\end{itemize}
+
+% ======= simulation.py – Vorfilter =======
+
+\subsubsection{Modul \texttt{simulation.py} – Erweiterte Imports}
+
+Die Simulation importiert die zwei neuen Abfrage-Funktionen aus \texttt{prolog.py} sowie die 4C-Log-Templates:
+
+\lstinputlisting[
+    language=python,
+    style=python,
+    caption={Erweiterte Imports (\texttt{simulation.py})},
+    label={lst:sim_imports_4c},
+    firstline=11,
+    lastline=11
+]{asset/code/4C-simulation.py}
+
+\lstinputlisting[
+    language=python,
+    style=python,
+    caption={Erweiterte Imports \texttt{config} (\texttt{simulation.py})},
+    label={lst:sim_config_imports_4c},
+    firstline=34,
+    lastline=37
+]{asset/code/4C-simulation.py}
+
+Die Zeile \texttt{from prolog import query\_reachable, export\_agents} bindet die zwei produktiven 4C-Funktionen ein. Der \texttt{config}-Block wird um die Log-Templates für die Erreichbarkeitsprüfung und den Agenten-Export ergänzt.
+
+\subsubsection{Modul \texttt{simulation.py} – \texttt{reachable/2}-Vorfilter}
+
+Die Methode \texttt{\_generate\_package} wird um den \texttt{reachable}-Vorfilter und den Agenten-Export erweitert:
+
+\lstinputlisting[
+    language=python,
+    style=python,
+    caption={\texttt{reachable}-Vorfilter (\texttt{simulation.py})},
+    label={lst:sim_generate_4c},
+    firstline=142,
+    lastline=147
+]{asset/code/4C-simulation.py}
+
+\lstinputlisting[
+    language=python,
+    style=python,
+    caption={Agenten-Export (\texttt{simulation.py})},
+    label={lst:sim_export_agents_4c},
+    firstline=160,
+    lastline=161
+]{asset/code/4C-simulation.py}
+
+Drei \acs{PROLOG}-bezogene Änderungen:
+\begin{enumerate}
+    \item \textbf{Vorfilter:} \texttt{query\_reachable(depot, target)} prüft die Erreichbarkeit. Bei \texttt{False} wird das Paket verworfen -- es entsteht erst gar nicht. Der Vorfilter ist damit ein \textit{Task-Filter}, nicht nur ein Bieter-Filter.
+    \item \textbf{Agenten-Export:} \texttt{export\_agents(self.agents)} schreibt die aktuellen Agentendaten, bevor die Ausschreibung beginnt. Der Aufruf muss vor \texttt{depot.announce\_task} erfolgen, damit die anschließende Kandidatenabfrage die aktuellen Daten liest.
+    \item \textbf{Logging:} Die Anzahl exportierter Agenten wird über \texttt{self.log\_event} in den Step-Puffer geschrieben -- so erscheint die Meldung in der richtigen Reihenfolge im Step-Block.
+\end{enumerate}
+
+% ======= depot.py – Vorfilter =======
+
+\subsubsection{Modul \texttt{depot.py} – Erweiterte Imports}
+
+Das Depot importiert die Kandidaten-Abfrage aus \texttt{prolog.py} sowie die 4C-Log-Templates:
+
+\lstinputlisting[
+    language=python,
+    style=python,
+    caption={Erweiterte Imports (\texttt{depot.py})},
+    label={lst:depot_imports_4c},
+    firstline=10,
+    lastline=10
+]{asset/code/4C-depot.py}
+
+\lstinputlisting[
+    language=python,
+    style=python,
+    caption={Erweiterte Imports \texttt{config} (\texttt{depot.py})},
+    label={lst:depot_config_imports_4c},
+    firstline=34,
+    lastline=36
+]{asset/code/4C-depot.py}
+
+Die Zeile \texttt{from prolog import query\_candidate\_agents} bindet die 4C-Abfrage ein. Der \texttt{config}-Block wird um die zwei Log-Templates für die Kandidatenabfrage und den Fall ohne Kandidaten ergänzt.
+
+\subsubsection{Modul \texttt{depot.py} – \texttt{candidate\_agents/2}-Vorfilter}
+
+Die Methode \texttt{announce\_task} wird um den Kandidaten-Vorfilter erweitert:
+
+\lstinputlisting[
+    language=python,
+    style=python,
+    caption={Erweiterte Ausschreibung (\texttt{depot.py})},
+    label={lst:depot_announce_4c},
+    firstline=71,
+    lastline=78
+]{asset/code/4C-depot.py}
+
+\lstinputlisting[
+    language=python,
+    style=python,
+    caption={Kandidaten-Filter im Broadcast-Loop (\texttt{depot.py})},
+    label={lst:depot_filter_4c},
+    firstline=85,
+    lastline=86
+]{asset/code/4C-depot.py}
+
+Die zwei Zeilen filtern im Broadcast-Loop die nicht-berechtigten Agenten heraus. Nur Agenten, deren ID in der \acs{PROLOG}-Kandidatenliste \texttt{eligible\_ids} enthalten ist, erhalten die \texttt{ANNOUNCE}-Nachricht — alle anderen werden übersprungen.
+
+Der Ablauf:
+\begin{enumerate}
+    \item \texttt{query\_candidate\_agents(depot, target, all\_ids)} liefert die Liste der zulässigen Agenten.
+    \item Das Abfrage-Ergebnis wird geloggt (sichtbar im Step-Block).
+    \item Ist die Liste leer, wird die Ausschreibung übersprungen und eine Warnung geloggt. Dies entspricht dem Fall, dass kein Agent die Nebenbedingungen (Kapazität, Batterie, Erreichbarkeit) erfüllt.
+    \item Andernfalls wird die \texttt{ANNOUNCE}-Nachricht nur an die Agenten aus der Kandidatenliste gesendet. Nicht-Kandidaten erhalten weder die Ausschreibung noch senden sie später ein \texttt{BID}.
+\end{enumerate}
+
+% ======= Refactoring: agents_demo.pl entfernt =======
+
+\subsection{Refactoring: Entfernung der statischen Agentendatei}
+
+In Aufgabe~4b wurde eine hand-gepflegte Datei \texttt{agents\_demo.pl} angelegt, um \\ \texttt{candidate\_agent/2} isoliert zu verifizieren. Die Datei wurde damals explizit als entfernbar gekennzeichnet, sobald die Agentendaten dynamisch aus Python exportiert werden.
+
+Mit der Integration in Aufgabe~4c ist diese Ankündigung eingelöst: \texttt{agents\_demo.pl} wurde gelöscht. Die aktuelle Agentendatei \texttt{agents.pl} wird bei jedem Simulationslauf von \texttt{export\_agents} neu geschrieben -- analog zur bereits bestehenden \texttt{facts.pl}-Generierung aus 4a. Der 4b-Nachweis bleibt in der historischen Dokumentation erhalten (Listing~\ref{lst:agents_demo_4b}); die damalige Datei ist nicht mehr Teil des produktiven Codes.
+
+% ======= Ergebnisnachweis =======
+
+\subsection{Ergebnisnachweis}
+\label{sssec:prolog_4c_nachweis}
+
+Der Nachweis besteht aus drei Teilen: zwei konkreten \acs{PROLOG}-Abfragen, einem Konsolenausschnitt mit vollständigem Task-Zyklus und einer Konsistenz-Tabelle mit Aufgabe~2c.
+
+\paragraph{Teil 1: Zwei konkrete \acs{PROLOG}-Abfragen.}
+Die Aufgabenstellung verlangt mindestens zwei Abfragen, die in der Simulation tatsächlich genutzt werden. Die erste Abfrage ist \texttt{reachable/2} -- sie läuft in \\ \texttt{Simulation.\_generate\_package} unmittelbar nach der Depot-/Ziel-Wahl:
+
+\lstinputlisting[
+    style=console,
+    caption={Abfrage 1: \texttt{reachable/2} in der Simulation},
+    label={lst:test_4c_reachable},
+    firstline=84,
+    lastline=84
+]{asset/code/4C-terminal.tex}
+
+Die zweite Abfrage ist \texttt{candidate\_agents/2} -- sie läuft in \texttt{Depot.announce\_task} vor dem ANNOUNCE-Broadcast:
+
+\lstinputlisting[
+    style=console,
+    caption={Abfrage 2: \texttt{candidate\_agents/2} in der Simulation},
+    label={lst:test_4c_candidates},
+    firstline=87,
+    lastline=87
+]{asset/code/4C-terminal.tex}
+
+Die Liste \texttt{[0, 1, 2, 3]} enthält alle vier Agenten, weil sie die drei Nebenbedingungen erfüllen: ausreichend Kapazität (Cargo = 0, Capacity > 3), positive Batterie (Standard: 100, Express: 120) und Erreichbarkeit der Route (Karte ist zusammenhängend, siehe Aufgabe~1a).
+
+\paragraph{Teil 2: Konsolenausschnitt eines vollständigen Task-Zyklus.}
+Der folgende Auszug aus dem Simulationslauf zeigt einen kompletten Durchlauf: Vorfilter, Paketgenerierung, Agenten-Export, Kandidatenauswahl, \texttt{ANNOUNCE}-Broadcast, \texttt{BID}-Phase, Auktion und Zuschlag:
+
+\lstinputlisting[
+    style=console,
+    caption={Simulationslauf Step~5: vollständiger Task-Zyklus},
+    label={lst:test_4c_cycle},
+    firstline=84,
+    lastline=102
+]{asset/code/4C-terminal.tex}
+
+Der \acs{PROLOG}-Vorfilter greift an zwei Stellen sichtbar: Die Zeile \texttt{[PROLOG] reachable((37, 13), (25, 0)) = true} erscheint direkt nach der Depot-/Ziel-Wahl, und die Zeile \texttt{[\acs{PROLOG}] candidate\_agents(...) = [0, 1, 2, 3]} erscheint unmittelbar vor dem ersten \texttt{ANNOUNCE}. Die Auktion läuft dann unverändert zur Logik aus Aufgabe~2c ab.
+
+Ein zweiter Step-Ausschnitt zeigt die Wiederholung des Zyklus mit anderen Depot-/Ziel-Paaren:
+
+\lstinputlisting[
+    style=console,
+    caption={Simulationslauf Step~15: Wiederholung mit anderem Task},
+    label={lst:test_4c_cycle2},
+    firstline=205,
+    lastline=223
+]{asset/code/4C-terminal.tex}
+
+\paragraph{Teil 3: Konsistenz mit Aufgabe~2c.}
+Der \acs{PROLOG}-Vorfilter schließt in diesem Szenario keinen Agenten aus -- die Kandidatenliste \texttt{[0, 1, 2, 3]} enthält stets alle vier Agenten. Die Auktionsergebnisse aus 4c sind daher mit den Ergebnissen aus 2c strukturell konsistent: Beide liefern denselben Gewinner für identische (Depot, Ziel)-Paare (siehe Listing~\ref{lst:test_4c_cycle} und Tabelle~\ref{tab:auktionen_2d}).
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}{r l c c c}
+        \toprule
+        \textbf{Task} & \textbf{Depot $\to$ Ziel} & \textbf{Kandidaten} & \textbf{Gewinner 4c} & \textbf{Gewinner 2c} \\
+        \midrule
+        0 & $(37,13) \to (25,0)$ & $[0,1,2,3]$ & Agent 0 & Agent 0 \\
+        1 & $(43,1) \to (36,5)$  & $[0,1,2,3]$ & Agent 1 & Agent 1 \\
+        2 & $(37,13) \to (36,5)$ & $[0,1,2,3]$ & Agent 0 & Agent 0 \\
+        3 & $(37,13) \to (25,0)$ & $[0,1,2,3]$ & Agent 0 & Agent 0 \\
+        4 & $(43,1) \to (25,0)$  & $[0,1,2,3]$ & Agent 0 & Agent 0 \\
+        \bottomrule
+    \end{tabular}
+    \caption{Deckungsgleichheit der Auktionsergebnisse 4c vs.\ 2c}
+    \label{tab:prolog_4c_consistency}
+\end{table}
+
+Der \acs{PROLOG}-Vorfilter ist damit kein \textit{Shortcut}, der die Logik ersetzt -- er ist ein \textit{Filter}, der die Empfängermenge auf die zulässigen Bieter einschränkt. Die eigentliche Optimierung (Auswahl des Gewinners nach minimalen Kosten) bleibt in der Python-Bietlogik, wie in Aufgabe~2c spezifiziert.
+
+\paragraph{Hinweis zum Fallback-Verhalten.}
+Bei Ausfall der \acs{SWI}-\acs{PROLOG}-Verbindung (Programm nicht im \acs{PATH} -- siehe Einrichtung in der Einleitung -- oder Timeout) weichen beide Vorfilter auf Python-Verhalten zurück: \texttt{query\_reachable} liefert \texttt{True}, \texttt{query\_candidate\_agents} liefert alle Agenten-IDs. Damit bleibt die Simulation auch bei fehlender \acs{PROLOG}-Umgebung lauffähig -- der Fallback ist explizit im Log dokumentiert (\texttt{[\acs{PROLOG}] Fallback auf Python-Logik}). Im vorliegenden Lauf wurde kein Fallback ausgelöst.
+
+% ==============================================================================
+% ================================= Aufgabe 4 =================================
+% ==============================================================================

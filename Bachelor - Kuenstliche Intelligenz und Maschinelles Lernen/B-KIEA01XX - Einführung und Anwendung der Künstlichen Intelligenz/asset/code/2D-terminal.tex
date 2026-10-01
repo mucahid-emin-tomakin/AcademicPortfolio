@@ -1,0 +1,179 @@
+=============================================================================
+Kartengröße:           71x15
+Depots:                2 -> [(37, 13), (43, 1)]
+Ziele:                 4 -> [(25, 0), (36, 5), (55, 4), (70, 3)]
+Wände:                 306
+Freie Zellen:          753
+=============================================================================
+Karte (ASCII):
+                         Z
+                                           D
+   ##       ####     ###       ###     ###         ###  ###
+  ##############     ####     #####    #####       ###  ###           Z
+  ########   ###    ######   ######    ########    ### Z###
+  ###              #### ####### ####Z  ###  #####  ###  ###      ###
+  ###              ###   #####   ###   ###    ########  #############
+  ##############  ####    ###    ####  ###       #####  ########  ###
+  ##############          ###          ###         ###  ###       ###
+  ####       ###          ###          ###              ###       ###
+  ###        ###          ###          ###              ###       ###
+  ###        ###          ###          ###              ###       ###
+   ##         ##          ###           ##              ##         ##
+                                     D
+
+=============================================================================
+ Agent | Typ       | Position    | Speed   | Kapazität  | Batterie  | Ladung
+-----------------------------------------------------------------------------
+ 0     | Standard  | (43, 13)    | 1       | 5          | 100/100   | 0
+ 1     | Standard  | (45, 1)     | 1       | 5          | 100/100   | 0
+ 2     | Express   | (26, 0)     | 2       | 3          | 120/120   | 0
+ 3     | Express   | (49, 5)     | 2       | 3          | 120/120   | 0
+=============================================================================
+                                --- Step 1 ---
+-----------------------------------------------------------------------------
+ 0     | Standard  | (43, 14)    | 1       | 5          | 99/100    | 0
+ 1     | Standard  | (45, 2)     | 1       | 5          | 99/100    | 0
+ 2     | Express   | (27, 0)     | 2       | 3          | 119/120   | 0
+ 3     | Express   | (49, 3)     | 2       | 3          | 118/120   | 0
+-----------------------------------------------------------------------------
+                                --- Step 2 ---
+-----------------------------------------------------------------------------
+ 0     | Standard  | (43, 14)    | 1       | 5          | 99/100    | 0
+ 1     | Standard  | (45, 3)     | 1       | 5          | 98/100    | 0
+ 2     | Express   | (26, 1)     | 2       | 3          | 117/120   | 0
+ 3     | Express   | (49, 5)     | 2       | 3          | 116/120   | 0
+-----------------------------------------------------------------------------
+                                --- Step 3 ---
+-----------------------------------------------------------------------------
+ 0     | Standard  | (43, 13)    | 1       | 5          | 98/100    | 0
+ 1     | Standard  | (45, 2)     | 1       | 5          | 97/100    | 0
+ 2     | Express   | (26, 1)     | 2       | 3          | 115/120   | 0
+ 3     | Express   | (49, 4)     | 2       | 3          | 115/120   | 0
+-----------------------------------------------------------------------------
+                                --- Step 4 ---
+-----------------------------------------------------------------------------
+ 0     | Standard  | (42, 13)    | 1       | 5          | 97/100    | 0
+ 1     | Standard  | (46, 2)     | 1       | 5          | 96/100    | 0
+ 2     | Express   | (26, 1)     | 2       | 3          | 113/120   | 0
+ 3     | Express   | (49, 4)     | 2       | 3          | 113/120   | 0
+-----------------------------------------------------------------------------
+                                --- Step 5 ---
+-----------------------------------------------------------------------------
+[PKG]      Paket 0 erzeugt (depot=(43, 1), target=(36, 5), deadline=20)
+[ANNOUNCE] Depot -2 -> Agent 0 (task=0, dest=(36, 5), deadline=20)
+[ANNOUNCE] Depot -2 -> Agent 1 (task=0, dest=(36, 5), deadline=20)
+[ANNOUNCE] Depot -2 -> Agent 2 (task=0, dest=(36, 5), deadline=20)
+[ANNOUNCE] Depot -2 -> Agent 3 (task=0, dest=(36, 5), deadline=20)
+[READ]    Agent 0 <- 1 Message
+[BID]      Agent 0 -> Depot -2 (task=0, cost=24)
+[READ]    Agent 1 <- 1 Message
+[BID]      Agent 1 -> Depot -2 (task=0, cost=15)
+[READ]    Agent 2 <- 1 Message
+[BID]      Agent 2 -> Depot -2 (task=0, cost=28)
+[READ]    Agent 3 <- 1 Message
+[BID]      Agent 3 -> Depot -2 (task=0, cost=20)
+[READ]    Depot -2 <- 4 Message
+[AUCTION] Depot -2 (Task 0): 4 Bieter, Gewinner Agent 1 (Kosten 15)
+[AWARD]    Depot -2 -> Agent 1 (task=0)
+-----------------------------------------------------------------------------
+ 0     | Standard  | (42, 12)    | 1       | 5          | 96/100    | 0
+ 1     | Standard  | (47, 2)     | 1       | 5          | 95/100    | 0
+ 2     | Express   | (26, 3)     | 2       | 3          | 111/120   | 0
+ 3     | Express   | (48, 4)     | 2       | 3          | 112/120   | 0
+-----------------------------------------------------------------------------
+                               --- Step 10 ---
+-----------------------------------------------------------------------------
+[PKG]      Paket 1 erzeugt (depot=(43, 1), target=(36, 5), deadline=25)
+[ANNOUNCE] Depot -2 -> Agent 0 (task=1, dest=(36, 5), deadline=25)
+[ANNOUNCE] Depot -2 -> Agent 1 (task=1, dest=(36, 5), deadline=25)
+[ANNOUNCE] Depot -2 -> Agent 2 (task=1, dest=(36, 5), deadline=25)
+[ANNOUNCE] Depot -2 -> Agent 3 (task=1, dest=(36, 5), deadline=25)
+[READ]    Agent 0 <- 1 Message
+[BID]      Agent 0 -> Depot -2 (task=1, cost=25)
+[READ]    Agent 1 <- 1 Message
+[BID]      Agent 1 -> Depot -2 (task=1, cost=18)
+[READ]    Agent 2 <- 1 Message
+[BID]      Agent 2 -> Depot -2 (task=1, cost=29)
+[READ]    Agent 3 <- 1 Message
+[BID]      Agent 3 -> Depot -2 (task=1, cost=18)
+[READ]    Depot -2 <- 4 Message
+[AUCTION] Depot -2 (Task 1): 4 Bieter, Gewinner Agent 1 (Kosten 18)
+[AWARD]    Depot -2 -> Agent 1 (task=1)
+-----------------------------------------------------------------------------
+ 0     | Standard  | (42, 13)    | 1       | 5          | 91/100    | 0
+ 1     | Standard  | (49, 3)     | 1       | 5          | 90/100    | 0
+ 2     | Express   | (28, 2)     | 2       | 3          | 104/120   | 0
+ 3     | Express   | (47, 2)     | 2       | 3          | 103/120   | 0
+-----------------------------------------------------------------------------
+                               --- Step 15 ---
+-----------------------------------------------------------------------------
+[PKG]      Paket 2 erzeugt (depot=(43, 1), target=(36, 5), deadline=30)
+[ANNOUNCE] Depot -2 -> Agent 0 (task=2, dest=(36, 5), deadline=30)
+[ANNOUNCE] Depot -2 -> Agent 1 (task=2, dest=(36, 5), deadline=30)
+[ANNOUNCE] Depot -2 -> Agent 2 (task=2, dest=(36, 5), deadline=30)
+[ANNOUNCE] Depot -2 -> Agent 3 (task=2, dest=(36, 5), deadline=30)
+[READ]    Agent 0 <- 1 Message
+[BID]      Agent 0 -> Depot -2 (task=2, cost=24)
+[READ]    Agent 1 <- 1 Message
+[BID]      Agent 1 -> Depot -2 (task=2, cost=18)
+[READ]    Agent 2 <- 1 Message
+[BID]      Agent 2 -> Depot -2 (task=2, cost=27)
+[READ]    Agent 3 <- 1 Message
+[BID]      Agent 3 -> Depot -2 (task=2, cost=12)
+[READ]    Depot -2 <- 4 Message
+[AUCTION] Depot -2 (Task 2): 4 Bieter, Gewinner Agent 3 (Kosten 12)
+[AWARD]    Depot -2 -> Agent 3 (task=2)
+-----------------------------------------------------------------------------
+ 0     | Standard  | (43, 13)    | 1       | 5          | 86/100    | 0
+ 1     | Standard  | (49, 1)     | 1       | 5          | 86/100    | 0
+ 2     | Express   | (28, 2)     | 2       | 3          | 94/120    | 0
+ 3     | Express   | (44, 1)     | 2       | 3          | 93/120    | 0
+-----------------------------------------------------------------------------
+                               --- Step 20 ---
+-----------------------------------------------------------------------------
+[PKG]      Paket 3 erzeugt (depot=(37, 13), target=(25, 0), deadline=35)
+[ANNOUNCE] Depot -1 -> Agent 0 (task=3, dest=(25, 0), deadline=35)
+[ANNOUNCE] Depot -1 -> Agent 1 (task=3, dest=(25, 0), deadline=35)
+[ANNOUNCE] Depot -1 -> Agent 2 (task=3, dest=(25, 0), deadline=35)
+[ANNOUNCE] Depot -1 -> Agent 3 (task=3, dest=(25, 0), deadline=35)
+[READ]    Agent 0 <- 1 Message
+[BID]      Agent 0 -> Depot -1 (task=3, cost=35)
+[READ]    Agent 1 <- 1 Message
+[BID]      Agent 1 -> Depot -1 (task=3, cost=45)
+[READ]    Agent 2 <- 1 Message
+[BID]      Agent 2 -> Depot -1 (task=3, cost=45)
+[READ]    Agent 3 <- 1 Message
+[BID]      Agent 3 -> Depot -1 (task=3, cost=45)
+[READ]    Depot -1 <- 4 Message
+[AUCTION] Depot -1 (Task 3): 4 Bieter, Gewinner Agent 0 (Kosten 35)
+[AWARD]    Depot -1 -> Agent 0 (task=3)
+-----------------------------------------------------------------------------
+ 0     | Standard  | (46, 11)    | 1       | 5          | 81/100    | 0
+ 1     | Standard  | (46, 3)     | 1       | 5          | 81/100    | 0
+ 2     | Express   | (28, 4)     | 2       | 3          | 84/120    | 0
+ 3     | Express   | (47, 1)     | 2       | 3          | 84/120    | 0
+-----------------------------------------------------------------------------
+                               --- Step 25 ---
+-----------------------------------------------------------------------------
+[PKG]      Paket 4 erzeugt (depot=(43, 1), target=(25, 0), deadline=40)
+[ANNOUNCE] Depot -2 -> Agent 0 (task=4, dest=(25, 0), deadline=40)
+[ANNOUNCE] Depot -2 -> Agent 1 (task=4, dest=(25, 0), deadline=40)
+[ANNOUNCE] Depot -2 -> Agent 2 (task=4, dest=(25, 0), deadline=40)
+[ANNOUNCE] Depot -2 -> Agent 3 (task=4, dest=(25, 0), deadline=40)
+[READ]    Agent 0 <- 1 Message
+[BID]      Agent 0 -> Depot -2 (task=4, cost=30)
+[READ]    Agent 1 <- 1 Message
+[BID]      Agent 1 -> Depot -2 (task=4, cost=21)
+[READ]    Agent 2 <- 1 Message
+[BID]      Agent 2 -> Depot -2 (task=4, cost=35)
+[READ]    Agent 3 <- 1 Message
+[BID]      Agent 3 -> Depot -2 (task=4, cost=23)
+[READ]    Depot -2 <- 4 Message
+[AUCTION] Depot -2 (Task 4): 4 Bieter, Gewinner Agent 1 (Kosten 21)
+[AWARD]    Depot -2 -> Agent 1 (task=4)
+-----------------------------------------------------------------------------
+ 0     | Standard  | (44, 10)    | 1       | 5          | 76/100    | 0
+ 1     | Standard  | (45, 0)     | 1       | 5          | 77/100    | 0
+ 2     | Express   | (28, 4)     | 2       | 3          | 74/120    | 0
+ 3     | Express   | (47, 1)     | 2       | 3          | 74/120    | 0
+-----------------------------------------------------------------------------
