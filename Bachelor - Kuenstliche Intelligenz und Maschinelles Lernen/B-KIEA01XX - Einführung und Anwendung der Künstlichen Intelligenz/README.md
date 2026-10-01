@@ -15,6 +15,8 @@
 ## 📖 INHALTSVERZEICHNIS
 
 - [📝 PROJEKTBESCHREIBUNG](#-projektbeschreibung)
+- [🎬 DEMO](#-demo)
+- [📈 ERGEBNISSE](#-ergebnisse)
 - [✨ FEATURES](#-features)
 - [🚀 TOOL](#-tool)
 - [📁 STRUKTUR](#-struktur)
@@ -62,6 +64,92 @@ Die Arbeit gliedert sich in fünf Hauptaufgaben, die Theorie mit praktischer Ums
 - Automatische **Plot-Generierung** (matplotlib), CSV-Export und statistische Aggregation
 
 Die gesamte Simulation wurde in **Python 3.10** mit **Tkinter** implementiert, die Wissensbasis in **SWI-Prolog** repräsentiert und die Ergebnisse in einer **LaTeX-Dokumentation** festgehalten.
+
+---
+
+## 🎬 DEMO
+
+### 🖥️ Interaktive Simulation (`main.py`)
+
+Die folgende Animation zeigt den Start der Anwendung, die Tkinter-GUI mit der Karte, den Agenten (Standard **S**, Express **E**), die Info-Zeile sowie die Step- und AutoRun-Buttons.
+
+![Interaktive Simulation mit Tkinter-GUI](B-KIEA01XX/asset/gif/main.gif)
+
+**Zu sehen:**
+- ASCII-Art-Wandmuster mit schwarzem Hintergrund und grüner Akzentfarbe `#2CFF05`
+- Agenten als farbige Kreise (Standard: dunkelorange, Express: gelb)
+- **Step**-Button für manuelle Schritte, **AutoRun**-Button für die Endlosschleife
+- Info-Zeile mit Karten-, Agenten- und Step-Statistiken
+
+### 📊 Experiment-Runner (`experiment.py`)
+
+Die folgende Animation zeigt den Start des Experiment-Runners, die Ausführung der 15 Simulationsläufe und die Generierung der Terminal-Logs, CSVs und Plots.
+
+![Experiment-Runner mit Terminal-Logs](B-KIEA01XX/asset/gif/experiment.gif)
+
+**Zu sehen:**
+- 15 Simulationsläufe (3 Konfigurationen × 5 Runs × 200 Steps) im Headless-Modus
+- Aggregierte Ergebnis-Tabellen in der Konsole
+- Bestätigung der generierten CSV- und PNG-Dateien
+- Automatische Aggregation und Plot-Erzeugung
+
+---
+
+## 📈 ERGEBNISSE
+
+Die Experimente aus Aufgabe 5 liefern vier Kategorien von Kennzahlen. Nachfolgend die aussagekräftigsten Plots:
+
+### 📦 Leistungskennzahlen (Aufgabe 5a)
+
+Die drei Kernmetriken des Systems – **durchschnittliche Lieferzeit**, **Erfolgsquote** und **durchschnittliche Pfadlänge** – zeigen ein differenziertes Bild:
+
+<p align="center">
+  <img src="B-KIEA01XX/asset/image/5A-Lieferzeit.png" alt="Lieferzeit" width="32%">
+  <img src="B-KIEA01XX/asset/image/5A-Erfolgsquote.png" alt="Erfolgsquote" width="32%">
+  <img src="B-KIEA01XX/asset/image/5A-Pfadlaenge.png" alt="Pfadlaenge" width="32%">
+</p>
+
+**Kernergebnisse:**
+- **Lieferzeit:** Minimum bei 5 Agenten (39,4 Steps) – mehr Agenten erzeugen mehr Konflikte
+- **Erfolgsquote:** 18–25 % – begrenzt durch Deadlocks in den 55 Engpass-Zellen
+- **Pfadlänge:** Monotoner Rückgang mit Agentenzahl (51,1 → 43,9 → 37,2 Zellen)
+
+### 🧭 A\*-Eigenschaften (Aufgabe 5b)
+
+<p align="center">
+  <img src="B-KIEA01XX/asset/image/5B-ExpandedBoxplot.png" alt="A*-Expansionen pro Konfiguration" width="48%">
+  <img src="B-KIEA01XX/asset/image/5B-TimeHistogram.png" alt="Planungszeit-Verteilung" width="48%">
+</p>
+
+**Kernergebnisse:**
+- **Expansionen:** 20–30 Knoten im Mittel, Maximalwert 232 (3 Agenten, Run 2)
+- **Planungszeit:** 0,15–0,24 ms im Mittel, Spitzenwert 3,93 ms (5 Agenten)
+- **Nicht-lineare Korrelation:** Höchste Zeit bei 5 Agenten trotz mittlerer Expansionszahl → externe Faktoren dominieren
+
+### 📨 Kommunikationsmetriken (Aufgabe 5c)
+
+<p align="center">
+  <img src="B-KIEA01XX/asset/image/5C-MsgBar.png" alt="Nachrichten pro Auftrag" width="48%">
+  <img src="B-KIEA01XX/asset/image/5C-BidBar.png" alt="Bieter pro Auktion" width="48%">
+</p>
+
+**Kernergebnisse:**
+- **Nachrichten pro Auftrag:** \(2N + 1\) (linear mit Agentenzahl) – 7 / 11 / 21 für \(N = 3, 5, 10\)
+- **Bieter pro Auktion:** \(N\) (alle Agenten erfüllen Vorfilter-Kriterien)
+- **Deterministisch:** Keine Varianz zwischen Runs – Folge der PROLOG-Vorfilter-Korrektheit
+
+### ⚔️ Konfliktanalyse (Aufgabe 5d)
+
+<p align="center">
+  <img src="B-KIEA01XX/asset/image/5D-Combined.png" alt="Kollisionen vs. Neuplanungen" width="60%">
+</p>
+
+**Kernergebnisse:**
+- **1:1-Kopplung:** Kollisionen = Neuplanungen exakt in allen 15 Läufen
+- **Präventive Kollisionsvermeidung:** Keine echten Doppelbelegungen (`_resolve_collisions` nie ausgelöst)
+- **Nicht-monotone Skalierung:** 3 Agenten: 185,6 | 5 Agenten: 179,8 | 10 Agenten: 328,0
+
+**Vollständige Rohdaten:** Alle 15 Einzelläufe pro Metrik sind in `B-KIEA01XX/asset/results/` als CSV-Dateien abgelegt (`5A-Results.csv` … `5D-Results.csv`).
 
 ---
 
@@ -127,11 +215,11 @@ Die gesamte Simulation wurde in **Python 3.10** mit **Tkinter** implementiert, d
 │   ├── 📄 agents.pl                                            # Generierte PROLOG-Fakten (Agenten)
 │   │
 │   └── 📁 asset/
-│       ├── 📁 gif/                                             # Demonstrations-GIFs
-│       │   ├── 🎞️ main.gif
-│       │   └── 🎞️ experiment.gif
+│       ├── 📁 gif/                                             # Demonstrations-GIFs (im README eingebettet)
+│       │   ├── 🎞️ main.gif                                     # GUI-Demo: main.py + Step/AutoRun
+│       │   └── 🎞️ experiment.gif                               # Experiment-Demo: experiment.py + Logs
 │       │
-│       ├── 📁 image/                                           # Alle Plots aus Aufgabe 5
+│       ├── 📁 image/                                           # Alle Plots aus Aufgabe 5 (im README eingebettet)
 │       │   ├── 🖼️ 5A-Lieferzeit.png
 │       │   ├── 🖼️ 5A-Erfolgsquote.png
 │       │   ├── 🖼️ 5A-Pfadlaenge.png
@@ -196,8 +284,8 @@ Die gesamte Simulation wurde in **Python 3.10** mit **Tkinter** implementiert, d
 ├── 📄 main.tex               # LaTeX-Hauptdokument
 ├── 📁 B-KIEA01XX/            # Python-Simulation (Quellcode + generierte Artefakte)
 │   └── 📁 asset/
-│       ├── 📁 gif/           # Demonstrations-GIFs
-│       ├── 📁 image/         # Plots aus Aufgabe 5 (5A–5D)
+│       ├── 📁 gif/           # Demonstrations-GIFs (im README eingebettet)
+│       ├── 📁 image/         # Plots aus Aufgabe 5 (im README eingebettet)
 │       └── 📁 results/       # CSV-Ergebnisse aus Aufgabe 5
 ├── 📁 asset/                 # LaTeX-Assets
 │   ├── 📁 code/              # Code-Listings (*.tex) für die Doku
