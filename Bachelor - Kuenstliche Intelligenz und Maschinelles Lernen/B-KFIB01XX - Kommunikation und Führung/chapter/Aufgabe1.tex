@@ -1,0 +1,60 @@
+% ==============================================================================
+% ================================== AUFGABE 1 ================================
+% ==============================================================================
+
+\chapter{Aufgabe 1: Konstruktion des Dialogskripts} 
+\label{sec:aufgabe1}
+
+\section{Kontextualisierung und Rahmenbedingungen}
+Zur systematischen Analyse der gestörten Kommunikations- und Interaktionsdynamik wird nachfolgend ein reales Klärungsgespräch zwischen einem Dienstleister und einer Kundin in Form eines vollständigen Dialogskripts (Drehbuch) rekonstruiert.
+
+Der operative Kontext lässt sich wie folgt charakterisieren: Der Dienstleister ist als Entwickler im Bereich der Prozessautomatisierung (\acs{RPA}/\acs{KI}) tätig. Die Kundin verantwortet als Führungskraft den Prozess der finanziellen Nachprüfung in der Finanzabteilung eines Auftraggebers. Im Rahmen eines gemeinsamen Face-to-Face-Workshops wurde ein detailliertes Lastenheft erstellt, in dem sämtliche benötigten Prozessparameter, Ausnahmefälle und Testdaten verbindlich aufgelistet wurden. Die vereinbarte Zulieferung dieser Inputs durch die Kundenseite ist jedoch über Monate hinweg ausgeblieben. Die Kundin war als benannte Ansprechpartnerin für das Projekt zunehmend unerreichbar; zahlreiche Rückfragen des Dienstleisters per E-Mail blieben unbeantwortet. Um den vereinbarten Entwicklungsfortschritt nicht zu gefährden, hat der Dienstleister in einer E-Mail transparent angekündigt, vorübergehend eigene Annahmeparameter einzusetzen. Diese E-Mail blieb ebenfalls ohne Reaktion. Die nun aufgetretenen Fehler resultieren aus diesen temporären Parametern; die Umstellung auf die eigentlichen Parameter sowie die anschließenden Tests erfordern einen zusätzlichen Zeitaufwand. Vor diesem Hintergrund ist die Kundin zusätzlich durch den Druck ihres eigenen Vorgesetzten belastet, dem sie den Projektverzug erklären muss.
+
+\section{Dialogskript (Drehbuch)}
+
+\textbf{Rahmenparameter des Geschehens:}
+\begin{itemize}
+    \item \textbf{Ort:} Besprechungsraum der Finanzabteilung beim Kunden.
+    \item \textbf{Akteure:} 
+    \begin{itemize}
+        \item Frau Dr. Weber (K): Prozessverantwortliche der Finanzabteilung (Kundin).
+        \item Herr Schmidt (D): \acs{RPA}/\acs{KI}-Entwickler (Dienstleister).
+    \end{itemize}
+    \item \textbf{Gesprächsziel:} Fachliche Klärung der Abweichungen im Automatisierungsmodul und Festlegung des weiteren Vorgehens.
+\end{itemize}
+
+\vspace{0.3cm}
+
+\begin{description}
+    \item[Kundin (K):] \textit{[Sitzt bereits am Besprechungstisch, tippt gereizt auf ihr Smartphone. Ohne aufzublicken, als D den Raum betritt.]} Ah, der Herr Entwickler geruht also doch noch, sich blicken zu lassen. Setzen Sie sich. Ich habe nicht viel Zeit. Mein Vorstand hat heute Morgen den Projektstatus angefordert, und ich darf ihm jetzt erklären, warum Ihre ach so tolle Automatisierung nicht funktioniert. Also – was haben Sie sich dabei eigentlich gedacht?
+    
+    \item[Dienstleister (D):] \textit{[Setzt sich ruhig gegenüber, legt einen Ordner mit der Aufschrift „Lastenheft“ auf den Tisch.]} Guten Tag, Frau Dr. Weber. Ich verstehe, dass Sie unter Druck stehen. Lassen Sie uns die Situation sachlich aufarbeiten. Wir haben im Kick-off-Workshop gemeinsam ein detailliertes Lastenheft erstellt, in dem alle 47 Prozessparameter, die Sonderfälle und die zu verwendenden Testdaten verbindlich festgehalten wurden. Genau diese Daten sind uns jedoch über die letzten Monate nicht zugegangen.
+    
+    \item[Kundin (K):] \textit{[Unterbricht sofort, ohne D ausreden zu lassen, mit spöttischem Lachen.]} Ach, jetzt kommen Sie mir mit dem Lastenheft! Das ist ja lächerlich. Sie sind der Dienstleister, Sie werden dafür bezahlt, dass Sie Lösungen liefern – nicht dafür, dass Sie Ausreden erfinden. Ich habe Ihnen von Anfang an gesagt, dass ich keine Ahnung von IT habe. Genau deswegen habe ich Sie geholt. Und jetzt wollen Sie mir erklären, dass ich schuld bin, dass Sie Ihre Arbeit nicht gemacht haben?
+    
+    \item[Dienstleister (D):] \textit{[Bleibt ruhig, öffnet den Ordner, zeigt auf eine Seite.]} Frau Dr. Weber, es geht nicht um Schuld. Es geht um die technische Realität: Ein \acs{RPA}-Modul kann nur so präzise arbeiten wie die Prozessdefinition, die es erhält. Auf Seite 12 des Lastenhefts haben Sie selbst festgehalten, welche Sonderfälle es in der Nachprüfung gibt. Ohne diese Informationen kann kein Entwickler die Logik korrekt abbilden. Ich habe Ihnen am 8., 15. und 22. des letzten Monats konkrete Rückfragen per E-Mail geschickt.
+    
+    \item[Kundin (K):] \textit{[Winkt ab, ohne D anzuschauen, tippt weiter auf ihrem Smartphone.]} Ja, ja, E-Mails, E-Mails. Wissen Sie, was ich den ganzen Tag mache? Ich habe 40 Mitarbeiter, ein laufendes Tagesgeschäft und einen Vorstand im Nacken. Ich habe wirklich Wichtigeres zu tun, als Ihre E-Mails zu beantworten. Außerdem – wenn es so wichtig gewesen wäre, hätten Sie mich anrufen können. Oder sich an meinen Chef wenden. Das nennt man Projektmanagement. Aber Sie sind ja lieber in Ihrer IT-Welt geblieben und haben vor sich hin programmiert.
+    
+    \item[Dienstleister (D):] \textit{[Spricht ruhig, aber bestimmt.]} Frau Dr. Weber, ich habe mehrfach versucht, Sie telefonisch zu erreichen. Ihre Sekretärin teilte mir mit, Sie seien ‚in Terminen‘. Auf meine Bitte um Rückruf kam keine Reaktion. Um das Projekt dennoch voranzutreiben, habe ich Ihnen – und das war in einer E-Mail am 30. des letzten Monats – transparent mitgeteilt, dass wir, wenn keine Rückmeldung erfolgt, vorübergehend eigene Annahmeparameter einsetzen müssen.
+    
+    \item[Kundin (K):] \textit{[Schaut nun auf, legt das Handy beiseite, Stimme wird schärfer.]} Hören Sie auf, mir etwas von E-Mails zu erzählen. Sie wollen sich doch nur rausreden. Sie haben doch von Anfang an nicht verstanden, was wir brauchen. Ich habe Ihnen gesagt, das System muss funktionieren – fertig. Ich habe Ihnen gesagt, die Daten kommen. Und Sie haben mir versprochen, dass es läuft. Jetzt läuft es nicht, und Sie schieben es auf mich. Das ist erbärmlich. Sie sind einfach nicht kompetent genug für diese Aufgabe.
+    
+    \item[Dienstleister (D):] \textit{[Bleibt professionell, öffnet die E-Mail auf seinem Laptop, dreht den Bildschirm zu K.]} Frau Dr. Weber, ich möchte Ihnen das nicht vorhalten, sondern die Situation klären. In dieser E-Mail habe ich ausdrücklich geschrieben, dass die Umstellung auf die eigentlichen Parameter nachträglich Zeit kostet – ein bis zwei Wochen allein für die Anpassung, plus zwei Wochen für die vollständigen Tests. Das war kommuniziert. Nun sind die Fehler aufgetreten, weil die provisorischen Parameter für Ihre Sonderfälle nicht greifen. Genau das können wir jetzt aber gemeinsam lösen.
+    
+    \item[Kundin (K):] \textit{[Lacht höhnisch, verschränkt die Arme.]} Gemeinsam lösen. Dass ich nicht lache. Sie haben das Projekt an die Wand gefahren und wollen mir jetzt erklären, dass wir das „gemeinsam“ lösen. Wissen Sie was? Ich glaube, Sie haben einfach keine Ahnung, was Sie tun. Sie sind ein klassischer Fall von jemandem, der zu viel verspricht und dann nicht liefert. Und dann kommt er mit Lastenheft, E-Mail und was weiß ich noch. Peinlich.
+    
+    \item[Dienstleister (D):] \textit{[Spricht noch ruhig, aber mit Nachdruck.]} Frau Dr. Weber, ich möchte Sie wirklich bitten, sachlich zu bleiben. Es geht hier nicht um Schuld, sondern darum, wie wir die Parameter nun schnellstmöglich nachziehen können. Dafür brauche ich lediglich die Angaben von Ihnen, wie diese zu handhaben sind. Mehr müssen Sie gar nicht machen.
+    
+    \item[Kundin (K):] \textit{[Schlägt mit der flachen Hand auf den Tisch, laut.]} Spar dir das, du Stümper! Red nicht so mit mir, als wäre ich ein Schulbub! Glaubst du wirklich, du kannst mir erklären, wie ich meine Abteilung zu führen habe? Du bist nichts weiter als ein dahergelaufener angeblicher Programmierer, der nicht einmal zwei Zeilen Code schreiben kann! Und du willst mir was von Professionalität erzählen?
+    
+    \item[Dienstleister (D):] \textit{[Tritt einen Schritt zurück, hebt beschwichtigend die Hände.]} Frau Dr. Weber, ich möchte Sie wirklich bitten, sachlich zu bleiben. Wenn Sie nicht bereit sind, dieses Gespräch auf einer fachlichen Ebene zu führen, kommen wir nicht weiter.
+    
+    \item[Kundin (K):] \textit{[Brüllt, beugt sich weit über den Tisch, ballt die Faust.]} Halten Sie den Mund! Sie sind ein Versager! Glauben Sie wirklich, Sie können mir Vorwürfe machen? Sie elender Mensch haben das Projekt an die Wand gefahren, und jetzt wollen Sie sich rausreden! Sie haben keine Manieren, und dann trauen Sie sich, von Professionalität zu reden! Sie Unverschämter! Ich habe keine Zeit mehr für Ihr inkompetentes Gerede! Die Details interessieren mich nicht. Ich gebe Ihnen noch bis heute Abend – machen Sie, dass es funktioniert!
+    
+    \item[\textit{[Abgang:]}] \textit{Frau Dr. Weber packt ihre Unterlagen und ihre Handtasche, steht auf und verlässt mit einem tödlichen Blick ohne ein weiteres Wort den Raum. Sie knallt die Tür so heftig zu, dass die Scheibe klirrt. D bleibt schockiert allein am Tisch zurück.}
+\end{description}
+
+% ==============================================================================
+% ================================== AUFGABE 1 ================================
+% ==============================================================================
