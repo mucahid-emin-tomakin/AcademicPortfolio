@@ -1,0 +1,37 @@
+% ==============================================================================
+% ================================== AUFGABE 5 ================================
+% ==============================================================================
+
+\section{Aufgabe 5: Early Stopping und Hyperparameter-Tuning}
+\label{sec:aufgabe5}
+
+\subsection{Methodik}
+
+Early Stopping überwacht den Validierungsverlust mit einer Geduld von zehn Epochen und stellt anschließend die Gewichte der besten Epoche wieder her \cite[S.~60]{2}. Für das Tuning wird der Keras Tuner (\texttt{RandomSearch}, 15 Trials) eingesetzt \cite{6}. Der Suchraum umfasst die Anzahl verborgener Schichten (1--3), die Neuronen pro Schicht (32--128, Schrittweite 32), die Aktivierungsfunktion (\ac{ReLU}, tanh) und die Lernrate ($10^{-4}$ bis $10^{-2}$, logarithmisch). Das Vorgehen orientiert sich an der in KIPR00 beschriebenen Hyperparameter-Suche \cite[S.~30--31]{2} sowie an den Empfehlungen von Géron \cite[S.~154--160]{1}.
+
+\subsection{Ergebnisse}
+
+Mit Early Stopping stoppt das Training nach 64 statt 200 Epochen (beste Validierungs-Loss $0{,}00112$, eigene Messung). Auf der Testmenge ergibt sich Test-\ac{MSE} $0{,}00184$, Test-\ac{MAE} $0{,}01106$ -- praktisch identisch zur Baseline. Die Tuner-Suche (15 Trials) findet als beste Konfiguration zwei verborgene Schichten mit je 128 Neuronen, \ac{ReLU} und Lernrate $2{,}45 \cdot 10^{-4}$ (eigene Messung). Tabelle~\ref{tab:a5_vergleich} fasst die Ergebnisse zusammen.
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}{lrr}
+        \toprule
+        Modell & Test-\ac{MSE} & Test-\ac{MAE} \\
+        \midrule
+        Baseline (100 Epochen, fix)       & 0{,}001765 & 0{,}010162 \\
+        Mit Early Stopping                & 0{,}001840 & 0{,}011061 \\
+        Getunt (Keras Tuner)              & 0{,}001740 & 0{,}010086 \\
+        \bottomrule
+    \end{tabular}
+    \caption{Vergleich der drei Modellvarianten \textit{(eigene Darstellung)}.}
+    \label{tab:a5_vergleich}
+\end{table}
+
+\subsection{Interpretation}
+
+Weder Early Stopping noch Tuning verbessern die Test-\ac{MAE} signifikant. Early Stopping reduziert die Trainingszeit um mehr als die Hälfte, ohne die Modellqualität zu beeinträchtigen. Das Tuning liefert keinen messbaren Zugewinn, weil das Basismodell bereits im Optimum liegt. Hyperparameter-Tuning lohnt sich vor allem dann, wenn das Modell an Under- oder Overfitting leidet, ist das nicht der Fall, ist der Aufwand nicht durch eine Qualitätsverbesserung zu rechtfertigen. Der Tuned-Test-\ac{MAE} ist mit $0{,}01009$ der Beste der drei Modelle, der Unterschied zum Baseline-Modell ist jedoch gering (eigene Messung).
+
+% ==============================================================================
+% ================================== AUFGABE 5 ================================
+% ==============================================================================

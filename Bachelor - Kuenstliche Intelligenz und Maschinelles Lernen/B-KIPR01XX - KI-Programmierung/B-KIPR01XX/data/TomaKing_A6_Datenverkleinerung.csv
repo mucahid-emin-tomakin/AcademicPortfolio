@@ -1,0 +1,7 @@
+Datensatz,n_train,Test MSE,Test MAE
+Original (100%),7935,0.00184,0.01106
+Stratifiziert (50%),3967,0.00118,0.01239
+Stratifiziert (30%),2380,0.00124,0.01307
+Stratifiziert (20%),1586,0.00148,0.01604
+Stratifiziert (10%),793,0.00257,0.01904
+Stratifiziert (5%),396,0.00114,0.02154

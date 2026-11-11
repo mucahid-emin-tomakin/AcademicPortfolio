@@ -1,0 +1,19 @@
+% ==============================================================================
+% =================================== EINLEITUNG ================================
+% ==============================================================================
+
+\section*{Einleitung}
+\addcontentsline{toc}{section}{Einleitung}
+\label{sec:einleitung}
+
+\ac{RL} hat sich in den vergangenen Jahren zu einem zentralen Teilgebiet des maschinellen Lernens entwickelt. Im Gegensatz zum überwachten Lernen benötigt ein \ac{RL}-Agent keinen vorab gelabelten Datensatz, sondern interagiert mit einer simulierten Umgebung, sammelt Erfahrungen und verbessert seine Policy anhand der erhaltenen Belohnungen. Die wesentliche Rückmeldung ist der sogenannte Reward, der die Qualität einer Aktion bewertet \cite[S.~12]{2}.
+
+Die vorliegende Arbeit bearbeitet sechs aufeinander aufbauende Aufgaben am Beispiel der \texttt{LunarLander}-Umgebung aus der Bibliothek \emph{Gymnasium} \cite{4}. Jede Aufgabe wird in einem eigenen Kapitel behandelt, das Methodik, Ergebnisse und Interpretation zusammenfasst. Aufgabe~\ref{sec:aufgabe1} evaluiert einen trainierten \ac{PPO}-Agenten und exploriert die gewonnenen Daten, Aufgabe~\ref{sec:aufgabe2} ergänzt ein Treibstoff-Feature, Aufgabe~\ref{sec:aufgabe3} analysiert den Zusammenhang zwischen Treibstoff und Erfolg, Aufgabe~\ref{sec:aufgabe4} trainiert ein Surrogatmodell als neuronales Netz, Aufgabe~\ref{sec:aufgabe5} setzt Early Stopping und Hyperparameter-Tuning ein, Aufgabe~\ref{sec:aufgabe6} untersucht Methoden zur Datenreduktion.
+
+Als theoretische Grundlage dienen die Studienhefte KIPR00 (Begleitheft zu KIPRBU) und KIPR01 (Die Sprache R) sowie das Lehrbuch von Géron. Während KIPR00 die methodischen Grundlagen des maschinellen Lernens und der neuronalen Netze vermittelt, vergleicht KIPR01 die Stärken von R und Python in der Datenanalyse und die Prinzipien der Datenaufbereitung \cite[S.~29--44]{3}, für die vorliegende Arbeit ist Python aufgrund der besseren Integration mit den verwendeten ML-Bibliotheken (TensorFlow, Keras, Stable-Baselines3) die geeignetere Wahl.
+
+Alle Berechnungen wurden in einer lokalen Python-Umgebung (\texttt{venv}) mit Python~3.12, TensorFlow~2.14 (\ac{CPU}) und Stable-Baselines3~2.9.2 durchgeführt \cite{5}. Das Training des \ac{PPO}-Agenten erfolgte mit dem in der Aufgabenstellung vorgegebenen Code, einzige Anpassungen waren die Umgebungs-ID (\texttt{LunarLander-v3} statt \texttt{-v2}, da \texttt{-v2} in der aktuellen Gymnasium-Version nicht mehr verfügbar ist \cite{4}), ein fester Zufalls-Seed (\texttt{seed=42}) sowie eine Pfadanpassung. Die Hyperparameter (\texttt{n\_steps=1024}, \texttt{batch\_size=64}, \texttt{gae\_lambda=0.98}, \texttt{gamma=0.999}, \texttt{n\_epochs=4}, \texttt{ent\_coef=0.01}) und die Trainingsdauer (1\,500\,000 Timesteps) wurden unverändert übernommen. Der resultierende Agent erzielt in einer kurzen Evaluation über zehn Episoden einen mittleren Reward von $283{,}77 \pm 15{,}17$ (eigene Messung), die ausführliche Evaluation über 50 Episoden folgt in Aufgabe~\ref{sec:aufgabe1}.
+
+% ==============================================================================
+% =================================== EINLEITUNG ================================
+% ==============================================================================

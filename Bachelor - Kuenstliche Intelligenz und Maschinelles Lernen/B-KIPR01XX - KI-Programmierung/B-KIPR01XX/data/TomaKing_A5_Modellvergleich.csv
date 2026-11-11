@@ -1,0 +1,4 @@
+Modell,Test MSE,Test MAE
+"Baseline (100 Epochen, fix)",0.001765,0.010162
+Mit Early Stopping,0.00184,0.011061
+Tuned (Keras Tuner),0.00174,0.010086

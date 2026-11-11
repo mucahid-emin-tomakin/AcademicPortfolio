@@ -1,0 +1,105 @@
+% ==============================================================================
+% ===================================== MAIN ===================================
+% ==============================================================================
+
+\documentclass[
+    a4paper,
+    11pt,
+    numbers=noenddot,
+    toc=sectionentrydotfill,
+    toc=chapterentrydotfill
+]{scrreprt}
+
+% ================= Settings =================
+
+\input{config/settings.tex}
+
+% ================= Settings =================
+
+\begin{document}
+
+% ================= Deckblatt =================
+
+\input{config/titlepage.tex}
+\cleardoublepage
+
+% ================= Deckblatt =================
+% ================= Inhaltsverzeichnis =================
+
+\pagenumbering{Roman}
+\setcounter{page}{1}
+\renewcommand{\chapterpagestyle}{plain}
+\tableofcontents
+\cleardoublepage
+
+% ================= Inhaltsverzeichnis =================
+% ================= Hauptteil =================
+
+\pagenumbering{arabic}
+\setcounter{page}{1}
+\pagestyle{fancy}
+\renewcommand{\chapterpagestyle}{fancy}
+\input{chapter/Einleitung.tex}
+\input{chapter/Aufgabe1.tex}
+\input{chapter/Aufgabe2.tex}
+\input{chapter/Aufgabe3.tex}
+\input{chapter/Aufgabe4.tex}
+\input{chapter/Aufgabe5.tex}
+\input{chapter/Aufgabe6.tex}
+\input{chapter/Fazit.tex}
+\cleardoublepage
+
+% ================= Hauptteil =================
+% ================= Verzeichnisse =================
+
+\pagenumbering{Roman}
+\setcounter{page}{2}
+\renewcommand{\chapterpagestyle}{plain}
+\begingroup
+\let\clearpage\relax
+\let\cleardoublepage\relax
+\footnotesize
+\section*{Abkürzungsverzeichnis}
+\addcontentsline{toc}{section}{Abkürzungsverzeichnis}
+\input{config/acronym.tex}
+\makeatletter
+\section*{\lstlistlistingname}
+\addcontentsline{toc}{section}{\lstlistlistingname}
+\@starttoc{lol}
+\section*{\listtablename}
+\addcontentsline{toc}{section}{\listtablename}
+\@starttoc{lot}
+\section*{\listfigurename}
+\addcontentsline{toc}{section}{\listfigurename}
+\@starttoc{lof}
+\section*{Literaturverzeichnis}
+\addcontentsline{toc}{section}{Literaturverzeichnis}
+\begingroup
+\renewcommand*{\bibfont}{\footnotesize}
+\defbibenvironment{bibliography}
+  {\list
+     {\printtext[labelnumberwidth]{%
+        \printfield{labelprefix}%
+        \printfield{labelnumber}}}
+     {\setlength{\labelwidth}{\labelnumberwidth}%
+      \setlength{\leftmargin}{\labelwidth}%
+      \setlength{\labelsep}{\biblabelsep}%
+      \addtolength{\leftmargin}{\labelsep}%
+      \addtolength{\leftmargin}{1.5em}%
+      \setlength{\itemsep}{\bibitemsep}%
+      \setlength{\parsep}{\bibparsep}}%
+      \renewcommand*{\makelabel}[1]{\hss##1}}
+  {\endlist}
+  {\item}
+\printbibliography[heading=none]
+\endgroup
+\makeatother
+\endgroup
+
+% ================= Verzeichnisse =================
+
+\end{document}
+
+% ==============================================================================
+% ===================================== MAIN ===================================
+% ==============================================================================

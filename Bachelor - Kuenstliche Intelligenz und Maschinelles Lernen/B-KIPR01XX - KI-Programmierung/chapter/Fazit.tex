@@ -1,0 +1,43 @@
+% ==============================================================================
+% ================================== FAZIT =====================================
+% ==============================================================================
+
+\section{Fazit}
+\label{sec:fazit}
+
+Die vorliegende Arbeit hat den vollständigen Data-Science-Prozess am Beispiel der LunarLander-Umgebung nachvollzogen -- von der Datenerhebung über die explorative Analyse bis zur Modellierung und Datenreduktion. Die detaillierten Ergebnisse sind in den jeweiligen Aufgabenkapiteln dokumentiert, im Folgenden werden daher ausschließlich die \emph{übergreifenden} Limitationen, die persönliche Reflexion und der Ausblick zusammengefasst.
+
+\subsection{Kritische Würdigung}
+\label{sec:kritik}
+
+Die aufgabenspezifischen Einschränkungen des Surrogatmodells (Trainingsverteilung, binäre Kontakt-Flags, fehlende Episodenhistorie) wurden in Aufgabe~\ref{sec:aufgabe4} ausführlich diskutiert. Zwei übergreifende Punkte verdienen darüber hinaus Beachtung:
+
+\paragraph{Fehlerakkumulation über mehrere Schritte.}
+Die berichtete \ac{MAE} bezieht sich auf einen einzelnen Vorhersageschritt. Wird das Modell iterativ für mehrstufige Vorhersagen eingesetzt, akkumulieren sich die Einzelfehler. Die langfristige Stabilität wurde in dieser Arbeit nicht systematisch geprüft, sie wäre vor einem produktiven Einsatz zu evaluieren, etwa durch eine geschlossene Rollout-Simulation über mehrere Hundert Schritte.
+
+\paragraph{Reproduzierbarkeit und statistische Belastbarkeit.}
+Alle Analysen beruhen auf einem einzelnen trainierten Agenten und einer Stichprobe von 50 Episoden (11\,337 Schritte). Für statistisch belastbarere Aussagen wäre eine größere Stichprobe mit variierenden Zufalls-Seeds erforderlich. Auf eine formale Adjustierung für multiples Testen (z.\,B.\ Bonferroni) wurde bewusst verzichtet, da die Arbeit primär explorativ angelegt ist.
+
+\subsection{Reflexion}
+\label{sec:reflexion}
+
+\paragraph{Was gut funktioniert hat.}
+Die schrittweise Struktur (erst Daten erheben, dann explorieren, dann modellieren, dann reduzieren) hat sich bewährt: Jede Aufgabe baute auf den Ergebnissen der vorherigen auf, sodass am Ende ein konsistentes Bild entstand. Besonders hilfreich war die frühe Entscheidung, den PPO-Agenten zwischenzuspeichern -- ohne diese Maßnahme hätte jede Iteration 25 Minuten gedauert, und die Arbeit wäre in der verfügbaren Zeit nicht zu schaffen gewesen. Die Auslagerung der Feature-Aufbereitung in wiederverwendbare Funktionen (\texttt{tk\_prepare\_xy}, \texttt{tk\_split\_70\_15\_15}) hat sich spätestens in Aufgabe~\ref{sec:aufgabe6} ausgezahlt, als dieselbe Pipeline auf sechs verschiedene Datensätze angewendet werden musste.
+
+\paragraph{Was schwierig war.}
+Die Reproduzierbarkeit des Trainings war anfangs nicht gegeben: Ohne konsequentes Setzen des Zufalls-Seeds vor jedem \texttt{fit}-Aufruf lieferten wiederholte Läufe unterschiedliche Ergebnisse, was die Vergleichbarkeit der Modelle unmöglich machte. Erst nachdem der Seed systematisch vor jedem Training zurückgesetzt wurde, waren die Ergebnisse stabil. Auch die Wahl des Hyperparameter-Suchraums für den Keras Tuner war nicht trivial: Zu enge Grenzen hätten das Optimum verfehlt, zu weite Grenzen hätten die Laufzeit unnötig verlängert. Hier half ein erster explorativer Lauf mit weiten Grenzen, gefolgt von einem feineren Lauf um das gefundene Optimum.
+
+\paragraph{Was ich beim nächsten Mal anders machen würde.}
+Zwei Dinge: Erstens würde ich die Datenreduktion (Aufgabe~\ref{sec:aufgabe4}) früher durchführen und als Standard-Pipeline etablieren, weil das Surrogatmodell auf 30\,\% der Daten fast dieselbe Qualität erreicht und die späteren Experimente deutlich beschleunigt hätte. Zweitens würde ich die Modellierung der binären Kontakt-Flags von Anfang an getrennt behandeln (z.\,B.\ als Multi-Output-Modell mit Sigmoid-Ausgang), statt sie zunächst als Regressionsziel mitzuschleppen -- das hätte den Fehler an dieser Stelle von vornherein reduziert.
+
+\paragraph{Was ich gelernt habe.}
+Die größte Erkenntnis war, dass ein Surrogatmodell nur so gut ist wie die Verteilung, auf der es trainiert wurde: Die sehr niedrige Test-MAE aus Aufgabe~\ref{sec:aufgabe4} täuscht darüber hinweg, dass das Modell außerhalb der vom Agenten besuchten Zustände nicht generalisiert. Diese Einsicht prägt den kritischen Blick auf die Ergebnisse und ist für mich der wichtigste Lerneffekt dieser Arbeit.
+
+\subsection{Ausblick}
+\label{sec:ausblick}
+
+Aufbauend auf den genannten Einschränkungen bieten sich mehrere Richtungen an: Erstens könnte das Surrogatmodell in ein \ac{RL}-Training integriert werden (Model-Based \ac{RL}), um den Sample-Verbrauch zu reduzieren -- ein in der aktuellen Forschung intensiv untersuchter Ansatz. Zweitens wäre der Einsatz von Active Learning interessant: Statt zufällig zu sampeln, könnten gezielt solche Zustände ausgewählt werden, in denen das Surrogatmodell die größte Unsicherheit zeigt (eigene Überlegung). Drittens sollte die langfristige Vorhersagestabilität über Rollouts systematisch evaluiert werden, bevor das Modell außerhalb des Trainingskontexts eingesetzt wird.
+
+% ==============================================================================
+% ================================== FAZIT =====================================
+% ==============================================================================
